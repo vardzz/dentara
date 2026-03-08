@@ -1,6 +1,30 @@
 'use client';
 
 import { Rocket, Check } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.15,
+            delayChildren: 0.1,
+        },
+    },
+};
+
+const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.8,
+            ease: [0.22, 1, 0.36, 1], // Premium Ease-Out-Expo feel
+        },
+    },
+};
 
 export default function RoadmapPage() {
     return (
@@ -9,22 +33,35 @@ export default function RoadmapPage() {
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-light rounded-full blur-[100px] opacity-70 pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
             <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-brand-light/60 rounded-full blur-[100px] opacity-50 pointer-events-none -translate-x-1/2"></div>
 
-            <div className="max-w-4xl mx-auto text-center relative z-10 mb-16">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight flex items-center justify-center gap-3">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                className="max-w-4xl mx-auto text-center relative z-10 mb-16"
+            >
+                <motion.h2 variants={itemVariants} className="text-4xl font-bold text-gray-900 mb-4 tracking-tight flex items-center justify-center gap-3">
                     <Rocket className="w-8 h-8 text-brand-teal" /> <span className="text-gradient">Dentara Roadmap</span>
-                </h2>
-                <p className="text-brand-gray text-lg max-w-2xl mx-auto">
-                    Our journey to revolutionize the Philippine clinical supply chain. See what we've launched and what's coming next.
-                </p>
-            </div>
+                </motion.h2>
+                <motion.p variants={itemVariants} className="text-brand-gray text-lg max-w-2xl mx-auto">
+                    Our journey to revolutionize the Philippine clinical supply chain. See what we&apos;ve launched and what&apos;s coming next.
+                </motion.p>
+            </motion.div>
 
-            <div className="max-w-4xl mx-auto relative hidden md:block">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                className="max-w-4xl mx-auto relative hidden md:block"
+            >
                 {/* Center Line */}
                 <div className="absolute left-1/2 top-0 bottom-0 w-px bg-brand-light -translate-x-1/2"></div>
 
                 <div className="space-y-16">
                     {/* Item 1 (Left) */}
-                    <div className="relative flex items-start justify-between w-full group">
+                    <motion.div variants={itemVariants} className="relative flex items-start justify-between w-full group">
+                        {/* Left Content */}
                         <div className="w-[45%] text-right pr-8">
                             <div className="roadmap-card p-6 rounded-2xl inline-block w-full">
                                 <div className="text-brand-teal font-bold text-xl mb-1">January 2026</div>
@@ -37,14 +74,19 @@ export default function RoadmapPage() {
                                 </ul>
                             </div>
                         </div>
+                        {/* Node */}
                         <div className="absolute left-1/2 -translate-x-1/2 top-8 w-4 h-4 rounded-full bg-white border-4 border-brand-teal z-10 shadow-sm shadow-brand-teal/20 group-hover:scale-125 transition-transform duration-300"></div>
+                        {/* Right Space */}
                         <div className="w-[45%]"></div>
-                    </div>
+                    </motion.div>
 
                     {/* Item 2 (Right) */}
-                    <div className="relative flex items-start justify-between w-full group">
+                    <motion.div variants={itemVariants} className="relative flex items-start justify-between w-full group">
+                        {/* Left Space */}
                         <div className="w-[45%]"></div>
+                        {/* Node */}
                         <div className="absolute left-1/2 -translate-x-1/2 top-8 w-4 h-4 rounded-full bg-white border-4 border-brand-teal z-10 shadow-sm shadow-brand-teal/20 group-hover:scale-125 transition-transform duration-300"></div>
+                        {/* Right Content */}
                         <div className="w-[45%] text-left pl-8">
                             <div className="roadmap-card p-6 rounded-2xl inline-block w-full">
                                 <div className="text-brand-teal font-bold text-xl mb-1">February 2026</div>
@@ -57,10 +99,11 @@ export default function RoadmapPage() {
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Item 3 (Left) */}
-                    <div className="relative flex items-start justify-between w-full group">
+                    <motion.div variants={itemVariants} className="relative flex items-start justify-between w-full group">
+                        {/* Left Content */}
                         <div className="w-[45%] text-right pr-8">
                             <div className="roadmap-card p-6 rounded-2xl inline-block w-full">
                                 <div className="text-brand-teal/60 font-bold text-xl mb-1">April 2026</div>
@@ -73,14 +116,19 @@ export default function RoadmapPage() {
                                 </ul>
                             </div>
                         </div>
+                        {/* Node */}
                         <div className="absolute left-1/2 -translate-x-1/2 top-8 w-4 h-4 rounded-full bg-white border-4 border-brand-teal/40 z-10 group-hover:scale-125 transition-transform duration-300"></div>
+                        {/* Right Space */}
                         <div className="w-[45%]"></div>
-                    </div>
+                    </motion.div>
 
                     {/* Item 4 (Right) */}
-                    <div className="relative flex items-start justify-between w-full group">
+                    <motion.div variants={itemVariants} className="relative flex items-start justify-between w-full group">
+                        {/* Left Space */}
                         <div className="w-[45%]"></div>
+                        {/* Node */}
                         <div className="absolute left-1/2 -translate-x-1/2 top-8 w-4 h-4 rounded-full bg-white border-4 border-brand-teal/40 z-10 group-hover:scale-125 transition-transform duration-300"></div>
+                        {/* Right Content */}
                         <div className="w-[45%] text-left pl-8">
                             <div className="roadmap-card p-6 rounded-2xl inline-block w-full">
                                 <div className="text-brand-teal/60 font-bold text-xl mb-1">July 2026</div>
@@ -93,85 +141,78 @@ export default function RoadmapPage() {
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
-                <div className="mt-20 text-center">
+                <motion.div variants={itemVariants} className="mt-20 text-center">
                     <p className="text-sm font-bold text-brand-teal uppercase tracking-wide">More exciting features coming soon!</p>
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
 
-            {/* Mobile Roadmap */}
-            <div className="max-w-md mx-auto relative md:hidden space-y-12 pl-4">
+            {/* Mobile Roadmap (Simple vertical list) */}
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                className="max-w-md mx-auto relative md:hidden space-y-12 pl-4"
+            >
+                {/* Left Line */}
                 <div className="absolute left-[23px] top-2 bottom-0 w-px bg-brand-light"></div>
 
-                <MobileRoadmapItem
-                    date="January 2026"
-                    title="Waitlist & Beta Launch"
-                    description="Initial release to gather real student demand and secure pilot LGU partners."
-                    tasks={[
-                        { text: "Gathering demographic data", completed: true },
-                        { text: "Initial 5 LGU onboarded", completed: true }
-                    ]}
-                    active
-                />
-                <MobileRoadmapItem
-                    date="February 2026"
-                    title="AI Triage Integration"
-                    description="Rollout of smart case matching to eliminate manual screening of patients."
-                    tasks={[
-                        { text: "Tagalog symptom text analyzer", completed: true },
-                        { text: "Quota mapping logic", completed: true }
-                    ]}
-                    active
-                />
-                <MobileRoadmapItem
-                    date="April 2026"
-                    title="Institutional Dashboard"
-                    description="Bringing universities into the loop for seamless oversight and academic approval."
-                    tasks={[
-                        { text: "Clinical attendance tracking", completed: false },
-                        { text: "Faculty case approval", completed: false }
-                    ]}
-                />
-                <MobileRoadmapItem
-                    date="July 2026"
-                    title="Nationwide Expansion"
-                    description="Scaling the platform to cover all dental schools in the Philippines."
-                    tasks={[
-                        { text: "Onboard 50+ dental schools", completed: false },
-                        { text: "Automated reconciliation", completed: false }
-                    ]}
-                />
+                {/* Item 1 */}
+                <motion.div variants={itemVariants} className="relative pl-10 text-left">
+                    <div className="absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-brand-teal z-10 shadow-sm shadow-brand-teal/20"></div>
+                    <div className="text-brand-teal font-bold text-lg mb-1">January 2026</div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">Waitlist & Beta Launch</h3>
+                    <p className="text-sm text-gray-500 mb-4">Initial release to gather real student demand and secure pilot LGU partners.</p>
+                    <ul className="space-y-2 text-sm text-gray-400">
+                        <li className="flex items-center gap-2 line-through"><Check className="w-3.5 h-3.5" /> Gathering demographic data</li>
+                        <li className="flex items-center gap-2 line-through"><Check className="w-3.5 h-3.5" /> Initial 5 LGU onboarded</li>
+                    </ul>
+                </motion.div>
 
-                <div className="pt-8 text-center border-t border-brand-light/50">
+                {/* Item 2 */}
+                <motion.div variants={itemVariants} className="relative pl-10 text-left">
+                    <div className="absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-brand-teal z-10 shadow-sm shadow-brand-teal/20"></div>
+                    <div className="text-brand-teal font-bold text-lg mb-1">February 2026</div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">AI Triage Integration</h3>
+                    <p className="text-sm text-gray-500 mb-4">Rollout of smart case matching to eliminate manual screening of patients.</p>
+                    <ul className="space-y-2 text-sm text-gray-400">
+                        <li className="flex items-center gap-2 line-through"><Check className="w-3.5 h-3.5" /> Tagalog symptom text analyzer</li>
+                        <li className="flex items-center gap-2 line-through"><Check className="w-3.5 h-3.5" /> Quota mapping logic</li>
+                    </ul>
+                </motion.div>
+
+                {/* Item 3 */}
+                <motion.div variants={itemVariants} className="relative pl-10 text-left">
+                    <div className="absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-brand-teal/40 z-10"></div>
+                    <div className="text-brand-teal/60 font-bold text-lg mb-1">April 2026</div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">Institutional Dashboard</h3>
+                    <p className="text-sm text-gray-500 mb-4">Bringing universities into the loop for seamless oversight and academic approval.</p>
+                    <ul className="space-y-2 text-sm text-gray-600">
+                        <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-gray-300" /> Clinical attendance tracking</li>
+                        <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-gray-300" /> Faculty case approval</li>
+                    </ul>
+                </motion.div>
+
+                {/* Item 4 */}
+                <motion.div variants={itemVariants} className="relative pl-10 text-left">
+                    <div className="absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-brand-teal/40 z-10"></div>
+                    <div className="text-brand-teal/60 font-bold text-lg mb-1">July 2026</div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">Nationwide Expansion</h3>
+                    <p className="text-sm text-gray-500 mb-4">Scaling the platform to cover all dental schools in the Philippines.</p>
+                    <ul className="space-y-2 text-sm text-gray-600">
+                        <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-gray-300" /> Onboard 50+ dental schools</li>
+                        <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-gray-300" /> Automated reconciliation</li>
+                    </ul>
+                </motion.div>
+
+                <motion.div variants={itemVariants} className="pt-8 text-center border-t border-brand-light/50">
                     <p className="text-xs font-bold text-brand-teal uppercase tracking-wide">More coming soon!</p>
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
         </section>
     );
 }
 
-function MobileRoadmapItem({ date, title, description, tasks, active = false }: {
-    date: string,
-    title: string,
-    description: string,
-    tasks: { text: string, completed: boolean }[],
-    active?: boolean
-}) {
-    return (
-        <div className="relative pl-10 text-left">
-            <div className={`absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 z-10 ${active ? 'border-brand-teal shadow-sm shadow-brand-teal/20' : 'border-brand-teal/40'}`}></div>
-            <div className={`font-bold text-lg mb-1 ${active ? 'text-brand-teal' : 'text-brand-teal/60'}`}>{date}</div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
-            <p className="text-sm text-gray-500 mb-4">{description}</p>
-            <ul className={`space-y-2 text-sm ${active ? 'text-gray-400' : 'text-gray-600'}`}>
-                {tasks.map((task, idx) => (
-                    <li key={idx} className={`flex items-center gap-2 ${task.completed ? 'line-through' : ''}`}>
-                        <Check className={`w-3.5 h-3.5 ${task.completed ? '' : 'text-gray-300'}`} /> {task.text}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-}
