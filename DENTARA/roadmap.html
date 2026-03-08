@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dentara | Where Care Meets Career</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0e2b5c',   // Deep blue from left side of logo
+                            teal: '#138b94',   // Teal from right side of logo
+                            light: '#f0f7f9',  // Very light teal/blue background
+                            gray: '#475569'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .text-gradient {
+            background: linear-gradient(90deg, #0e2b5c 0%, #138b94 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bg-gradient-brand {
+            background: linear-gradient(90deg, #0e2b5c 0%, #138b94 100%);
+        }
+        .number-bg {
+            position: absolute;
+            right: 1rem;
+            bottom: -1rem;
+            font-size: 8rem;
+            font-weight: 800;
+            color: #f1f5f9;
+        }
+        .card-content {
+            position: relative;
+            z-index: 10;
+        }
+        .roadmap-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(19, 139, 148, 0.1);
+            transition: all 0.3s ease;
+        }
+        .roadmap-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px -10px rgba(19, 139, 148, 0.15);
+            border-color: rgba(19, 139, 148, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 antialiased selection:bg-brand-teal selection:text-white flex flex-col min-h-screen overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-4 flex justify-between items-center w-full">
+            <div class="flex items-center gap-2 cursor-pointer group" onclick="window.scrollTo(0,0)">
+                <!-- Logo image -->
+                <img src="assets/logo.png" alt="Dentara Logo" class="w-8 h-8 object-contain transition-transform group-hover:scale-110 duration-300">
+                <span class="text-2xl font-bold tracking-tight text-brand-dark group-hover:text-brand-teal transition-colors">DENTARA</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm font-medium text-gray-500 hover:text-brand-dark transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-brand-dark hover:after:w-full duration-300">Home</a>
+                <a href="roadmap.html" class="text-sm font-bold text-brand-teal relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-brand-teal transition-colors">Roadmap</a>
+                <button onclick="alert('Waitlist joined successfully!');" class="bg-brand-teal/10 hover:bg-brand-teal text-brand-teal hover:text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 shadow-sm hover:shadow-md">Get Access</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="py-24 px-6 md:px-12 lg:px-24 bg-[#fafaf9] relative overflow-hidden">
+        <!-- Background aesthetic blur -->
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-light rounded-full blur-[100px] opacity-70 pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
+        <div class="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-brand-light/60 rounded-full blur-[100px] opacity-50 pointer-events-none -translate-x-1/2"></div>
+        
+        <div class="max-w-4xl mx-auto text-center relative z-10 mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4 tracking-tight flex items-center justify-center gap-3">
+                <i data-lucide="rocket" class="w-8 h-8 text-brand-teal"></i> <span class="text-gradient">Dentara Roadmap</span>
+            </h2>
+            <p class="text-brand-gray text-lg max-w-2xl mx-auto">
+                Our journey to revolutionize the Philippine clinical supply chain. See what we've launched and what's coming next.
+            </p>
+        </div>
+
+        <div class="max-w-4xl mx-auto relative hidden md:block">
+            <!-- Center Line -->
+            <div class="absolute left-1/2 top-0 bottom-0 w-px bg-brand-light -translate-x-1/2"></div>
+            
+            <div class="space-y-16">
+                <!-- Item 1 (Left) -->
+                <div class="relative flex items-start justify-between w-full group">
+                    <!-- Left Content -->
+                    <div class="w-[45%] text-right pr-8">
+                        <div class="roadmap-card p-6 rounded-2xl inline-block w-full">
+                            <div class="text-brand-teal font-bold text-xl mb-1">January 2026</div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Waitlist & Beta Launch</h3>
+                            <p class="text-sm text-gray-500 mb-4">Initial release to gather real student demand and secure pilot LGU partners.</p>
+                            <ul class="space-y-2 text-sm text-gray-400 flex flex-col items-end">
+                                <li class="flex items-center justify-end gap-2 line-through"><span>Gather demand from 500+ students</span> <i data-lucide="check" class="w-3.5 h-3.5"></i></li>
+                                <li class="flex items-center justify-end gap-2 line-through"><span>Onboard first 5 LGUs</span> <i data-lucide="check" class="w-3.5 h-3.5"></i></li>
+                                <li class="flex items-center justify-end gap-2 line-through"><span>Release v1 waiting list platform</span> <i data-lucide="check" class="w-3.5 h-3.5"></i></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Node -->
+                    <div class="absolute left-1/2 -translate-x-1/2 top-8 w-4 h-4 rounded-full bg-white border-4 border-brand-teal z-10 shadow-sm shadow-brand-teal/20 group-hover:scale-125 transition-transform duration-300"></div>
+                    <!-- Right Space -->
+                    <div class="w-[45%]"></div>
+                </div>
+
+                <!-- Item 2 (Right) -->
+                <div class="relative flex items-start justify-between w-full group">
+                    <!-- Left Space -->
+                    <div class="w-[45%]"></div>
+                    <!-- Node -->
+                    <div class="absolute left-1/2 -translate-x-1/2 top-8 w-4 h-4 rounded-full bg-white border-4 border-brand-teal z-10 shadow-sm shadow-brand-teal/20 group-hover:scale-125 transition-transform duration-300"></div>
+                    <!-- Right Content -->
+                    <div class="w-[45%] text-left pl-8">
+                        <div class="roadmap-card p-6 rounded-2xl inline-block w-full">
+                            <div class="text-brand-teal font-bold text-xl mb-1">February 2026</div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">AI Triage Integration</h3>
+                            <p class="text-sm text-gray-500 mb-4">Rollout of smart case matching to eliminate manual screening of patients.</p>
+                            <ul class="space-y-2 text-sm text-gray-400">
+                                <li class="flex items-center gap-2 line-through"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span>Launch Tagalog/English symptom text analyzer</span></li>
+                                <li class="flex items-center gap-2 line-through"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span>Automated quota mapping algorithm</span></li>
+                                <li class="flex items-center gap-2 line-through"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span>Photo-based pre-screening flow</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 (Left) -->
+                <div class="relative flex items-start justify-between w-full group">
+                    <!-- Left Content -->
+                    <div class="w-[45%] text-right pr-8">
+                        <div class="roadmap-card p-6 rounded-2xl inline-block w-full">
+                            <div class="text-brand-teal/60 font-bold text-xl mb-1">April 2026</div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Institutional Dashboard</h3>
+                            <p class="text-sm text-gray-500 mb-4">Bringing universities into the loop for seamless oversight and academic approval.</p>
+                            <ul class="space-y-2 text-sm text-gray-600 flex flex-col items-end">
+                                <li class="flex items-center justify-end gap-2"><span>Real-time clinical attendance tracking</span> <i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i></li>
+                                <li class="flex items-center justify-end gap-2"><span>Faculty case approval system</span> <i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i></li>
+                                <li class="flex items-center justify-end gap-2"><span>Digital waiver & consent management</span> <i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Node -->
+                    <div class="absolute left-1/2 -translate-x-1/2 top-8 w-4 h-4 rounded-full bg-white border-4 border-brand-teal/40 z-10 group-hover:scale-125 transition-transform duration-300"></div>
+                    <!-- Right Space -->
+                    <div class="w-[45%]"></div>
+                </div>
+
+                <!-- Item 4 (Right) -->
+                <div class="relative flex items-start justify-between w-full group">
+                    <!-- Left Space -->
+                    <div class="w-[45%]"></div>
+                    <!-- Node -->
+                    <div class="absolute left-1/2 -translate-x-1/2 top-8 w-4 h-4 rounded-full bg-white border-4 border-brand-teal/40 z-10 group-hover:scale-125 transition-transform duration-300"></div>
+                    <!-- Right Content -->
+                    <div class="w-[45%] text-left pl-8">
+                        <div class="roadmap-card p-6 rounded-2xl inline-block w-full">
+                            <div class="text-brand-teal/60 font-bold text-xl mb-1">July 2026</div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Nationwide Expansion</h3>
+                            <p class="text-sm text-gray-500 mb-4">Scaling the platform to cover all dental schools in the Philippines.</p>
+                            <ul class="space-y-2 text-sm text-gray-600">
+                                <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i> <span>Onboard 50+ dental schools</span></li>
+                                <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i> <span>Corporate CSR sponsorship matching</span></li>
+                                <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i> <span>Automated payout & reconciliation</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-20 text-center">
+                <p class="text-sm font-bold text-brand-teal uppercase tracking-wide">More exciting features coming soon!</p>
+            </div>
+        </div>
+
+        <!-- Mobile Roadmap (Simple vertical list) -->
+        <div class="max-w-md mx-auto relative md:hidden space-y-12 pl-4">
+            <!-- Left Line -->
+            <div class="absolute left-[23px] top-2 bottom-0 w-px bg-brand-light"></div>
+            
+            <!-- Item 1 -->
+            <div class="relative pl-10 text-left">
+                <div class="absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-brand-teal z-10 shadow-sm shadow-brand-teal/20"></div>
+                <div class="text-brand-teal font-bold text-lg mb-1">January 2026</div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Waitlist & Beta Launch</h3>
+                <p class="text-sm text-gray-500 mb-4">Initial release to gather real student demand and secure pilot LGU partners.</p>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li class="flex items-center gap-2 line-through"><i data-lucide="check" class="w-3.5 h-3.5"></i> Gathering demographic data</li>
+                    <li class="flex items-center gap-2 line-through"><i data-lucide="check" class="w-3.5 h-3.5"></i> Initial 5 LGU onboarded</li>
+                </ul>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="relative pl-10 text-left">
+                <div class="absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-brand-teal z-10 shadow-sm shadow-brand-teal/20"></div>
+                <div class="text-brand-teal font-bold text-lg mb-1">February 2026</div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">AI Triage Integration</h3>
+                <p class="text-sm text-gray-500 mb-4">Rollout of smart case matching to eliminate manual screening of patients.</p>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li class="flex items-center gap-2 line-through"><i data-lucide="check" class="w-3.5 h-3.5"></i> Tagalog symptom text analyzer</li>
+                    <li class="flex items-center gap-2 line-through"><i data-lucide="check" class="w-3.5 h-3.5"></i> Quota mapping logic</li>
+                </ul>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="relative pl-10 text-left">
+                <div class="absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-brand-teal/40 z-10"></div>
+                <div class="text-brand-teal/60 font-bold text-lg mb-1">April 2026</div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Institutional Dashboard</h3>
+                <p class="text-sm text-gray-500 mb-4">Bringing universities into the loop for seamless oversight and academic approval.</p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i> Clinical attendance tracking</li>
+                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i> Faculty case approval</li>
+                </ul>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="relative pl-10 text-left">
+                <div class="absolute left-[-1px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-brand-teal/40 z-10"></div>
+                <div class="text-brand-teal/60 font-bold text-lg mb-1">July 2026</div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Nationwide Expansion</h3>
+                <p class="text-sm text-gray-500 mb-4">Scaling the platform to cover all dental schools in the Philippines.</p>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i> Onboard 50+ dental schools</li>
+                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-gray-300"></i> Automated reconciliation</li>
+                </ul>
+            </div>
+            
+            <div class="pt-8 text-center border-t border-brand-light/50">
+                <p class="text-xs font-bold text-brand-teal uppercase tracking-wide">More coming soon!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer CTA Container -->
+    <div class="px-4 md:px-12 lg:px-24 pb-12 bg-[#fafaf9] pt-12">
+        <footer class="bg-[#1e293b] relative overflow-hidden text-white rounded-2xl w-full">
+            <div class="absolute inset-0 opacity-10 pointer-events-none">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="network-footer" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                            <circle cx="50" cy="50" r="2" fill="#fff"/>
+                            <path d="M50 50 L100 0 M50 50 L0 100 M50 50 L100 100 M50 50 L0 0" stroke="#fff" stroke-width="0.5"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#network-footer)"/>
+                </svg>
+            </div>
+
+            <div class="relative z-10 max-w-4xl mx-auto text-center py-20 px-6">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 tracking-tight text-white">Ready to complete your quotas?</h2>
+                
+                <p class="text-blue-100/90 mb-10 max-w-2xl mx-auto md:text-lg">
+                    Join Dentara to explore our network of pre-screened patients, structured LGU partnerships, and seamless institutional tracking.
+                </p>
+
+                <button onclick="alert('Waitlist joined successfully!');" class="group relative bg-[#f8fafc] hover:bg-white text-[#1e293b] font-bold px-8 py-3.5 rounded-lg shadow-[0_0_20px_-5px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_-5px_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 mx-auto sm:w-auto w-full overflow-hidden">
+                    <span class="relative z-10 flex items-center gap-2">Get Early Access &rarr; Save My Spot</span>
+                    <div class="absolute inset-0 bg-brand-light/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-0"></div>
+                </button>
+            </div>
+        </footer>
+        
+        <!-- Bottom bar -->
+        <div class="mt-8 text-center text-sm text-[#475569] font-medium flex flex-col items-center gap-4">
+             <div class="group flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
+                 <img src="assets/logo.png" alt="Dentara Logo" class="w-5 h-5 object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
+                 <span class="text-lg font-bold tracking-tight text-[#1e293b]">DENTARA</span>
+             </div>
+            <div>&copy; 2026 Dentara Inc. All rights reserved. Where Care Meets Career.</div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
