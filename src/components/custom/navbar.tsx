@@ -66,6 +66,12 @@ export default function Navbar() {
                     >
                         Get Access
                     </button>
+                    <Link
+                        href="/login"
+                        className="bg-brand-teal hover:bg-brand-dark flex items-center justify-center text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 shadow-md hover:shadow-lg h-11"
+                    >
+                        Visit App
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Toggle (44px min target) */}
@@ -121,6 +127,13 @@ export default function Navbar() {
                             >
                                 Get Early Access
                             </button>
+                            <Link
+                                href="/login"
+                                onClick={handleLinkClick}
+                                className="flex items-center justify-center w-full min-h-[60px] rounded-2xl text-xl font-bold bg-brand-teal hover:bg-brand-dark text-white shadow-lg shadow-teal-500/20 active:scale-[0.98] transition-all mt-2"
+                            >
+                                Visit App
+                            </Link>
                         </div>
                     </motion.div>
                 )}
