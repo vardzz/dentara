@@ -68,7 +68,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            transition={{ ease: [0.4, 0, 0.2, 1], duration: 0.4 }}
             className="w-full h-full"
           >
             {children}
