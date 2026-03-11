@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  Menu, ArrowRight, PlayCircle, ScanFace, Activity, Check, GitMerge,
+  Menu, X, ArrowRight, PlayCircle, ScanFace, Activity, Check, GitMerge,
   BrainCircuit, ShieldCheck, LayoutDashboard, Users, Building, AlertTriangle,
   CheckCircle, ListTodo, Bot, CalendarCheck, Sparkles, Loader2, AlertCircle,
   ChevronDown, Facebook, Twitter, Instagram, Linkedin,
@@ -48,8 +48,19 @@ const floatAnimation = {
 export default function App() {
   const shouldReduceMotion = useReducedMotion();
 
+  // Navigation States
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  // Scroll lock effect
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isMobileMenuOpen]);
 
   // AI Demo States
   const [symptom, setSymptom] = useState('');
@@ -165,7 +176,7 @@ export default function App() {
       {/* Navigation                                                        */}
       {/* ---------------------------------------------------------------- */}
       <nav
-        className={`w-full fixed top-0 z-50 transition-all duration-300 ${
+        className={`w-full fixed top-0 z-[60] transition-all duration-300 ${
           isScrolled
             ? 'bg-white/95 shadow-sm backdrop-blur-md border-b border-gray-100'
             : 'bg-white/80 backdrop-blur-md border-b border-gray-100'
@@ -173,7 +184,7 @@ export default function App() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 h-20 flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center gap-2 cursor-pointer">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
             <img
               src="/assets/icon.png"
               alt="Dentara Icon"
@@ -207,11 +218,122 @@ export default function App() {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button className="md:hidden text-gray-600">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Open Menu"
+          >
             <Menu className="w-6 h-6" />
           </button>
         </div>
       </nav>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Mobile Focused Sidebar                                             */}
+      {/* ---------------------------------------------------------------- */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[70] md:hidden"
+            />
+
+            {/* Sidebar Content */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed right-0 top-0 bottom-0 w-[280px] sm:w-[320px] bg-white z-[80] md:hidden shadow-2xl flex flex-col"
+            >
+              {/* Top Header */}
+              <div className="h-20 flex items-center justify-between px-8 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/assets/icon.png"
+                    alt="Dentara Icon"
+                    className="w-8 h-8 object-contain"
+                  />
+                  <span className="text-xl font-bold tracking-tight text-[#0e2b5c]">
+                    DENTARA
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 text-gray-400 hover:text-[#0e2b5c] transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Navigation Links */}
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: { transition: { staggerChildren: 0.1 } }
+                }}
+                className="flex flex-col gap-2 p-8"
+              >
+                {[
+                  { name: 'Features', href: '#features' },
+                  { name: 'How it Works', href: '#how-it-works' },
+                  { name: 'AI Demo', href: '#demo' },
+                  { name: 'FAQ', href: '#faq' },
+                ].map((link) => (
+                  <motion.a
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    variants={{
+                      hidden: { opacity: 0, x: 20 },
+                      visible: { opacity: 1, x: 0 }
+                    }}
+                    className="text-2xl font-bold text-[#0e2b5c] hover:text-[#138b94] transition-colors py-2"
+                  >
+                    {link.name}
+                  </motion.a>
+                ))}
+
+                <div className="h-px bg-gray-100 my-6" />
+
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  className="flex flex-col gap-4"
+                >
+                  <a
+                    href="/app/login"
+                    className="flex items-center justify-center py-4 rounded-xl border border-gray-200 text-[#0e2b5c] font-bold hover:bg-gray-50 transition-all"
+                  >
+                    Log In
+                  </a>
+                  <a
+                    href="/app/register"
+                    className="flex items-center justify-center py-4 rounded-xl bg-[#3b82f6] text-white font-bold shadow-lg hover:bg-blue-600 transition-all"
+                  >
+                    Join Waitlist
+                  </a>
+                </motion.div>
+              </motion.div>
+
+              {/* Bottom Brand */}
+              <div className="mt-auto p-8 border-t border-gray-100 text-center">
+                <p className="text-gray-400 text-xs font-bold tracking-widest uppercase">
+                  Dentara © 2026
+                </p>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* ---------------------------------------------------------------- */}
       {/* Hero Section                                                      */}

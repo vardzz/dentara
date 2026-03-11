@@ -45,12 +45,15 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* ── Glass Header ── */}
       <header className="fixed top-0 left-0 right-0 z-40 px-6 pt-12 pb-4 bg-white/40 backdrop-blur-2xl border-b border-white/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <img
-            src="/assets/logo.png"
+            src="/assets/icon.png"
             alt="Dentara"
             className="h-6 w-auto object-contain drop-shadow-sm"
           />
+          <span className="text-lg font-bold tracking-tight text-[#0e2b5c]">
+            DENTARA
+          </span>
         </div>
         <div className="bg-white/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/80 shadow-sm flex items-center gap-2">
           <div className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
