@@ -79,13 +79,13 @@ const AuthContainer: React.FC<AuthContainerProps> = ({ initialView = 'login' }) 
         if (target === 'register') setRegStep(1);
         // pushState updates the URL without a navigation, so the component
         // stays mounted and the 700ms CSS slide animation plays smoothly.
-        window.history.pushState(null, '', `/${target}`);
+        window.history.pushState(null, '', `/app/${target}`);
     };
 
     const handleLogin = (e: FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setTimeout(() => { setIsLoading(false); router.push('/'); }, 1500);
+        setTimeout(() => { setIsLoading(false); router.push('/app/home'); }, 1500);
     };
 
     const handleRegister = (e: FormEvent) => {
@@ -94,7 +94,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({ initialView = 'login' }) 
         setTimeout(() => {
             setIsLoading(false);
             setRegStep(role === 'student' ? 6 : 5);
-            setTimeout(() => router.push('/'), 3000);
+            setTimeout(() => router.push('/app/home'), 3000);
         }, 2000);
     };
 

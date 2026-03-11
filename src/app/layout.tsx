@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Dentara | Where Care Meets Career",
   description: "Tackling the PH Dental Quota Crisis. Graduate on time, not by chance.",
   icons: {
-    icon: '/assets/icon.png',
+    icon: '/assets/logo.png',
   },
 };
 

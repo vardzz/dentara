@@ -1,4 +1,4 @@
-import { Navbar, Footer } from "@/components/custom";
+import { Footer, Navbar } from "@/components/custom";
 
 export default function MarketingLayout({
     children,

@@ -1,54 +1,147 @@
 'use client';
 
-import Image from 'next/image';
+import React from 'react';
+import Link from 'next/link';
+import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+
+const PLATFORM_LINKS = [
+    { label: 'Features',      href: '/#features'    },
+    { label: 'How it Works',  href: '/#how-it-works' },
+    { label: 'AI Demo',       href: '/#demo'         },
+    { label: 'FAQ',           href: '/#faq'          },
+    { label: 'Sign In',       href: '/app/login'     },
+    { label: 'Register',      href: '/app/register'  },
+];
+
+const COMPANY_LINKS = [
+    { label: 'About Us',   href: '/about'   },
+    { label: 'Blog',       href: '/blog'    },
+    { label: 'Careers',    href: '/careers' },
+    { label: 'Press Kit',  href: '/press'   },
+];
+
+const LEGAL_LINKS = [
+    { label: 'Terms of Service', href: '/terms'   },
+    { label: 'Privacy Policy',   href: '/privacy' },
+    { label: 'Cookie Policy',    href: '/cookies' },
+];
+
+const SOCIAL_LINKS = [
+    { icon: <Facebook  className="w-5 h-5" />, href: '#', label: 'Facebook'  },
+    { icon: <Twitter   className="w-5 h-5" />, href: '#', label: 'Twitter'   },
+    { icon: <Instagram className="w-5 h-5" />, href: '#', label: 'Instagram' },
+    { icon: <Linkedin  className="w-5 h-5" />, href: '#', label: 'LinkedIn'  },
+];
 
 export default function Footer() {
     return (
-        <div className="px-4 md:px-12 lg:px-24 pb-12 bg-white pt-12">
-            <footer className="bg-[#1e293b] relative overflow-hidden text-white rounded-2xl w-full">
-                <div className="absolute inset-0 opacity-10 pointer-events-none">
-                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <pattern id="network-footer" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                                <circle cx="50" cy="50" r="2" fill="#fff" />
-                                <path d="M50 50 L100 0 M50 50 L0 100 M50 50 L100 100 M50 50 L0 0" stroke="#fff" strokeWidth="0.5" />
-                            </pattern>
-                        </defs>
-                        <rect width="100%" height="100%" fill="url(#network-footer)" />
-                    </svg>
+        <footer className="bg-white border-t border-gray-100 pt-16 pb-8 px-6 md:px-12 lg:px-24">
+            <div className="max-w-7xl mx-auto">
+
+                {/* ── Main Grid ────────────────────────────────────────── */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
+
+                    {/* Brand Column */}
+                    <div className="lg:col-span-2">
+                        <div className="flex items-center gap-2 mb-4">
+                            <img
+                                src="/assets/icon.png"
+                                alt="Dentara Icon"
+                                className="w-6 h-6 object-contain"
+                            />
+                            <span className="text-lg font-bold tracking-tight text-[#0e2b5c]">
+                                DENTARA
+                            </span>
+                        </div>
+
+                        <p className="text-sm text-gray-500 leading-relaxed max-w-sm mb-6">
+                            Dentara addresses the &ldquo;quota crisis&rdquo; in Philippine dental education
+                            by replacing chaotic patient hunting with a secure, data-driven matching engine.
+                            Where care meets career.
+                        </p>
+
+                        <div className="flex items-center gap-4 text-gray-400">
+                            {SOCIAL_LINKS.map(s => (
+                                <Link
+                                    key={s.label}
+                                    href={s.href}
+                                    aria-label={s.label}
+                                    className="hover:text-[#3b82f6] transition-colors duration-200"
+                                >
+                                    {s.icon}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Platform Column */}
+                    <div>
+                        <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-5">
+                            Platform
+                        </h4>
+                        <ul className="space-y-3">
+                            {PLATFORM_LINKS.map(l => (
+                                <li key={l.label}>
+                                    <Link
+                                        href={l.href}
+                                        className="text-sm text-gray-500 hover:text-[#138b94] transition-colors duration-200"
+                                    >
+                                        {l.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Company Column */}
+                    <div>
+                        <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-5">
+                            Company
+                        </h4>
+                        <ul className="space-y-3">
+                            {COMPANY_LINKS.map(l => (
+                                <li key={l.label}>
+                                    <Link
+                                        href={l.href}
+                                        className="text-sm text-gray-500 hover:text-[#138b94] transition-colors duration-200"
+                                    >
+                                        {l.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Legal Column */}
+                    <div>
+                        <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-5">
+                            Legal
+                        </h4>
+                        <ul className="space-y-3">
+                            {LEGAL_LINKS.map(l => (
+                                <li key={l.label}>
+                                    <Link
+                                        href={l.href}
+                                        className="text-sm text-gray-500 hover:text-[#138b94] transition-colors duration-200"
+                                    >
+                                        {l.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center py-20 px-6">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight text-white">Ready to complete your quotas?</h2>
-
-                    <p className="text-blue-100/90 mb-10 max-w-2xl mx-auto md:text-lg">
-                        Join Dentara to explore our network of pre-screened patients, structured LGU partnerships, and seamless institutional tracking.
+                {/* ── Bottom Bar ──────────────────────────────────────── */}
+                <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <p className="text-xs text-gray-400 font-medium">
+                        &copy; 2026 Dentara Technologies, Inc. All rights reserved.
                     </p>
-
-                    <button
-                        onClick={() => alert('Waitlist joined successfully!')}
-                        className="group relative bg-[#f8fafc] hover:bg-white text-[#1e293b] font-bold px-8 py-3.5 rounded-lg shadow-[0_0_20px_-5px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_-5px_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 mx-auto sm:w-auto w-full overflow-hidden"
-                    >
-                        <span className="relative z-10 flex items-center gap-2">Get Early Access &rarr; Save My Spot</span>
-                        <div className="absolute inset-0 bg-brand-light/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-0"></div>
-                    </button>
+                    <p className="text-xs text-gray-400 font-medium">
+                        Made with care in the Philippines, for Filipino students &amp; communities.
+                    </p>
                 </div>
-            </footer>
-
-            {/* Bottom bar */}
-            <div className="mt-8 text-center text-sm text-[#475569] font-medium flex flex-col items-center gap-4">
-                <div className="group flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
-                    <Image
-                        src="/assets/logo.png"
-                        alt="Dentara Logo"
-                        width={20}
-                        height={20}
-                        className="w-5 h-5 object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110"
-                    />
-                    <span className="text-lg font-bold tracking-tight text-[#1e293b]">DENTARA</span>
-                </div>
-                <div>&copy; 2026 Dentara Inc. All rights reserved. Where Care Meets Career.</div>
             </div>
-        </div>
+        </footer>
     );
 }
