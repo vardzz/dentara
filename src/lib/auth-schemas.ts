@@ -47,6 +47,7 @@ export const patientLocationSchema = z.object({
 /** Student registration: Step 2 - Academic Info */
 export const studentAcademicSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
   school: z.string().min(2, 'Dental school is required'),
   yearLevel: z.string().min(1, 'Year level is required'),
   studentId: z.string().min(3, 'Student ID is required'),

@@ -137,6 +137,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
       if (regStep === 2) {
         const result = studentAcademicSchema.safeParse({
           fullName: values.fullName,
+          email: values.email,
           school: trimmed.school,
           yearLevel: trimmed.yearLevel,
           studentId: trimmed.studentId,
@@ -287,7 +288,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
   /** Field names for the current step (for form.trigger) */
   const getCurrentStepFields = (): ("fullName" | "age" | "phone" | "email" | "password" | "concern" | "location" | "school" | "yearLevel" | "studentId" | "username" | "clinicAddress")[] => {
     if (role === "student") {
-      if (regStep === 2) return ["fullName", "school", "yearLevel", "studentId", "username", "password"];
+      if (regStep === 2) return ["fullName", "email", "school", "yearLevel", "studentId", "username", "password"];
       if (regStep === 5) return ["clinicAddress"];
     } else if (role === "patient") {
       if (regStep === 2) return ["fullName", "age", "phone", "email", "password"];
@@ -315,6 +316,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
       if (regStep === 2) {
         const result = studentAcademicSchema.safeParse({
           fullName: values.fullName,
+          email: values.email,
           school: trimmed.school,
           yearLevel: trimmed.yearLevel,
           studentId: trimmed.studentId,
@@ -705,7 +707,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
           ref={registerSectionRef}
           className={`w-full md:w-1/2 flex flex-col justify-center px-8 md:px-16 absolute right-0 h-full transition-all duration-700 ${!isLogin ? "opacity-100 translate-x-0 z-20" : "opacity-0 translate-x-12 pointer-events-none md:z-10"}`}
         >
-          <div className="h-full flex flex-col justify-center py-12 w-full max-w-[420px] mx-auto overflow-y-auto no-scrollbar">
+          <div className="h-full flex flex-col py-12 w-full max-w-[420px] mx-auto overflow-y-auto no-scrollbar">
             {regStep < 6 && (
               <div className="flex gap-2 mb-8 shrink-0">
                 {[1, 2, 3, 4, 5].map((s) => (
@@ -814,6 +816,32 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                         </>
                       )}
                     </div>
+                    {/* Email Address */}
+                  <div className="col-span-2 space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
+                      Email Address
+                    </label>
+                    <div className="relative group">
+                      <Mail
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-brand-teal transition-colors"
+                        size={16}
+                      />
+                      <input
+                        {...registerForm.register("email")}
+                        type="email"
+                        placeholder="juan@university.edu.ph"
+                        className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 pl-11 pr-4 text-gray-900 outline-none border ${registerForm.formState.errors.email ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
+                      />
+                    </div>
+                    <div className="h-5 flex items-center gap-1.5 ml-1">
+                      {registerForm.formState.errors.email && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.email.message}</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -938,7 +966,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                   disabled={isLoading}
                   className="w-full bg-brand-teal min-h-[44px] py-4 rounded-xl text-white font-bold hover:opacity-90 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Next: Case Targets
+                  Next
                 </button>
               </div>
             )}
@@ -1248,7 +1276,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                   disabled={isLoading}
                   className="w-full bg-brand-teal min-h-[44px] py-4 rounded-xl text-white font-bold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Next: Concern
+                  Next
                 </button>
               </div>
             )}
@@ -1298,7 +1326,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                   disabled={isLoading}
                   className="w-full bg-brand-teal min-h-[44px] py-4 rounded-xl text-white font-bold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Next: Location
+                  Next
                 </button>
               </div>
             )}
