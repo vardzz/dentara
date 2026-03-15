@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn, getSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -22,10 +23,11 @@ import {
   Plus,
   Minus,
   Clock,
+  AlertCircle,
 } from "lucide-react";
 
 import { useRole } from "@/lib/role-context";
-import { loginAction, registerAction } from "@/app/actions/auth";
+import { registerAction } from "@/app/actions/auth";
 import {
   loginSchema,
   patientBasicInfoSchema,
@@ -82,7 +84,11 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
   const [showStudentPassword, setShowStudentPassword] = useState(false);
   const [showPatientPassword, setShowPatientPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  /** Login-only server error (wrong credentials); cleared when user types again */
+  const [serverError, setServerError] = useState<string | null>(null);
   const registerSectionRef = useRef<HTMLDivElement>(null);
+  const roleRegRef = useRef<{ role: UserRole; regStep: number }>({ role: null, regStep: 1 });
+  roleRegRef.current = { role, regStep };
 
   /* ── Form State (for non-RHF fields: cases, availability) ── */
   const [cases, setCases] = useState<CaseRequirement[]>([
@@ -118,8 +124,103 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
     },
   });
 
-  /* ── Register Form (RHF for student/patient flows) ── */
+  /* ── Step-aware resolver: validates only the current step's schema ── */
+  const stepResolver = (
+    values: Record<string, unknown>,
+    _context: unknown
+  ): { values: Record<string, unknown>; errors: Record<string, { message: string }> } => {
+    const { role, regStep } = roleRegRef.current;
+    const trimmed = Object.fromEntries(
+      Object.entries(values).map(([k, v]) => [k, typeof v === "string" ? (v as string).trim() : v])
+    ) as Record<string, unknown>;
+    if (role === "student") {
+      if (regStep === 2) {
+        const result = studentAcademicSchema.safeParse({
+          fullName: values.fullName,
+          school: trimmed.school,
+          yearLevel: trimmed.yearLevel,
+          studentId: trimmed.studentId,
+          username: trimmed.username,
+          password: trimmed.password,
+        });
+        if (!result.success) {
+          const err = result.error.flatten().fieldErrors;
+          return {
+            values,
+            errors: Object.fromEntries(
+              Object.entries(err).map(([k, v]) => [k, { message: Array.isArray(v) ? v[0] : String(v ?? "") }])
+            ) as Record<string, { message: string }>,
+          };
+        }
+        return { values, errors: {} };
+      }
+      if (regStep === 5) {
+        const result = studentClinicSchema.safeParse({ clinicAddress: values.clinicAddress });
+        if (!result.success) {
+          const err = result.error.flatten().fieldErrors;
+          return {
+            values,
+            errors: Object.fromEntries(
+              Object.entries(err).map(([k, v]) => [k, { message: Array.isArray(v) ? v[0] : String(v ?? "") }])
+            ) as Record<string, { message: string }>,
+          };
+        }
+        return { values, errors: {} };
+      }
+    } else if (role === "patient") {
+      if (regStep === 2) {
+        const result = patientBasicInfoSchema.safeParse({
+          fullName: trimmed.fullName,
+          age: trimmed.age,
+          phone: trimmed.phone,
+          email: trimmed.email,
+          password: trimmed.password,
+        });
+        if (!result.success) {
+          const err = result.error.flatten().fieldErrors;
+          return {
+            values,
+            errors: Object.fromEntries(
+              Object.entries(err).map(([k, v]) => [k, { message: Array.isArray(v) ? v[0] : String(v ?? "") }])
+            ) as Record<string, { message: string }>,
+          };
+        }
+        return { values, errors: {} };
+      }
+      if (regStep === 3) {
+        const result = patientConcernSchema.safeParse({ concern: trimmed.concern });
+        if (!result.success) {
+          const err = result.error.flatten().fieldErrors;
+          return {
+            values,
+            errors: Object.fromEntries(
+              Object.entries(err).map(([k, v]) => [k, { message: Array.isArray(v) ? v[0] : String(v ?? "") }])
+            ) as Record<string, { message: string }>,
+          };
+        }
+        return { values, errors: {} };
+      }
+      if (regStep === 4) {
+        const result = patientLocationSchema.safeParse({ location: trimmed.location });
+        if (!result.success) {
+          const err = result.error.flatten().fieldErrors;
+          return {
+            values,
+            errors: Object.fromEntries(
+              Object.entries(err).map(([k, v]) => [k, { message: Array.isArray(v) ? v[0] : String(v ?? "") }])
+            ) as Record<string, { message: string }>,
+          };
+        }
+        return { values, errors: {} };
+      }
+    }
+    return { values, errors: {} };
+  };
+
+  /* ── Register Form (RHF for student/patient flows) with step-aware validation ── */
   const registerForm = useForm({
+    resolver: stepResolver as never,
+    mode: "onSubmit",
     defaultValues: {
       fullName: "",
       age: "",
@@ -142,6 +243,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
   const toggleView = (target: AuthView) => {
     setView(target);
     setAuthError(null);
+    setServerError(null);
     loginForm.clearErrors();
     registerForm.clearErrors();
     if (target === "register") setRegStep(1);
@@ -151,22 +253,59 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
   };
 
   const handleLogin = loginForm.handleSubmit(async (data) => {
+    setServerError(null);
     setAuthError(null);
     setIsLoading(true);
-    const result = await loginAction(data.email.trim(), data.password);
-    setIsLoading(false);
-
-    if (!result.success) {
-      loginForm.clearErrors();
-      setAuthError(result.error);
-      return;
+    try {
+      const result = await signIn("credentials", {
+        email: data.email.trim(),
+        password: data.password,
+        redirect: false,
+      });
+      if (result?.error) {
+        setServerError("The email or password is incorrect.");
+        setIsLoading(false);
+        return;
+      }
+      const session = await getSession();
+      if (session?.user?.id && (session.user.role === "student" || session.user.role === "patient")) {
+        setAuth(session.user.role, {
+          id: session.user.id,
+          email: session.user.email ?? "",
+          fullName: session.user.name ?? "",
+        });
+        router.push("/app/home");
+      } else {
+        setServerError("Could not load session. Please try again.");
+      }
+    } catch {
+      setServerError("Something went wrong. Please try again.");
     }
-    setAuth(result.role, result.user);
-    router.push("/app/home");
+    setIsLoading(false);
   });
 
-  /** Validate current step and return true if valid; sets field errors and scrolls on failure */
-  const validateCurrentStep = (): boolean => {
+  /** Field names for the current step (for form.trigger) */
+  const getCurrentStepFields = (): ("fullName" | "age" | "phone" | "email" | "password" | "concern" | "location" | "school" | "yearLevel" | "studentId" | "username" | "clinicAddress")[] => {
+    if (role === "student") {
+      if (regStep === 2) return ["fullName", "school", "yearLevel", "studentId", "username", "password"];
+      if (regStep === 5) return ["clinicAddress"];
+    } else if (role === "patient") {
+      if (regStep === 2) return ["fullName", "age", "phone", "email", "password"];
+      if (regStep === 3) return ["concern"];
+      if (regStep === 4) return ["location"];
+    }
+    return [];
+  };
+
+  /** Validate only the current step's fields using form.trigger(); returns true if valid */
+  const validateCurrentStep = async (): Promise<boolean> => {
+    const fields = getCurrentStepFields();
+    if (fields.length === 0) return true;
+    return registerForm.trigger(fields);
+  };
+
+  /** Validate current step only (no other steps); sets field errors and returns true if valid (sync fallback) */
+  const validateCurrentStepSync = (): boolean => {
     const values = registerForm.getValues();
     const trimmed = Object.fromEntries(
       Object.entries(values).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v])
@@ -189,7 +328,6 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               message: Array.isArray(v) ? v[0] : v,
             })
           );
-          registerSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
           return false;
         }
       } else if (regStep === 5) {
@@ -203,7 +341,6 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               message: Array.isArray(v) ? v[0] : v,
             })
           );
-          registerSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
           return false;
         }
       }
@@ -223,7 +360,6 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               message: Array.isArray(v) ? v[0] : v,
             })
           );
-          registerSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
           return false;
         }
       } else if (regStep === 3) {
@@ -237,7 +373,6 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               message: Array.isArray(v) ? v[0] : v,
             })
           );
-          registerSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
           return false;
         }
       } else if (regStep === 4) {
@@ -251,21 +386,22 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               message: Array.isArray(v) ? v[0] : v,
             })
           );
-          registerSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
           return false;
         }
       }
     }
-    registerForm.clearErrors();
     return true;
   };
 
-  /** Handle Next button: validate current step, then increment. Handles steps 2→3, 3→4, 4→5 for student; 2→3, 3→4 for patient. */
+  /** Handle Next button: validate ONLY current step's fields, then increment on success */
   const handleNextStep = () => {
     if (role === null) return;
     registerForm.clearErrors();
     setAuthError(null);
-    if (!validateCurrentStep()) return;
+    if (!validateCurrentStepSync()) {
+      registerSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     nextStep();
   };
 
@@ -281,30 +417,31 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
 
     registerForm.clearErrors();
     setAuthError(null);
-    if (!validateCurrentStep()) return;
+    if (!(await validateCurrentStep())) return;
 
     setIsLoading(true);
     setAuthError(null);
 
     const raw = registerForm.getValues();
     const values = Object.fromEntries(
-      Object.entries(raw).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v])
-    ) as typeof raw;
+      Object.entries(raw).map(([k, v]) => [k, typeof v === "string" ? (v as string).trim() : v])
+    ) as Record<string, string | undefined>;
+    // Ensure required fields are never undefined (avoids "Invalid input" / server validation errors)
     const payload = {
       role,
-      fullName: values.fullName,
-      age: values.age || undefined,
-      phone: values.phone,
-      email: values.email,
-      password: values.password,
-      concern: values.concern,
-      location: values.location,
-      school: values.school,
-      yearLevel: values.yearLevel,
-      studentId: values.studentId,
-      username: values.username,
-      clinicAddress: values.clinicAddress,
-      cases: role === "student" ? cases : undefined,
+      fullName: (values.fullName ?? "").trim(),
+      email: (values.email ?? "").trim().toLowerCase(),
+      password: values.password ?? "",
+      age: values.age?.trim() || "",
+      phone: values.phone?.trim() || "",
+      concern: values.concern?.trim() || "",
+      location: values.location?.trim() || "",
+      school: values.school?.trim() || "",
+      yearLevel: values.yearLevel?.trim() || "",
+      studentId: values.studentId?.trim() || "",
+      username: values.username?.trim() || "",
+      clinicAddress: values.clinicAddress?.trim() || "",
+      cases: role === "student" ? cases : [],
       availability: role === "student" ? { ...availability } : undefined,
     };
 
@@ -316,16 +453,40 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
       return;
     }
 
-    setRole(role);
-    setAuth(role, {
-      id: result.userId,
-      email: values.email,
-      fullName: values.fullName,
-    });
-    setIsLoading(false);
     setAuthError(null);
     setRegStep(role === "student" ? 6 : 5);
-    router.push("/app/home");
+
+    try {
+      const signInResult = await signIn("credentials", {
+        email: payload.email,
+        password: payload.password,
+        redirect: false,
+      });
+      if (signInResult?.error) {
+        setAuthError("Account created but sign-in failed. Please sign in manually.");
+        setIsLoading(false);
+        return;
+      }
+      const res = await fetch("/api/auth/session");
+      const session = await res.json();
+      if (session?.user?.id && (session.user.role === "student" || session.user.role === "patient")) {
+        setAuth(session.user.role, {
+          id: session.user.id,
+          email: session.user.email ?? payload.email,
+          fullName: session.user.name ?? payload.fullName,
+        });
+        router.push("/app/home");
+      } else {
+        setRole(role);
+        setAuth(role, { id: result.userId, email: payload.email, fullName: payload.fullName });
+        router.push("/app/home");
+      }
+    } catch {
+      setRole(role);
+      setAuth(role, { id: result.userId, email: payload.email, fullName: payload.fullName });
+      router.push("/app/home");
+    }
+    setIsLoading(false);
   };
 
   const handleCaseCount = (id: number, delta: number) => {
@@ -399,10 +560,12 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
             </header>
 
             <form onSubmit={handleLogin} className="space-y-5">
-              <div className="min-h-[3.25rem] flex flex-col justify-center">
-                {authError && (
-                  <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 text-sm">
-                    {authError}
+              {/* Fixed-height slot for login server error (no layout shift) */}
+              <div className="h-14 min-h-[1.25rem] flex flex-col justify-center">
+                {serverError && (
+                  <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 text-sm flex items-center gap-2">
+                    <AlertCircle className="text-red-500 shrink-0" size={18} />
+                    {serverError}
                   </div>
                 )}
               </div>
@@ -418,17 +581,24 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                     size={18}
                   />
                   <input
-                    {...loginForm.register("email")}
+                    {...loginForm.register("email", {
+                      onChange: () => setServerError(null),
+                    })}
                     type="email"
                     placeholder="name@clinic.com"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl min-h-[44px] py-4 pl-12 pr-4 text-gray-900 focus:ring-2 focus:ring-brand-teal/10 focus:border-brand-teal/50 transition-all outline-none placeholder:text-gray-300"
+                    className={`w-full bg-gray-50 rounded-2xl min-h-[44px] py-4 pl-12 pr-4 text-gray-900 focus:ring-2 focus:ring-brand-teal/10 transition-all outline-none placeholder:text-gray-300 border ${loginForm.formState.errors.email ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                   />
                 </div>
-                {loginForm.formState.errors.email && (
-                  <p className="text-xs text-red-500 ml-1">
-                    {loginForm.formState.errors.email.message}
-                  </p>
-                )}
+                <div className="h-5 flex items-center gap-1.5 ml-1">
+                  {loginForm.formState.errors.email && (
+                    <>
+                      <AlertCircle className="text-red-500 shrink-0" size={14} />
+                      <p className="text-xs text-red-500">
+                        {loginForm.formState.errors.email.message}
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
 
               {/* Password */}
@@ -450,10 +620,12 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                     size={18}
                   />
                   <input
-                    {...loginForm.register("password")}
+                    {...loginForm.register("password", {
+                      onChange: () => setServerError(null),
+                    })}
                     type={showLoginPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl min-h-[44px] py-4 pl-12 pr-12 text-gray-900 focus:ring-2 focus:ring-brand-teal/10 focus:border-brand-teal/50 transition-all outline-none placeholder:text-gray-300"
+                    className={`w-full bg-gray-50 rounded-2xl min-h-[44px] py-4 pl-12 pr-12 text-gray-900 focus:ring-2 focus:ring-brand-teal/10 transition-all outline-none placeholder:text-gray-300 border ${loginForm.formState.errors.password ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                   />
                   <button
                     type="button"
@@ -467,11 +639,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                     )}
                   </button>
                 </div>
-                {loginForm.formState.errors.password && (
-                  <p className="text-xs text-red-500 ml-1">
-                    {loginForm.formState.errors.password.message}
-                  </p>
-                )}
+                <div className="h-5 flex items-center gap-1.5 ml-1">
+                  {loginForm.formState.errors.password && (
+                    <>
+                      <AlertCircle className="text-red-500 shrink-0" size={14} />
+                      <p className="text-xs text-red-500">
+                        {loginForm.formState.errors.password.message}
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
 
               <button
@@ -520,11 +697,15 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               </div>
             )}
 
-            {authError && !isLogin && (
-              <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 text-sm">
-                {authError}
-              </div>
-            )}
+            {/* Reserved error slot (h-14) to prevent layout shift when "Invalid input" or server error appears */}
+            <div className="min-h-[1.25rem] h-14 flex flex-col justify-center mb-2">
+              {authError && !isLogin && (
+                <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 text-sm flex items-center gap-2">
+                  <AlertCircle className="text-red-500 shrink-0" size={18} />
+                  {authError}
+                </div>
+              )}
+            </div>
 
             {/* ── STEP 1: Role Selection ── */}
             {regStep === 1 && (
@@ -603,13 +784,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       {...registerForm.register("fullName")}
                       type="text"
                       placeholder="Dr. Juan Dela Cruz"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:border-brand-teal/50 focus:bg-white"
+                      className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:bg-white border ${registerForm.formState.errors.fullName ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                     />
-                    {registerForm.formState.errors.fullName && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.fullName.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.fullName && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.fullName.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -619,13 +803,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       {...registerForm.register("school")}
                       type="text"
                       placeholder="UP / UST / CEU"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:border-brand-teal/50 focus:bg-white"
+                      className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:bg-white border ${registerForm.formState.errors.school ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                     />
-                    {registerForm.formState.errors.school && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.school.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.school && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.school.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -635,13 +822,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       {...registerForm.register("yearLevel")}
                       type="text"
                       placeholder="4th Year"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:border-brand-teal/50 focus:bg-white"
+                      className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:bg-white border ${registerForm.formState.errors.yearLevel ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                     />
-                    {registerForm.formState.errors.yearLevel && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.yearLevel.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.yearLevel && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.yearLevel.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="col-span-2 space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -656,14 +846,17 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                         {...registerForm.register("studentId")}
                         type="text"
                         placeholder="2024-XXXXX"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 pl-11 text-gray-900 outline-none focus:border-brand-teal/50"
+                        className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 pl-11 text-gray-900 outline-none border ${registerForm.formState.errors.studentId ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                       />
                     </div>
-                    {registerForm.formState.errors.studentId && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.studentId.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.studentId && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.studentId.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -673,13 +866,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       {...registerForm.register("username")}
                       type="text"
                       placeholder="dent_juan"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:border-brand-teal/50 focus:bg-white"
+                      className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:bg-white border ${registerForm.formState.errors.username ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                     />
-                    {registerForm.formState.errors.username && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.username.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.username && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.username.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -690,7 +886,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                         {...registerForm.register("password")}
                         type={showStudentPassword ? "text" : "password"}
                         placeholder="••••••••"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 pr-12 px-4 text-gray-900 outline-none focus:border-brand-teal/50 focus:bg-white"
+                        className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 pr-12 px-4 text-gray-900 outline-none focus:bg-white border ${registerForm.formState.errors.password ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                       />
                       <button
                         type="button"
@@ -706,11 +902,14 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                         )}
                       </button>
                     </div>
-                    {registerForm.formState.errors.password && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.password.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.password && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.password.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <button
@@ -872,13 +1071,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                     {...registerForm.register("clinicAddress")}
                     type="text"
                     placeholder="Enter complete clinic address..."
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl min-h-[44px] py-5 px-6 text-gray-900 outline-none focus:border-brand-teal/50 focus:bg-white transition-all shadow-sm"
+                    className={`w-full bg-gray-50 rounded-2xl min-h-[44px] py-5 px-6 text-gray-900 outline-none focus:bg-white transition-all shadow-sm border ${registerForm.formState.errors.clinicAddress ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                   />
-                  {registerForm.formState.errors.clinicAddress && (
-                    <p className="text-xs text-red-500">
-                      {registerForm.formState.errors.clinicAddress.message}
-                    </p>
-                  )}
+                  <div className="h-5 flex items-center gap-1.5">
+                    {registerForm.formState.errors.clinicAddress && (
+                      <>
+                        <AlertCircle className="text-red-500 shrink-0" size={14} />
+                        <p className="text-xs text-red-500">{registerForm.formState.errors.clinicAddress.message}</p>
+                      </>
+                    )}
+                  </div>
                 </div>
                 <button
                   onClick={handleRegister}
@@ -917,13 +1119,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       {...registerForm.register("fullName")}
                       type="text"
                       placeholder="Juan Dela Cruz"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:border-brand-teal/50"
+                      className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none border ${registerForm.formState.errors.fullName ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                     />
-                    {registerForm.formState.errors.fullName && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.fullName.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.fullName && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.fullName.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -933,13 +1138,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       {...registerForm.register("age")}
                       type="number"
                       placeholder="25"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:border-brand-teal/50"
+                      className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none border ${registerForm.formState.errors.age ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                     />
-                    {registerForm.formState.errors.age && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.age.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.age && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.age.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -949,13 +1157,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       {...registerForm.register("phone")}
                       type="tel"
                       placeholder="+63"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:border-brand-teal/50"
+                      className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none border ${registerForm.formState.errors.phone ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                     />
-                    {registerForm.formState.errors.phone && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.phone.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.phone && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.phone.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="col-span-2 space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -965,13 +1176,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       {...registerForm.register("email")}
                       type="email"
                       placeholder="juan@email.com"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none focus:border-brand-teal/50"
+                      className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 px-4 text-gray-900 outline-none border ${registerForm.formState.errors.email ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                     />
-                    {registerForm.formState.errors.email && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.email.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.email && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.email.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="col-span-2 space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
@@ -982,7 +1196,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                         {...registerForm.register("password")}
                         type={showPatientPassword ? "text" : "password"}
                         placeholder="••••••••"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-3 pr-12 px-4 text-gray-900 outline-none focus:border-brand-teal/50"
+                        className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-3 pr-12 px-4 text-gray-900 outline-none border ${registerForm.formState.errors.password ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                       />
                       <button
                         type="button"
@@ -998,11 +1212,14 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                         )}
                       </button>
                     </div>
-                    {registerForm.formState.errors.password && (
-                      <p className="text-xs text-red-500">
-                        {registerForm.formState.errors.password.message}
-                      </p>
-                    )}
+                    <div className="h-5 flex items-center gap-1.5">
+                      {registerForm.formState.errors.password && (
+                        <>
+                          <AlertCircle className="text-red-500 shrink-0" size={14} />
+                          <p className="text-xs text-red-500">{registerForm.formState.errors.password.message}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <button
@@ -1034,13 +1251,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                   <textarea
                     {...registerForm.register("concern")}
                     placeholder="Describe your dental needs..."
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl min-h-[44px] py-4 px-4 text-gray-900 outline-none h-32 resize-none focus:border-brand-teal/50 focus:bg-white transition-all"
+                    className={`w-full bg-gray-50 rounded-xl min-h-[44px] py-4 px-4 text-gray-900 outline-none h-32 resize-none focus:bg-white transition-all border ${registerForm.formState.errors.concern ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                   />
-                  {registerForm.formState.errors.concern && (
-                    <p className="text-xs text-red-500">
-                      {registerForm.formState.errors.concern.message}
-                    </p>
-                  )}
+                  <div className="h-5 flex items-center gap-1.5">
+                    {registerForm.formState.errors.concern && (
+                      <>
+                        <AlertCircle className="text-red-500 shrink-0" size={14} />
+                        <p className="text-xs text-red-500">{registerForm.formState.errors.concern.message}</p>
+                      </>
+                    )}
+                  </div>
                   <label className="flex flex-col items-center justify-center w-full h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-white transition-all group">
                     <Upload
                       size={24}
@@ -1086,13 +1306,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                     {...registerForm.register("location")}
                     type="text"
                     placeholder="Enter your city/area"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl min-h-[44px] py-5 px-6 text-gray-900 outline-none focus:border-brand-teal/50 focus:bg-white transition-all"
+                    className={`w-full bg-gray-50 rounded-2xl min-h-[44px] py-5 px-6 text-gray-900 outline-none focus:bg-white transition-all border ${registerForm.formState.errors.location ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                   />
-                  {registerForm.formState.errors.location && (
-                    <p className="text-xs text-red-500">
-                      {registerForm.formState.errors.location.message}
-                    </p>
-                  )}
+                  <div className="h-5 flex items-center gap-1.5">
+                    {registerForm.formState.errors.location && (
+                      <>
+                        <AlertCircle className="text-red-500 shrink-0" size={14} />
+                        <p className="text-xs text-red-500">{registerForm.formState.errors.location.message}</p>
+                      </>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-400 mt-2 px-4 italic leading-relaxed">
                     This helps us match you with dentistry students within your
                     geographic proximity.

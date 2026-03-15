@@ -1,34 +1,78 @@
 // Dentara Database Schema
-// Supports Student and Patient roles with silent role detection on login
+// Supports Student and Patient roles; Auth.js (NextAuth v5) Prisma adapter models included
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  fullName  String
-  role      String   // "student" | "patient" — used for silent detection on login
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  fullName      String
+  role          String    // "student" | "patient" — used for session and dashboard routing
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Auth.js adapter fields (optional)
+  name            String?
+  image           String?
+  emailVerified   DateTime?
+
+  // Auth.js relations
+  accounts Account[]
+  sessions Session[]
 
   // Role-specific fields (nullable for flexibility)
-  age            Int?
-  phone          String?
-  concern        String?
-  location       String?
-  school         String?
-  yearLevel      String?
-  studentId      String?
-  username       String?   @unique
-  clinicAddress  String?
-  casesJson      String?   // JSON string of CaseRequirement[]
-  availabilityJson String? // JSON string of Availability
+  age              Int?
+  phone            String?
+  concern          String?
+  location         String?
+  school           String?
+  yearLevel        String?
+  studentId        String?
+  username         String?   @unique
+  clinicAddress    String?
+  casesJson        String?   // JSON string of CaseRequirement[]
+  availabilityJson String?   // JSON string of Availability
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

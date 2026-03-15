@@ -4,6 +4,7 @@ import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Search, Calendar, MessageCircle, User } from 'lucide-react';
+import { SessionProvider } from 'next-auth/react';
 import { RoleProvider, useRole } from '@/lib/role-context';
 
 // ---------------------------------------------------------------------------
@@ -144,8 +145,10 @@ function AppShell({ children }: { children: React.ReactNode }) {
 // ---------------------------------------------------------------------------
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <RoleProvider>
-      <AppShell>{children}</AppShell>
-    </RoleProvider>
+    <SessionProvider>
+      <RoleProvider>
+        <AppShell>{children}</AppShell>
+      </RoleProvider>
+    </SessionProvider>
   );
 }

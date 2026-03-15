@@ -125,6 +125,7 @@ export async function registerAction(
     if (role === "student") {
       const academic = studentAcademicSchema.safeParse({
         fullName: payload.fullName,
+        email: payload.email,
         school: payload.school,
         yearLevel: payload.yearLevel,
         studentId: payload.studentId,
@@ -150,6 +151,7 @@ export async function registerAction(
         age: payload.age,
         phone: payload.phone,
         email: payload.email,
+        password: payload.password,
       });
       if (!basic.success) {
         const msg = basic.error.flatten().fieldErrors;
@@ -179,6 +181,7 @@ export async function registerAction(
         email: normalizedEmail,
         password: hashedPassword,
         fullName: fullName.trim(),
+        name: fullName.trim(),
         role,
         age: payload.age ? parseInt(payload.age, 10) : null,
         phone: payload.phone ?? null,
@@ -213,6 +216,8 @@ function getAuthErrorMessage(err: unknown): string {
   const prismaErr = err as { code?: string; meta?: { target?: string[] } } | null;
   if (prismaErr && typeof prismaErr === "object" && typeof prismaErr.code === "string") {
     switch (prismaErr.code) {
+      case "P5010":
+        return "Warming up database. Please try again in a moment.";
       case "P2002": {
         const target = prismaErr.meta?.target;
         if (Array.isArray(target) && target.includes("email"))
