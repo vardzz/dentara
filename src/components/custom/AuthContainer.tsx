@@ -427,20 +427,26 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
       Object.entries(raw).map(([k, v]) => [k, typeof v === "string" ? (v as string).trim() : v])
     ) as Record<string, string | undefined>;
     // Ensure required fields are never undefined (avoids "Invalid input" / server validation errors)
+    // Ensure required fields are never undefined (avoids "Invalid input" / server validation errors)
     const payload = {
       role,
       fullName: (values.fullName ?? "").trim(),
       email: (values.email ?? "").trim().toLowerCase(),
       password: values.password ?? "",
+      
+      // Patient fields (Keep as empty strings so Zod validates them properly)
       age: values.age?.trim() || "",
       phone: values.phone?.trim() || "",
       concern: values.concern?.trim() || "",
       location: values.location?.trim() || "",
-      school: values.school?.trim() || "",
-      yearLevel: values.yearLevel?.trim() || "",
-      studentId: values.studentId?.trim() || "",
-      username: values.username?.trim() || "",
-      clinicAddress: values.clinicAddress?.trim() || "",
+      
+      // Student fields (Use undefined so the database saves them as completely empty NULLs)
+      school: values.school?.trim() || undefined,
+      yearLevel: values.yearLevel?.trim() || undefined,
+      studentId: values.studentId?.trim() || undefined,
+      username: values.username?.trim() || undefined,
+      clinicAddress: values.clinicAddress?.trim() || undefined,
+      
       cases: role === "student" ? cases : [],
       availability: role === "student" ? { ...availability } : undefined,
     };
@@ -457,35 +463,39 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
     setRegStep(role === "student" ? 6 : 5);
 
     try {
-      const signInResult = await signIn("credentials", {
+      // 1. Silently log the user in using the credentials they just created
+      await signIn("credentials", {
         email: payload.email,
         password: payload.password,
         redirect: false,
       });
-      if (signInResult?.error) {
-        setAuthError("Account created but sign-in failed. Please sign in manually.");
-        setIsLoading(false);
-        return;
-      }
-      const res = await fetch("/api/auth/session");
-      const session = await res.json();
-      if (session?.user?.id && (session.user.role === "student" || session.user.role === "patient")) {
-        setAuth(session.user.role, {
-          id: session.user.id,
-          email: session.user.email ?? payload.email,
-          fullName: session.user.name ?? payload.fullName,
-        });
-        router.push("/app/home");
+      
+      // 2. Get the session to confirm their role
+      const session = await getSession();
+      const userRole = session?.user?.role || role; 
+      
+      setAuth(userRole, {
+        id: session?.user?.id || result.userId,
+        email: session?.user?.email ?? payload.email,
+        fullName: session?.user?.name ?? payload.fullName,
+      });
+
+      // 3. Force the redirect to the specific dashboard!
+      if (userRole === "student") {
+        router.push("/student-dashboard"); 
       } else {
-        setRole(role);
-        setAuth(role, { id: result.userId, email: payload.email, fullName: payload.fullName });
-        router.push("/app/home");
+        router.push("/patient-dashboard"); 
       }
-    } catch {
-      setRole(role);
-      setAuth(role, { id: result.userId, email: payload.email, fullName: payload.fullName });
-      router.push("/app/home");
+
+    } catch (error) {
+      // Even if the silent login hiccups, push them to the dashboard anyway
+      if (role === "student") {
+        router.push("/student-dashboard");
+      } else {
+        router.push("/patient-dashboard");
+      }
     }
+    
     setIsLoading(false);
   };
 
@@ -548,31 +558,37 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
         {/* ═══════════════════════════════════════
          * LOGIN FORM SECTION
          * ═══════════════════════════════════════ */}
+        {/* ═══════════════════════════════════════
+         * LOGIN FORM SECTION
+         * ═══════════════════════════════════════ */}
         <div
           className={`w-full md:w-1/2 flex flex-col items-center justify-center transition-all duration-700 ${isLogin ? "opacity-100 translate-x-0 z-20" : "opacity-0 -translate-x-12 pointer-events-none"}`}
         >
-          <div className="w-full max-w-[340px] px-6 md:px-0 space-y-8">
-            <header className="space-y-2 text-center md:text-left">
-              <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
+          {/* Removed the space-y-8 here to give us precise control */}
+          <div className="w-full max-w-[340px] px-6 md:px-0">
+            
+            {/* Added mb-10 to create that clean gap before the form */}
+            <header className="mb-10 text-left">
+              <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight mb-1">
                 Sign In
               </h1>
-              <p className="text-brand-gray">Enter your portal credentials</p>
+              <p className="text-slate-500 text-[15px]">Enter your portal credentials</p>
             </header>
 
-            <form onSubmit={handleLogin} className="space-y-5">
-              {/* Fixed-height slot for login server error (no layout shift) */}
-              <div className="h-14 min-h-[1.25rem] flex flex-col justify-center">
+            <form onSubmit={handleLogin} className="space-y-4">
+              {/* Fixed-height slot for login server error */}
+              <div className="h-12 min-h-[1.25rem] flex flex-col justify-end pb-2">
                 {serverError && (
-                  <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 text-sm flex items-center gap-2">
-                    <AlertCircle className="text-red-500 shrink-0" size={18} />
+                  <div className="p-3 rounded-2xl bg-red-50 border border-red-100 text-red-700 text-xs flex items-center gap-2">
+                    <AlertCircle className="text-red-500 shrink-0" size={16} />
                     {serverError}
                   </div>
                 )}
               </div>
 
               {/* Email */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
                   Email
                 </label>
                 <div className="relative group">
@@ -589,7 +605,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                     className={`w-full bg-gray-50 rounded-2xl min-h-[44px] py-4 pl-12 pr-4 text-gray-900 focus:ring-2 focus:ring-brand-teal/10 transition-all outline-none placeholder:text-gray-300 border ${loginForm.formState.errors.email ? "border-red-500" : "border-gray-200 focus:border-brand-teal/50"}`}
                   />
                 </div>
-                <div className="h-5 flex items-center gap-1.5 ml-1">
+                <div className="h-5 flex items-center gap-1.5 ml-1 mt-1">
                   {loginForm.formState.errors.email && (
                     <>
                       <AlertCircle className="text-red-500 shrink-0" size={14} />
@@ -602,18 +618,10 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               </div>
 
               {/* Password */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center ml-1">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
-                    Password
-                  </label>
-                  <button
-                    type="button"
-                    className="text-[10px] text-brand-teal font-bold uppercase tracking-widest hover:text-brand-dark transition-colors min-h-[44px] flex items-center"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                  Password
+                </label>
                 <div className="relative group">
                   <Lock
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-brand-teal transition-colors"
@@ -639,22 +647,34 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                     )}
                   </button>
                 </div>
-                <div className="h-5 flex items-center gap-1.5 ml-1">
-                  {loginForm.formState.errors.password && (
-                    <>
-                      <AlertCircle className="text-red-500 shrink-0" size={14} />
-                      <p className="text-xs text-red-500">
-                        {loginForm.formState.errors.password.message}
-                      </p>
-                    </>
-                  )}
+                
+                {/* Error slot and Forgot Password alignment */}
+                <div className="flex items-start justify-between mt-1 px-1">
+                  <div className="h-5 flex items-center gap-1.5">
+                    {loginForm.formState.errors.password && (
+                      <>
+                        <AlertCircle className="text-red-500 shrink-0" size={14} />
+                        <p className="text-xs text-red-500">
+                          {loginForm.formState.errors.password.message}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Forgot Password sits below the input and above the button */}
+                  <button
+                    type="button"
+                    className="text-[10px] text-brand-teal font-bold uppercase tracking-widest hover:text-brand-dark transition-colors mt-1"
+                  >
+                    Forgot Password?
+                  </button>
                 </div>
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading || loginForm.formState.isSubmitting}
-                className="w-full bg-brand-teal hover:bg-brand-dark text-white font-bold min-h-[44px] py-5 rounded-2xl shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98] mt-4 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full bg-brand-teal hover:bg-brand-dark text-white font-bold min-h-[44px] py-5 rounded-2xl shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98] mt-6 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1324,7 +1344,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                 <button
                   onClick={handleRegister}
                   disabled={isLoading}
-                  className="w-full bg-brand-dark hover:opacity-90 min-h-[44px] py-5 rounded-2xl text-white font-bold shadow-xl disabled:opacity-50 transition-all"
+                  className="w-full bg-brand-dark hover:opacity-90 min-h-[44px] py-5 rounded-2xl text-white font-bold flex items-center justify-center shadow-xl disabled:opacity-50 transition-all"
                 >
                   {isLoading ? (
                     <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
