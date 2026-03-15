@@ -18,7 +18,11 @@ const ITEM_ANIM: Variants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
 
-export default function StudentDashboard() {
+interface StudentDashboardProps {
+  userName?: string;
+}
+
+export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboardProps) {
   const getGreeting = () => {
     const hr = new Date().getHours();
     if (hr < 12) return 'Good morning';
@@ -41,7 +45,7 @@ export default function StudentDashboard() {
         <div className="absolute top-0 right-0 w-32 h-32 bg-teal-400/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3" />
         
         <p className="text-sm font-medium text-gray-500 mb-1">{getGreeting()},</p>
-        <h1 className="text-3xl font-black text-[#0e2b5c] tracking-tight">Dr. Santos</h1>
+        <h1 className="text-3xl font-black text-[#0e2b5c] tracking-tight">{userName}</h1>
         
         <div className="mt-6 flex items-center justify-between">
           <div>

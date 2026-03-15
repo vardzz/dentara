@@ -18,7 +18,11 @@ const ITEM_ANIM: Variants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
 
-export default function PatientDashboard() {
+interface PatientDashboardProps {
+  userName?: string;
+}
+
+export default function PatientDashboard({ userName = 'Patient' }: PatientDashboardProps) {
   const getGreeting = () => {
     const hr = new Date().getHours();
     if (hr < 12) return 'Good morning';
@@ -41,7 +45,7 @@ export default function PatientDashboard() {
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         
         <p className="text-sm font-medium text-teal-100 mb-1">{getGreeting()},</p>
-        <h1 className="text-3xl font-black text-white tracking-tight">Maria</h1>
+        <h1 className="text-3xl font-black text-white tracking-tight">{userName}</h1>
         
         <div className="mt-6 p-4 bg-white/10 border border-white/20 backdrop-blur-md rounded-[20px] flex items-center justify-between">
           <div className="flex items-center gap-3">

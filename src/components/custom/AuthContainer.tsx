@@ -484,17 +484,17 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
 
       // 3. Force the redirect to the specific dashboard!
       if (userRole === "student") {
-        router.push("/student-dashboard"); 
+        router.push("/app/student"); 
       } else {
-        router.push("/patient-dashboard"); 
+        router.push("/app/patient"); 
       }
 
     } catch (error) {
       // Even if the silent login hiccups, push them to the dashboard anyway
       if (role === "student") {
-        router.push("/student-dashboard");
+        router.push("/app/student");
       } else {
-        router.push("/patient-dashboard");
+        router.push("/app/patient");
       }
     }
     
