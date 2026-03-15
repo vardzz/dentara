@@ -275,7 +275,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
           email: session.user.email ?? "",
           fullName: session.user.name ?? "",
         });
-        router.push("/app/home");
+        router.push(session.user.role === "student" ? "/app/student" : "/app/patient");
       } else {
         setServerError("Could not load session. Please try again.");
       }
