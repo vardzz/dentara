@@ -19,7 +19,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
   const NAV_ITEMS = [
     { id: 'home',     label: 'Home',     icon: Home,          href: `${basePath}/home` },
     { id: 'search',   label: 'Search',   icon: Search,        href: `${basePath}/search` },
-    { id: 'bookings', label: 'Bookings', icon: Calendar,      href: `${basePath}/booking` },
+    { id: 'bookings', label: 'Bookings', icon: Calendar,      href: `${basePath}/bookings` },
     { id: 'chats',    label: 'Chat',     icon: MessageCircle, href: `${basePath}/chats` },
     { id: 'profile',  label: 'Space',    icon: User,          href: `${basePath}/profile` },
   ];

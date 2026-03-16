@@ -1,14 +1,14 @@
-import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import BookingsClient from "@/components/app/BookingsClient";
+import { redirect } from "next/navigation";
 
 export default async function StudentBookingsPage() {
   const session = await auth();
   if (!session?.user) redirect("/app/login");
 
-  // Note: Once you build an Appointment model in Prisma, fetch it here!
-  // For now, we pass an empty array or mock data to prove the DB connection works.
-  const dbAppointments: any[] = []; 
+  // Since Appointment model is not in schema yet, we use an empty array or fetch mock data
+  const appointments: any[] = []; 
 
-  return <BookingsClient initialAppointments={dbAppointments} />;
+  return <BookingsClient initialAppointments={appointments} />;
 }

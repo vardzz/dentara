@@ -1,17 +1,22 @@
-import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import ProfileClient from "@/components/app/ProfileClient";
+import { redirect } from "next/navigation";
 
 export default async function PatientProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/app/login");
 
-  // Fetch full user details from DB
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
+    select: {
+      fullName: true,
+      role: true,
+      location: true,
+    },
   });
 
-  // Reuse the exact same ProfileClient! It already checks user.role internally.
+  if (!user || user.role !== "patient") redirect("/app/login");
+
   return <ProfileClient user={user} />;
 }

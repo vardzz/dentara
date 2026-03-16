@@ -1,28 +1,32 @@
-import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import SearchClient from "@/components/app/SearchClient";
+import { redirect } from "next/navigation";
 
 export default async function StudentSearchPage() {
   const session = await auth();
   if (!session?.user) redirect("/app/login");
 
-  // Fetch actual patients from your database who need care
+  // Fetch patient users as potential cases for a student
   const patients = await prisma.user.findMany({
     where: { role: "patient" },
-    select: { id: true, fullName: true, concern: true, location: true },
-    take: 10, // Limit results for performance
+    select: {
+      id: true,
+      fullName: true,
+      concern: true,
+      location: true,
+    },
+    take: 10,
   });
 
-  // Map the database data to match your UI format
-  const mappedResults = patients.map((p) => ({
+  const initialResults = patients.map(p => ({
     id: p.id,
-    name: p.fullName || "Unknown Patient",
+    name: p.fullName,
     type: "Patient",
-    dist: p.location || "Location not set",
-    match: "95%", // Placeholder for your future matching algorithm
-    tag: p.concern || "Consult",
+    dist: "Nearby", // Mock data for distance
+    match: "98%",   // Mock data for match percentage
+    tag: p.concern || "General",
   }));
 
-  return <SearchClient initialResults={mappedResults} />;
+  return <SearchClient initialResults={initialResults} />;
 }
