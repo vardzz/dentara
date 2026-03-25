@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import StudentProfileClient from "@/components/app/StudentProfileClient";
+import StudentProfileClient from "@/components/app/student/StudentProfileClient";
 import { redirect } from "next/navigation";
 
 export default async function StudentProfilePage() {

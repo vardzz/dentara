@@ -43,6 +43,11 @@ interface Props {
 }
 
 export default function UniversityHomeClient({ user }: Props) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
       {/* Greeting */}
@@ -119,9 +124,12 @@ export default function UniversityHomeClient({ user }: Props) {
           {students.map((s, i) => (
             <div
               key={i}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 px-5 py-3.5 hover:bg-gray-50/30 transition-colors duration-200 cursor-pointer border-b border-gray-100/30 last:border-0"
+              className="flex flex-col sm:grid sm:grid-cols-4 gap-2 sm:gap-4 px-5 py-3.5 hover:bg-gray-50/30 transition-colors duration-200 cursor-pointer border-b border-gray-100/30 last:border-0"
             >
-              <span className="text-sm font-medium text-foreground">{s.name}</span>
+              <div className="flex items-center justify-between sm:contents">
+                <span className="text-sm font-medium text-foreground">{s.name}</span>
+                <span className="sm:hidden text-xs text-muted-foreground tabular-nums">{s.daysLeft}d</span>
+              </div>
               <span className="text-sm text-muted-foreground hidden sm:block">{s.year}</span>
               <span>
                 <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${

@@ -48,7 +48,7 @@ export default function PatientSearchClient() {
         </button>
       </motion.div>
 
-      <motion.div variants={ITEM} className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <motion.div variants={ITEM} className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 no-scrollbar scrollbar-hide">
         {["All", ...specialties].map((s) => (
           <button
             key={s}

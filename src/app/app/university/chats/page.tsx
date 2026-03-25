@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import UniversityChatsClient from "@/components/app/UniversityChatsClient";
+import UniversityChatsClient from "@/components/app/university/UniversityChatsClient";
 import { redirect } from "next/navigation";
 
 export default async function UniversityChatsPage() {

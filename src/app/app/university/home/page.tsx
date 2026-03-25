@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import UniversityHomeClient from "@/components/app/UniversityHomeClient";
+import UniversityHomeClient from "@/components/app/university/UniversityHomeClient";
 import { redirect } from "next/navigation";
 
 export default async function UniversityHomePage() {

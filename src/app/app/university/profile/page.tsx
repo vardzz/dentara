@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import UniversityProfileClient from "@/components/app/UniversityProfileClient";
+import UniversityProfileClient from "@/components/app/university/UniversityProfileClient";
 import { redirect } from "next/navigation";
 
 export default async function UniversityProfilePage() {

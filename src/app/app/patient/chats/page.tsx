@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import PatientChatsClient from "@/components/app/PatientChatsClient";
+import PatientChatsClient from "@/components/app/patient/PatientChatsClient";
 import { redirect } from "next/navigation";
 
 export default async function PatientChatsPage() {

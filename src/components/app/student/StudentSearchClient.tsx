@@ -42,7 +42,7 @@ export default function StudentSearchClient() {
         />
       </motion.div>
 
-      <motion.div variants={ITEM} className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <motion.div variants={ITEM} className="flex gap-2 overflow-x-auto pb-1 no-scrollbar scrollbar-hide">
         {["All", "New", "Pending", "Accepted"].map((s) => (
           <button
             key={s}

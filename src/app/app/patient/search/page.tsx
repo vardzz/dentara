@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import PatientSearchClient from "@/components/app/PatientSearchClient";
+import PatientSearchClient from "@/components/app/patient/PatientSearchClient";
 import { redirect } from "next/navigation";
 
 export default async function PatientSearchPage() {

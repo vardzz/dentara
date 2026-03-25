@@ -33,6 +33,11 @@ interface Props {
 }
 
 export default function StudentHomeClient({ user }: Props) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
       {/* Greeting */}
@@ -42,7 +47,7 @@ export default function StudentHomeClient({ user }: Props) {
       </motion.div>
 
       {/* Alerts */}
-      <motion.div variants={ITEM} className="flex gap-3">
+      <motion.div variants={ITEM} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="glass-card-solid flex-1 p-4 hover-lift cursor-pointer">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#138b94]/10 flex items-center justify-center">

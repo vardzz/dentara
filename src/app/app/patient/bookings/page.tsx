@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import PatientBookingsClient from "@/components/app/PatientBookingsClient";
+import PatientBookingsClient from "@/components/app/patient/PatientBookingsClient";
 import { redirect } from "next/navigation";
 
 export default async function PatientBookingsPage() {

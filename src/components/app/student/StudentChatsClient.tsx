@@ -15,28 +15,28 @@ const ITEM: Variants = {
 };
 
 const chats = [
-  { name: "Dr. Ahmed Khalil", lastMsg: "Your x-ray results look great! See you tomorrow.", time: "2h", unread: 1, avatar: "AK", online: true },
-  { name: "Dr. Reem Nasser", lastMsg: "I've scheduled your orthodontic review.", time: "1d", unread: 0, avatar: "RN", online: false },
-  { name: "Dr. Omar Farid", lastMsg: "The procedure went well, how are you feeling?", time: "3d", unread: 0, avatar: "OF", online: true },
-  { name: "Dentara Support", lastMsg: "Welcome to Dentara! How can we help?", time: "1w", unread: 0, avatar: "DS", online: true },
+  { name: "Sarah Mitchell", lastMsg: "Thank you doctor, see you tomorrow!", time: "30m", unread: 2, avatar: "SM", online: true },
+  { name: "James Peterson", lastMsg: "Is it normal for the area to be sore?", time: "2h", unread: 1, avatar: "JP", online: false },
+  { name: "Maria Garcia", lastMsg: "Can we reschedule to next week?", time: "5h", unread: 0, avatar: "MG", online: true },
+  { name: "Dr. Hassan (Supervisor)", lastMsg: "Good job on the case documentation.", time: "1d", unread: 0, avatar: "DH", online: false },
 ];
 
 const mockMessages = [
-  { id: 1, sender: "them", text: "Hi! I wanted to confirm our appointment tomorrow.", time: "10:12 AM" },
-  { id: 2, sender: "me", text: "Yes, everything is confirmed! 10:30 AM at Clinic B, Room 204.", time: "10:14 AM" },
-  { id: 3, sender: "them", text: "Perfect. Should I bring my previous x-rays?", time: "10:15 AM" },
-  { id: 4, sender: "me", text: "That would be great, yes. We have your digital records but physical copies help too.", time: "10:18 AM" },
-  { id: 5, sender: "them", text: "Your x-ray results look great! See you tomorrow. 😊", time: "10:22 AM" },
+  { id: 1, sender: "them", text: "Hi Doctor! I wanted to check about my appointment.", time: "10:12 AM" },
+  { id: 2, sender: "me", text: "Hello! Yes, you're scheduled for 10:30 AM tomorrow at Clinic B.", time: "10:14 AM" },
+  { id: 3, sender: "them", text: "Perfect. Do I need to bring anything specific?", time: "10:15 AM" },
+  { id: 4, sender: "me", text: "Just your previous x-rays if you have them. Otherwise, we have everything on file.", time: "10:18 AM" },
+  { id: 5, sender: "them", text: "Thank you doctor, see you tomorrow! 😊", time: "10:22 AM" },
 ];
 
-export default function PatientChatsClient() {
+export default function StudentChatsClient() {
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
   const [message, setMessage] = useState("");
 
   if (selectedChat !== null) {
     const chat = chats[selectedChat];
     return (
-      <div className="flex flex-col h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] animate-settle-in">
+      <div className="flex flex-col h-[calc(100svh-11rem)] md:h-[calc(100vh-4rem)] animate-settle-in">
         <div className="flex items-center gap-3 pb-4 border-b border-gray-100/50">
           <button onClick={() => setSelectedChat(null)} className="p-1.5 rounded-xl hover:bg-gray-50/50 transition-colors">
             <ArrowLeft className="h-5 w-5 text-foreground" />
@@ -96,7 +96,7 @@ export default function PatientChatsClient() {
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
       <motion.div variants={ITEM} className="pt-2">
         <h2 className="text-2xl font-bold tracking-tight text-foreground">Messages</h2>
-        <p className="text-muted-foreground text-sm mt-1">Chat with your clinicians</p>
+        <p className="text-muted-foreground text-sm mt-1">Patient & supervisor messages</p>
       </motion.div>
 
       <motion.div variants={ITEM} className="relative">

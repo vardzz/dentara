@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import PatientHomeClient from "@/components/app/PatientHomeClient";
+import PatientHomeClient from "@/components/app/patient/PatientHomeClient";
 import { redirect } from "next/navigation";
 
 export default async function PatientHomePage() {

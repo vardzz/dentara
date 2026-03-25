@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import StudentBookingsClient from "@/components/app/StudentBookingsClient";
+import StudentBookingsClient from "@/components/app/student/StudentBookingsClient";
 import { redirect } from "next/navigation";
 
 export default async function StudentBookingsPage() {

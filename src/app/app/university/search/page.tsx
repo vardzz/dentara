@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import UniversitySearchClient from "@/components/app/UniversitySearchClient";
+import UniversitySearchClient from "@/components/app/university/UniversitySearchClient";
 import { redirect } from "next/navigation";
 
 export default async function UniversitySearchPage() {

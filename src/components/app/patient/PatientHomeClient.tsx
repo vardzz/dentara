@@ -19,7 +19,11 @@ interface Props {
 }
 
 export default function PatientHomeClient({ user }: Props) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
   const getGreeting = () => {
+    if (!mounted) return 'Welcome';
     const hr = new Date().getHours();
     if (hr < 12) return 'Good morning';
     if (hr < 18) return 'Good afternoon';
@@ -52,7 +56,7 @@ export default function PatientHomeClient({ user }: Props) {
       <motion.div variants={ITEM}>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Upcoming Appointment</h3>
         <div className="glass-card-solid p-5 bg-gradient-to-br from-[#138b94]/5 to-transparent hover-lift">
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
             <div className="space-y-3">
               <div>
                 <p className="font-semibold text-foreground">Dr. Ahmed Khalil</p>

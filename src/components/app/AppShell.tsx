@@ -16,6 +16,20 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isMobile = useIsMobile();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Avoid hydration mismatch by rendering a stable shell until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[#138b94]/20 border-t-[#138b94] rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const NAV_ITEMS = [
     { id: 'home',     label: 'Home',     icon: Home,          href: `${basePath}/home` },
@@ -130,7 +144,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
       </div>
 
       {/* Glass Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 px-6 pt-12 pb-4 bg-white/40 backdrop-blur-2xl border-b border-white/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-40 px-6 pt-10 pb-4 bg-white/40 backdrop-blur-2xl border-b border-white/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/assets/icon.png" alt="Dentara" className="h-6 w-auto object-contain drop-shadow-sm" />
           <span className="text-lg font-bold tracking-tight text-[#0e2b5c]">DENTARA</span>
@@ -144,7 +158,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
       </header>
 
       {/* Page Content */}
-      <main className="relative z-10 px-6 pt-32 pb-40 max-w-xl mx-auto w-full min-h-[100dvh]">
+      <main className="relative z-10 px-6 pt-24 pb-32 max-w-xl mx-auto w-full min-h-[100dvh]">
         <AnimatePresence mode="wait">
           <motion.div
             key={pathname}

@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import StudentChatsClient from "@/components/app/StudentChatsClient";
+import StudentChatsClient from "@/components/app/student/StudentChatsClient";
 import { redirect } from "next/navigation";
 
 export default async function StudentChatsPage() {
