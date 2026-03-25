@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import HomeClient from "@/components/app/HomeClient";
+import StudentHomeClient from "@/components/app/StudentHomeClient";
 import { redirect } from "next/navigation";
 
 export default async function StudentHomePage() {
@@ -18,5 +18,5 @@ export default async function StudentHomePage() {
 
   if (!user || user.role !== "student") redirect("/app/login");
 
-  return <HomeClient user={user} />;
+  return <StudentHomeClient user={user} />;
 }

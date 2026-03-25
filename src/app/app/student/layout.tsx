@@ -12,11 +12,11 @@ export default async function StudentLayout({ children }: { children: React.Reac
 
   // 2. Wrong role? 
   if (session.user.role !== "student") {
-    // Only send them to patient IF we are 100% sure they are a patient
     if (session.user.role === "patient") {
       redirect("/app/patient/home");
+    } else if (session.user.role === "university") {
+      redirect("/app/university/home");
     } else {
-      // Otherwise, their session is corrupted. Force them to log in again.
       redirect("/app/login"); 
     }
   }

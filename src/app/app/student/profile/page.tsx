@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import ProfileClient from "@/components/app/ProfileClient";
+import StudentProfileClient from "@/components/app/StudentProfileClient";
 import { redirect } from "next/navigation";
 
 export default async function StudentProfilePage() {
@@ -18,5 +18,5 @@ export default async function StudentProfilePage() {
 
   if (!user || user.role !== "student") redirect("/app/login");
 
-  return <ProfileClient user={user} />;
+  return <StudentProfileClient user={user} />;
 }

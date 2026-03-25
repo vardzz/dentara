@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import ProfileClient from "@/components/app/ProfileClient";
+import PatientProfileClient from "@/components/app/PatientProfileClient";
 import { redirect } from "next/navigation";
 
 export default async function PatientProfilePage() {
@@ -18,5 +18,5 @@ export default async function PatientProfilePage() {
 
   if (!user || user.role !== "patient") redirect("/app/login");
 
-  return <ProfileClient user={user} />;
+  return <PatientProfileClient user={user} />;
 }

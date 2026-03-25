@@ -134,3 +134,77 @@ body {
     cursor: pointer !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM GLASSMORPHISM & ANIMATION UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Glass Cards ── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px -8px rgba(14, 43, 92, 0.06),
+    0 0 0 0.5px rgba(255, 255, 255, 0.4) inset;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-solid {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  box-shadow:
+    0 4px 24px -4px rgba(14, 43, 92, 0.05),
+    0 0 0 0.5px rgba(255, 255, 255, 0.3) inset;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Hover Effects ── */
+.hover-lift {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 40px -8px rgba(14, 43, 92, 0.1),
+    0 0 0 0.5px rgba(255, 255, 255, 0.5) inset;
+}
+.hover-lift:active {
+  transform: translateY(0px);
+}
+
+/* ── Settle-in Animation ── */
+@keyframes settle-in {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-settle-in {
+  animation: settle-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stagger-1 { animation-delay: 0.08s; }
+.stagger-2 { animation-delay: 0.16s; }
+.stagger-3 { animation-delay: 0.24s; }
+.stagger-4 { animation-delay: 0.32s; }
+
+/* ── Scrollbar Utilities ── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-export type UserRole = 'student' | 'patient';
+export type UserRole = 'student' | 'patient' | 'university';
 
 /** Minimal user shape returned from login — used for global auth state */
 export interface AuthUser {
@@ -33,7 +33,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
   // Hydrate from localStorage (client-only) to avoid SSR mismatch
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as UserRole | null;
-    if (stored === 'student' || stored === 'patient') {
+    if (stored === 'student' || stored === 'patient' || stored === 'university') {
       setRoleState(stored);
     }
     try {
@@ -63,7 +63,8 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleRole = useCallback(() => {
-    setRole(role === 'student' ? 'patient' : 'student');
+    const next = role === 'student' ? 'patient' : role === 'patient' ? 'university' : 'student';
+    setRole(next);
   }, [role, setRole]);
 
   return (

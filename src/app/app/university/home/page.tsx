@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import PatientHomeClient from "@/components/app/PatientHomeClient";
+import UniversityHomeClient from "@/components/app/UniversityHomeClient";
 import { redirect } from "next/navigation";
 
-export default async function PatientHomePage() {
+export default async function UniversityHomePage() {
   const session = await auth();
   if (!session?.user) redirect("/app/login");
 
@@ -12,11 +12,10 @@ export default async function PatientHomePage() {
     select: {
       fullName: true,
       role: true,
-      location: true,
     },
   });
 
-  if (!user || user.role !== "patient") redirect("/app/login");
+  if (!user || user.role !== "university") redirect("/app/login");
 
-  return <PatientHomeClient user={user} />;
+  return <UniversityHomeClient user={user} />;
 }

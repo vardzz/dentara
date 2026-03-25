@@ -60,7 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!valid) return null;
 
         const role = user.role as UserRole;
-        if (role !== "student" && role !== "patient") return null;
+        if (role !== "student" && role !== "patient" && role !== "university") return null;
 
         return {
           id: user.id,
