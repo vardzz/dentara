@@ -42,7 +42,7 @@ import {
  * Types & Interfaces
  * ───────────────────────────────────────────── */
 type AuthView = "login" | "register";
-type UserRole = "student" | "patient" | null;
+type UserRole = "student" | "patient" | "university" | null;
 
 interface CaseRequirement {
   id: number;
@@ -269,13 +269,16 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
         return;
       }
       const session = await getSession();
-      if (session?.user?.id && (session.user.role === "student" || session.user.role === "patient")) {
+      if (session?.user?.id && (session.user.role === "student" || session.user.role === "patient" || session.user.role === "university")) {
         setAuth(session.user.role, {
           id: session.user.id,
           email: session.user.email ?? "",
           fullName: session.user.name ?? "",
         });
-        router.push(session.user.role === "student" ? "/app/student" : "/app/patient");
+        
+        if (session.user.role === "student") router.push("/app/student");
+        else if (session.user.role === "patient") router.push("/app/patient");
+        else if (session.user.role === "university") router.push("/app/university");
       } else {
         setServerError("Could not load session. Please try again.");
       }

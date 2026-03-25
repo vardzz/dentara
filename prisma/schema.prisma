@@ -1,6 +1,3 @@
-// Dentara Database Schema
-// Supports Student and Patient roles; Auth.js (NextAuth v5) Prisma adapter models included
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,24 +9,16 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
-  fullName      String
-  role          String    // "student" | "patient" — used for session and dashboard routing
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Auth.js adapter fields (optional)
-  name            String?
-  image           String?
-  emailVerified   DateTime?
-
-  // Auth.js relations
-  accounts Account[]
-  sessions Session[]
-
-  // Role-specific fields (nullable for flexibility)
+  id               String    @id @default(cuid())
+  email            String    @unique
+  password         String
+  fullName         String
+  role             String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  name             String?
+  image            String?
+  emailVerified    DateTime?
   age              Int?
   phone            String?
   concern          String?
@@ -39,8 +28,10 @@ model User {
   studentId        String?
   username         String?   @unique
   clinicAddress    String?
-  casesJson        String?   // JSON string of CaseRequirement[]
-  availabilityJson String?   // JSON string of Availability
+  casesJson        String?
+  availabilityJson String?
+  accounts         Account[]
+  sessions         Session[]
 }
 
 model Account {
