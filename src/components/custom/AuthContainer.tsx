@@ -92,10 +92,10 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
 
   /* ── Form State (for non-RHF fields: cases, availability) ── */
   const [cases, setCases] = useState<CaseRequirement[]>([
-    { id: 1, name: "Extraction", count: 0 },
-    { id: 2, name: "Prophylaxis", count: 0 },
-    { id: 3, name: "Restorative", count: 0 },
-    { id: 4, name: "Prosthodontics", count: 0 },
+    { id: 1, name: "Tooth Removal", count: 0 },
+    { id: 2, name: "Teeth Cleaning", count: 0 },
+    { id: 3, name: "Tooth Filling", count: 0 },
+    { id: 4, name: "Tooth Replacement", count: 0 },
   ]);
   const [availability, setAvailability] = useState<Availability>({
     Mon: false,
@@ -974,12 +974,12 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               </div>
             )}
 
-            {/* ── STUDENT STEP 3: Clinical Quotas ── */}
+            {/* ── STUDENT STEP 3: Case Goals ── */}
             {regStep === 3 && role === "student" && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-500">
                 <header className="flex items-center justify-between">
                   <h1 className="text-2xl font-bold text-gray-900">
-                    Clinical Quotas
+                    Case Goals
                   </h1>
                   <button
                     onClick={prevStep}
@@ -990,7 +990,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                 </header>
                 <div className="space-y-4">
                   <p className="text-sm text-brand-gray">
-                    Specify your target number of patients per case:
+                    Set how many patients you want for each case:
                   </p>
                   <div className="grid grid-cols-1 gap-3 max-h-[320px] overflow-y-auto pr-1 no-scrollbar">
                     {cases.map((item) => (
@@ -1030,7 +1030,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                   disabled={isLoading}
                   className="w-full bg-brand-teal min-h-[44px] py-4 rounded-xl text-white font-bold flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Set Availability <ArrowRight size={18} />
+                  Save Goals <ArrowRight size={18} />
                 </button>
               </div>
             )}

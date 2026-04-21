@@ -50,7 +50,7 @@ export default function StudentProfileClient({ user }: Props) {
           </button>
         </div>
         <h3 className="text-lg font-bold text-foreground">Dr. {user.fullName}</h3>
-        <p className="text-xs text-muted-foreground mt-0.5">4th Year · Prosthodontics</p>
+        <p className="text-xs text-muted-foreground mt-0.5">4th Year · Tooth Replacement</p>
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1 shrink-0"><GraduationCap className="h-3 w-3" /> {user.school || 'University'}</span>
           <span className="flex items-center gap-1 shrink-0"><Star className="h-3 w-3 text-amber-400" /> 4.9 rating</span>

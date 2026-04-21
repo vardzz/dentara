@@ -15,10 +15,10 @@ const ITEM: Variants = {
 };
 
 const bookings = [
-  { patient: "Sarah Mitchell", procedure: "Crown Fitting", date: "Mar 26, 2026", time: "10:30 AM", location: "Clinic B, Room 204", status: "upcoming" as const, quota: "Prosthodontics" },
-  { patient: "James Peterson", procedure: "Extraction", date: "Mar 27, 2026", time: "9:00 AM", location: "Clinic D, Room 101", status: "upcoming" as const, quota: "Oral Surgery" },
-  { patient: "Maria Garcia", procedure: "Cleaning", date: "Mar 20, 2026", time: "2:00 PM", location: "Clinic A, Room 105", status: "completed" as const, quota: "Periodontics" },
-  { patient: "Robert Kim", procedure: "Root Canal", date: "Mar 14, 2026", time: "10:00 AM", location: "Clinic C, Room 301", status: "completed" as const, quota: "Endodontics" },
+  { patient: "Sarah Mitchell", procedure: "Crown Fitting", date: "Mar 26, 2026", time: "10:30 AM", location: "Clinic B, Room 204", status: "upcoming" as const, quota: "Tooth Replacement" },
+  { patient: "James Peterson", procedure: "Extraction", date: "Mar 27, 2026", time: "9:00 AM", location: "Clinic D, Room 101", status: "upcoming" as const, quota: "Tooth Removal" },
+  { patient: "Maria Garcia", procedure: "Cleaning", date: "Mar 20, 2026", time: "2:00 PM", location: "Clinic A, Room 105", status: "completed" as const, quota: "Gum Care" },
+  { patient: "Robert Kim", procedure: "Root Canal", date: "Mar 14, 2026", time: "10:00 AM", location: "Clinic C, Room 301", status: "completed" as const, quota: "Root Canal" },
 ];
 
 const statusConfig = {

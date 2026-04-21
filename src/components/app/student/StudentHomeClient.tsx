@@ -15,11 +15,11 @@ const ITEM: Variants = {
 };
 
 const quotas = [
-  { name: "Prosthodontics", done: 3, total: 5 },
-  { name: "Extraction", done: 1, total: 10 },
-  { name: "Endodontics", done: 7, total: 8 },
-  { name: "Restorative", done: 4, total: 12 },
-  { name: "Periodontics", done: 2, total: 6 },
+  { name: "Tooth Replacement", done: 3, total: 5 },
+  { name: "Tooth Removal", done: 1, total: 10 },
+  { name: "Root Canal", done: 7, total: 8 },
+  { name: "Tooth Filling", done: 4, total: 12 },
+  { name: "Gum Care", done: 2, total: 6 },
 ];
 
 const todaySchedule = [
@@ -43,7 +43,7 @@ export default function StudentHomeClient({ user }: Props) {
       {/* Greeting */}
       <motion.div variants={ITEM} className="pt-2">
         <p className="text-muted-foreground text-sm font-medium">Welcome back,</p>
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">Clinician {user.fullName}</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">Student {user.fullName}</h2>
       </motion.div>
 
       {/* Alerts */}

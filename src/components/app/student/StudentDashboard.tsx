@@ -50,9 +50,9 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
         <div className="mt-6 flex items-center justify-between">
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-[#138b94] mb-1">
-              Licensure Progress
+              Progress
             </p>
-            <p className="text-xs font-medium text-gray-600">32 of 50 Clinical Cases</p>
+            <p className="text-xs font-medium text-gray-600">32 of 50 Cases</p>
           </div>
           
           {/* Progress Ring */}
@@ -77,13 +77,13 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
           <div className="w-10 h-10 rounded-full bg-teal-50 border border-teal-100/50 flex items-center justify-center text-[#138b94]">
             <Plus strokeWidth={2.5} size={20} />
           </div>
-          <span className="text-xs font-bold text-[#0e2b5c]">Log Case</span>
+          <span className="text-xs font-bold text-[#0e2b5c]">Add Case</span>
         </button>
         <button className="flex flex-col items-center justify-center gap-3 bg-white/60 backdrop-blur-md border border-white/40 shadow-sm p-5 rounded-[24px] active:scale-95 transition-transform">
           <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100/50 flex items-center justify-center text-blue-600">
             <UserPlus strokeWidth={2.5} size={20} />
           </div>
-          <span className="text-xs font-bold text-[#0e2b5c]">Invite Patient</span>
+          <span className="text-xs font-bold text-[#0e2b5c]">Add Patient</span>
         </button>
       </motion.div>
 
@@ -96,9 +96,9 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
         
         <div className="space-y-3">
           {[
-            { id: 1, title: 'Waiver Signed', desc: 'Maria C. (Class II Comp)', icon: FileSignature, color: 'text-orange-500', bg: 'bg-orange-50' },
-            { id: 2, title: 'Case Approved', desc: 'Extraction (Lower Right 8)', icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-50' },
-            { id: 3, title: 'AI Match Found', desc: 'New Complete Denture Lead', icon: Activity, color: 'text-purple-500', bg: 'bg-purple-50' },
+            { id: 1, title: 'Consent Signed', desc: 'Maria C. (Tooth Filling)', icon: FileSignature, color: 'text-orange-500', bg: 'bg-orange-50' },
+            { id: 2, title: 'Case Approved', desc: 'Tooth Removal (Lower Right 8)', icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-50' },
+            { id: 3, title: 'Match Found', desc: 'New Tooth Replacement Lead', icon: Activity, color: 'text-purple-500', bg: 'bg-purple-50' },
           ].map((item) => (
             <div key={item.id} className="flex items-center p-4 bg-white/80 backdrop-blur-xl border border-white/60 rounded-[24px] shadow-sm">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.bg} ${item.color} shrink-0`}>
