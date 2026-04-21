@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Search } from 'lucide-react';
+import { searchPatients } from '@/app/actions/search';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -14,16 +15,72 @@ const ITEM: Variants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
 
-const mockPatients = [
-  { name: "Sarah Mitchell", concern: "Crown Fitting", urgency: "Low", age: 34, status: "Pending" },
-  { name: "James Peterson", concern: "Root Canal", urgency: "High", age: 45, status: "New" },
-  { name: "Maria Garcia", concern: "Cleaning", urgency: "Low", age: 28, status: "Accepted" },
-  { name: "Robert Kim", concern: "Extraction", urgency: "Medium", age: 52, status: "Pending" },
-];
+type PatientSearchItem = {
+  id: string;
+  fullName: string;
+  concern: string;
+  location: string;
+};
+
+const LOCATION_FILTERS = ['All', 'Makati City', 'Taguig City', 'Quezon City', 'Manila'];
+
+function getPriorityFromConcern(concern: string): 'High' | 'Medium' | 'Low' {
+  const normalized = concern.toLowerCase();
+  if (normalized.includes('impacted') || normalized.includes('pain') || normalized.includes('extraction')) {
+    return 'High';
+  }
+  if (normalized.includes('restoration') || normalized.includes('crown') || normalized.includes('root canal')) {
+    return 'Medium';
+  }
+  return 'Low';
+}
+
+function getInitials(fullName: string): string {
+  return fullName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((name) => name[0]?.toUpperCase() ?? '')
+    .join('');
+}
 
 export default function StudentSearchClient() {
-  const [activeFilter, setActiveFilter] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [patients, setPatients] = useState<PatientSearchItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    let isCancelled = false;
+    const locationFilter = activeFilter === 'All' ? undefined : activeFilter;
+
+    const timeoutId = setTimeout(async () => {
+      setIsLoading(true);
+      setError(null);
+
+      const result = await searchPatients(searchQuery, locationFilter);
+
+      if (isCancelled) {
+        return;
+      }
+
+      if (!result.success) {
+        setPatients([]);
+        setError(result.error);
+        setIsLoading(false);
+        return;
+      }
+
+      setPatients(result.data);
+      setIsLoading(false);
+    }, 250);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(timeoutId);
+    };
+  }, [searchQuery, activeFilter]);
 
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
@@ -37,13 +94,13 @@ export default function StudentSearchClient() {
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by procedure, urgency..."
+          placeholder="Search by patient name or concern..."
           className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/80 border border-gray-100/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#138b94]/30 transition-all duration-200"
         />
       </motion.div>
 
       <motion.div variants={ITEM} className="flex gap-2 overflow-x-auto pb-1 no-scrollbar scrollbar-hide">
-        {["All", "New", "Pending", "Accepted"].map((s) => (
+        {LOCATION_FILTERS.map((s) => (
           <button
             key={s}
             onClick={() => setActiveFilter(s)}
@@ -59,31 +116,57 @@ export default function StudentSearchClient() {
       </motion.div>
 
       <motion.div variants={ITEM} className="space-y-3">
-        {mockPatients.map((p, i) => (
-          <div key={i} className="glass-card-solid p-4 hover-lift cursor-pointer">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#0e2b5c]/10 flex items-center justify-center text-[#138b94] font-bold text-xs shrink-0">
-                  {p.name.split(" ").map(n => n[0]).join("")}
+        {isLoading && (
+          <div className="glass-card-solid p-4 text-sm text-muted-foreground">Loading patients...</div>
+        )}
+
+        {!isLoading && error && (
+          <div className="glass-card-solid p-4 text-sm text-red-600">{error}</div>
+        )}
+
+        {!isLoading && !error && patients.length === 0 && (
+          <div className="glass-card-solid p-4 text-sm text-muted-foreground">
+            No matching patients found.
+          </div>
+        )}
+
+        {!isLoading && !error && patients.map((patient) => {
+          const priority = getPriorityFromConcern(patient.concern);
+          const isMock = patient.id.startsWith('mock-');
+
+          return (
+            <div key={patient.id} className="glass-card-solid p-4 hover-lift cursor-pointer">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#0e2b5c]/10 flex items-center justify-center text-[#138b94] font-bold text-xs shrink-0">
+                    {getInitials(patient.fullName)}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground text-sm">{patient.fullName}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {patient.concern || 'General Consultation'}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      {patient.location || 'Location not specified'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-foreground text-sm">{p.name}</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">{p.concern} · Age {p.age}</p>
+                <div className="flex flex-col items-end gap-1">
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                    priority === 'High' ? 'bg-red-100/60 text-red-600' :
+                    priority === 'Medium' ? 'bg-amber-500/10 text-amber-600' :
+                    'bg-[#138b94]/10 text-[#138b94]'
+                  }`}>
+                    {priority} Priority
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {isMock ? 'Premium Mock' : 'Verified User'}
+                  </span>
                 </div>
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                  p.urgency === "High" ? "bg-red-100/60 text-red-600" :
-                  p.urgency === "Medium" ? "bg-amber-500/10 text-amber-600" :
-                  "bg-[#138b94]/10 text-[#138b94]"
-                }`}>
-                  {p.urgency} Priority
-                </span>
-                <span className="text-[10px] text-muted-foreground">{p.status}</span>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </motion.div>
     </motion.div>
   );
