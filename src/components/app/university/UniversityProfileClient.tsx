@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Building2, Mail, Phone, MapPin, User, Bell, Shield, CreditCard, HelpCircle, ChevronRight, Camera, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
+import SignOutConfirmDialog from '@/components/custom/SignOutConfirmDialog';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -21,6 +23,19 @@ interface Props {
 
 export default function UniversityProfileClient({ user }: Props) {
   const router = useRouter();
+  const [showSignOutConfirm, setShowSignOutConfirm] = React.useState(false);
+  const [isSigningOut, setIsSigningOut] = React.useState(false);
+
+  const handleConfirmSignOut = React.useCallback(async () => {
+    try {
+      setIsSigningOut(true);
+      await signOut({ callbackUrl: '/app/login' });
+    } catch {
+      setIsSigningOut(false);
+      setShowSignOutConfirm(false);
+      router.push('/app/login');
+    }
+  }, [router]);
 
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
@@ -93,7 +108,7 @@ export default function UniversityProfileClient({ user }: Props) {
       {/* Logout */}
       <motion.div variants={ITEM}>
         <button
-          onClick={() => router.push('/app/login')}
+          onClick={() => setShowSignOutConfirm(true)}
           className="w-full glass-card-solid p-4 flex items-center gap-3 hover:bg-red-50/50 transition-colors"
         >
           <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
@@ -102,6 +117,13 @@ export default function UniversityProfileClient({ user }: Props) {
           <span className="text-sm font-semibold text-red-500">Sign Out</span>
         </button>
       </motion.div>
+
+      <SignOutConfirmDialog
+        open={showSignOutConfirm}
+        onStay={() => setShowSignOutConfirm(false)}
+        onExit={handleConfirmSignOut}
+        isSubmitting={isSigningOut}
+      />
     </motion.div>
   );
 }

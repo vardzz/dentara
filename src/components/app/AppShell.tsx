@@ -4,7 +4,9 @@ import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Search, Calendar, MessageCircle, User, LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SignOutConfirmDialog from '@/components/custom/SignOutConfirmDialog';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -17,6 +19,8 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
   const router = useRouter();
   const isMobile = useIsMobile();
   const [mounted, setMounted] = React.useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = React.useState(false);
+  const [isSigningOut, setIsSigningOut] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
@@ -41,12 +45,24 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
 
   const activeId = NAV_ITEMS.find(n => pathname.startsWith(n.href))?.id ?? 'home';
 
+  const handleConfirmSignOut = React.useCallback(async () => {
+    try {
+      setIsSigningOut(true);
+      await signOut({ callbackUrl: '/app/login' });
+    } catch {
+      setIsSigningOut(false);
+      setShowSignOutConfirm(false);
+      router.push('/app/login');
+    }
+  }, [router]);
+
   /* ──────────────────── DESKTOP LAYOUT ──────────────────── */
   if (!isMobile) {
     return (
-      <div className="flex min-h-screen bg-[#f8fafc] text-[#0e2b5c] font-sans selection:bg-teal-100 selection:text-teal-900">
-        {/* ── Sidebar ── */}
-        <aside className="fixed top-0 left-0 z-50 h-screen w-[260px] flex flex-col bg-white/60 backdrop-blur-2xl border-r border-white/50 shadow-[4px_0_30px_rgba(0,0,0,0.02)]">
+      <>
+        <div className="flex min-h-screen bg-[#f8fafc] text-[#0e2b5c] font-sans selection:bg-teal-100 selection:text-teal-900">
+          {/* ── Sidebar ── */}
+          <aside className="fixed top-0 left-0 z-50 h-screen w-[260px] flex flex-col bg-white/60 backdrop-blur-2xl border-r border-white/50 shadow-[4px_0_30px_rgba(0,0,0,0.02)]">
           {/* Logo */}
           <div className="flex items-center gap-2.5 px-7 pt-8 pb-6">
             <img src="/assets/icon.png" alt="Dentara" className="h-7 w-auto object-contain drop-shadow-sm" />
@@ -98,17 +114,17 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
           {/* Bottom section */}
           <div className="px-5 pb-6 pt-4 border-t border-gray-100/60 mt-auto">
             <button
-              onClick={() => router.push('/app/login')}
+              onClick={() => setShowSignOutConfirm(true)}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-400 hover:text-red-500 hover:bg-red-50/50 transition-all duration-200"
             >
               <LogOut size={18} strokeWidth={2} />
               <span className="text-sm font-medium">Sign Out</span>
             </button>
           </div>
-        </aside>
+          </aside>
 
         {/* ── Main Content ── */}
-        <main className="ml-[260px] flex-1 min-h-screen relative">
+          <main className="ml-[260px] flex-1 min-h-screen relative">
           {/* Ambient gradients */}
           <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden ml-[260px]">
             <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-teal-400/8 blur-[100px]" />
@@ -129,8 +145,15 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
               </motion.div>
             </AnimatePresence>
           </div>
-        </main>
-      </div>
+          </main>
+        </div>
+        <SignOutConfirmDialog
+          open={showSignOutConfirm}
+          onStay={() => setShowSignOutConfirm(false)}
+          onExit={handleConfirmSignOut}
+          isSubmitting={isSigningOut}
+        />
+      </>
     );
   }
 
@@ -203,6 +226,12 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
         </nav>
       </div>
       <style>{`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
+      <SignOutConfirmDialog
+        open={showSignOutConfirm}
+        onStay={() => setShowSignOutConfirm(false)}
+        onExit={handleConfirmSignOut}
+        isSubmitting={isSigningOut}
+      />
     </div>
   );
 }
