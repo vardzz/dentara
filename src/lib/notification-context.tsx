@@ -33,6 +33,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [pendingBookings, setPendingBookings] = React.useState<PendingBookingPayload[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  const FAST_POLL_MS = 1500;
+  const SLOW_POLL_MS = 6000;
+
   const refresh = React.useCallback(async (): Promise<number | null> => {
     try {
       const state = await getNotificationStateAction();
@@ -50,8 +53,19 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   React.useEffect(() => {
     let cancelled = false;
+    let pollTimeoutId: number | null = null;
     let retryCount = 0;
     const maxRetries = 6;
+
+    const scheduleNextPoll = () => {
+      if (cancelled) return;
+
+      const delay = document.visibilityState === 'visible' ? FAST_POLL_MS : SLOW_POLL_MS;
+      pollTimeoutId = window.setTimeout(async () => {
+        await refresh();
+        scheduleNextPoll();
+      }, delay);
+    };
 
     const initialRefreshWithRetry = async () => {
       const unread = await refresh();
@@ -69,9 +83,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     void initialRefreshWithRetry();
 
-    const intervalId = window.setInterval(() => {
-      void refresh();
-    }, 12000);
+    scheduleNextPoll();
 
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
@@ -79,13 +91,21 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       }
     };
 
+    const handleOnline = () => {
+      void refresh();
+    };
+
     window.addEventListener('focus', handleVisibility);
+    window.addEventListener('online', handleOnline);
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       cancelled = true;
-      window.clearInterval(intervalId);
+      if (pollTimeoutId) {
+        window.clearTimeout(pollTimeoutId);
+      }
       window.removeEventListener('focus', handleVisibility);
+      window.removeEventListener('online', handleOnline);
       document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [refresh]);
