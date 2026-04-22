@@ -1,12 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { User, Mail, GraduationCap, MapPin, Bell, Shield, HelpCircle, ChevronRight, Camera, Star, Award, LogOut } from 'lucide-react';
+import { User, Mail, GraduationCap, MapPin, Bell, Shield, HelpCircle, ChevronRight, Camera, Star, Award, LogOut, Loader2, Edit2, Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import SignOutConfirmDialog from '@/components/custom/SignOutConfirmDialog';
+import { useRole } from '@/lib/role-context';
+import { getCurrentUserProfile } from '@/app/actions/user';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -18,13 +20,44 @@ const ITEM: Variants = {
 };
 
 interface Props {
-  user: { fullName: string; role: string; school?: string | null };
+  user: { id?: string; fullName: string; role: string; school?: string | null };
 }
 
-export default function StudentProfileClient({ user }: Props) {
+export default function StudentProfileClient({ user: initialUser }: Props) {
   const router = useRouter();
-  const [showSignOutConfirm, setShowSignOutConfirm] = React.useState(false);
-  const [isSigningOut, setIsSigningOut] = React.useState(false);
+  const { user: authUser } = useRole();
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const [mounted, setMounted] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    fullName: '',
+    school: '',
+    yearLevel: '',
+    clinicAddress: '',
+  });
+
+  useEffect(() => {
+    setMounted(true);
+    async function loadData() {
+      if (!authUser?.id) return;
+      const data = await getCurrentUserProfile(authUser.id);
+      setProfile(data);
+      setFormData({
+        fullName: data?.fullName || '',
+        school: data?.school || '',
+        yearLevel: data?.yearLevel || '',
+        clinicAddress: data?.clinicAddress || '',
+      });
+      setLoading(false);
+    }
+    loadData();
+  }, [authUser?.id]);
 
   const handleConfirmSignOut = React.useCallback(async () => {
     try {
@@ -37,23 +70,54 @@ export default function StudentProfileClient({ user }: Props) {
     }
   }, [router]);
 
+  if (!mounted) return null;
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-[#138b94]" />
+        <p className="text-sm text-muted-foreground font-medium animate-pulse">Loading profile...</p>
+      </div>
+    );
+  }
+
+  const displayName = profile?.fullName || initialUser.fullName;
+  const yearLevel = profile?.yearLevel || 'Year Level Not Set';
+  let totalCases = 0;
+  try {
+    if (profile?.casesJson) {
+      const parsed = JSON.parse(profile.casesJson);
+      totalCases = parsed.reduce((acc: number, curr: any) => acc + (curr.done || 0), 0);
+    }
+  } catch (e) {}
+
+  const patientCount = profile?._count?.studentBookings || 0;
+
+  const handleSave = async () => {
+    // Optional: Add an action here to save the profile later
+    // await updateUserProfile(authUser.id, formData);
+    setIsEditing(false);
+    // Optimistically update profile state
+    setProfile((prev: any) => ({ ...prev, ...formData }));
+  };
+
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
       {/* Profile Header */}
       <motion.div variants={ITEM} className="glass-card-solid p-6 text-center">
         <div className="relative w-20 h-20 mx-auto mb-3">
           <div className="w-20 h-20 rounded-3xl bg-[#138b94]/10 flex items-center justify-center text-[#138b94] font-bold text-2xl">
-            {user.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+            {displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
           </div>
-          <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-[#138b94] text-white flex items-center justify-center shadow-lg">
+          <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-[#138b94] text-white flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
             <Camera className="h-3.5 w-3.5" />
           </button>
         </div>
-        <h3 className="text-lg font-bold text-foreground">Dr. {user.fullName}</h3>
-        <p className="text-xs text-muted-foreground mt-0.5">4th Year · Tooth Replacement</p>
+        <h3 className="text-lg font-bold text-foreground">Dr. {displayName}</h3>
+        <p className="text-xs text-muted-foreground mt-0.5">{yearLevel}</p>
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1 shrink-0"><GraduationCap className="h-3 w-3" /> {user.school || 'University'}</span>
-          <span className="flex items-center gap-1 shrink-0"><Star className="h-3 w-3 text-amber-400" /> 4.9 rating</span>
+          <span className="flex items-center gap-1 shrink-0"><GraduationCap className="h-3 w-3" /> {profile?.school || 'University Not Set'}</span>
+          <span className="flex items-center gap-1 shrink-0"><Star className="h-3 w-3 text-amber-400" /> New</span>
         </div>
       </motion.div>
 
@@ -62,9 +126,9 @@ export default function StudentProfileClient({ user }: Props) {
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Clinical Stats</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { label: "Cases Done", value: "27", icon: Award },
-            { label: "Patients", value: "18", icon: User },
-            { label: "Avg Rating", value: "4.9", icon: Star },
+            { label: "Cases Done", value: totalCases.toString(), icon: Award },
+            { label: "Patients", value: patientCount.toString(), icon: User },
+            { label: "Avg Rating", value: "N/A", icon: Star },
           ].map((stat, i) => (
             <div key={i} className="glass-card-solid p-4 text-center">
               <stat.icon className="h-4 w-4 text-[#138b94] mx-auto mb-1.5" />
@@ -77,13 +141,30 @@ export default function StudentProfileClient({ user }: Props) {
 
       {/* Personal Info */}
       <motion.div variants={ITEM}>
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Personal Information</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Personal Information</h3>
+          {!isEditing ? (
+            <button onClick={() => setIsEditing(true)} className="text-xs text-[#138b94] font-medium flex items-center gap-1">
+              <Edit2 className="h-3 w-3" /> Edit
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button onClick={() => setIsEditing(false)} className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <X className="h-3 w-3" /> Cancel
+              </button>
+              <button onClick={handleSave} className="text-xs text-[#138b94] font-medium flex items-center gap-1">
+                <Check className="h-3 w-3" /> Save
+              </button>
+            </div>
+          )}
+        </div>
         <div className="glass-card-solid divide-y divide-gray-100/30">
           {[
-            { icon: User, label: "Full Name", value: user.fullName },
-            { icon: Mail, label: "Email", value: "a.khalil@cairo-uni.edu" },
-            { icon: GraduationCap, label: "University", value: user.school || "Cairo University" },
-            { icon: MapPin, label: "Clinic", value: "Clinic B, Room 204" },
+            { id: 'fullName', icon: User, label: "Full Name", value: profile?.fullName },
+            { id: 'email', icon: Mail, label: "Email", value: profile?.email || 'Not provided', readOnly: true },
+            { id: 'school', icon: GraduationCap, label: "University", value: profile?.school || '' },
+            { id: 'yearLevel', icon: User, label: "Year Level", value: profile?.yearLevel || '' },
+            { id: 'clinicAddress', icon: MapPin, label: "Clinic", value: profile?.clinicAddress || '' },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-3 p-4">
               <div className="w-9 h-9 rounded-xl bg-[#138b94]/8 flex items-center justify-center shrink-0">
@@ -91,9 +172,19 @@ export default function StudentProfileClient({ user }: Props) {
               </div>
               <div className="flex-1">
                 <p className="text-[10px] text-muted-foreground">{item.label}</p>
-                <p className="text-sm font-medium text-foreground">{item.value}</p>
+                {isEditing && !item.readOnly ? (
+                  <input
+                    type="text"
+                    value={formData[item.id as keyof typeof formData]}
+                    onChange={(e) => setFormData({ ...formData, [item.id]: e.target.value })}
+                    className="w-full bg-transparent border-b border-[#138b94]/30 focus:border-[#138b94] outline-none text-sm font-medium text-foreground pb-1"
+                    placeholder={`Enter ${item.label.toLowerCase()}`}
+                  />
+                ) : (
+                  <p className="text-sm font-medium text-foreground">{item.value || <span className="text-gray-400 italic">Not set</span>}</p>
+                )}
               </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              {!isEditing && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
             </div>
           ))}
         </div>

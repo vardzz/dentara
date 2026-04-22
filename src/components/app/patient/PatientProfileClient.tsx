@@ -1,12 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { User, Mail, Phone, MapPin, Bell, Shield, CreditCard, HelpCircle, ChevronRight, Camera, Star, Calendar, LogOut } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Bell, Shield, CreditCard, HelpCircle, ChevronRight, Camera, Star, Calendar, LogOut, Loader2, Edit2, Check, X, Stethoscope } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import SignOutConfirmDialog from '@/components/custom/SignOutConfirmDialog';
+import { useRole } from '@/lib/role-context';
+import { getCurrentUserProfile } from '@/app/actions/user';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -18,13 +20,45 @@ const ITEM: Variants = {
 };
 
 interface Props {
-  user: { fullName: string; role: string; location?: string | null };
+  user: { id?: string; fullName: string; role: string; location?: string | null };
 }
 
-export default function PatientProfileClient({ user }: Props) {
+export default function PatientProfileClient({ user: initialUser }: Props) {
   const router = useRouter();
-  const [showSignOutConfirm, setShowSignOutConfirm] = React.useState(false);
-  const [isSigningOut, setIsSigningOut] = React.useState(false);
+  const { user: authUser } = useRole();
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const [mounted, setMounted] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [formData, setFormData] = useState({
+    fullName: '',
+    age: '',
+    phone: '',
+    location: '',
+    concern: '',
+  });
+
+  useEffect(() => {
+    setMounted(true);
+    async function loadData() {
+      if (!authUser?.id) return;
+      const data = await getCurrentUserProfile(authUser.id);
+      setProfile(data);
+      setFormData({
+        fullName: data?.fullName || '',
+        age: data?.age?.toString() || '',
+        phone: data?.phone || '',
+        location: data?.location || '',
+        concern: data?.concern || '',
+      });
+      setLoading(false);
+    }
+    loadData();
+  }, [authUser?.id]);
 
   const handleConfirmSignOut = React.useCallback(async () => {
     try {
@@ -37,35 +71,73 @@ export default function PatientProfileClient({ user }: Props) {
     }
   }, [router]);
 
+  if (!mounted) return null;
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-[#138b94]" />
+        <p className="text-sm text-muted-foreground font-medium animate-pulse">Loading profile...</p>
+      </div>
+    );
+  }
+
+  const displayName = profile?.fullName || initialUser.fullName;
+  const location = profile?.location || 'Update your location';
+  
+  const handleSave = async () => {
+    // Optional: Add server action call to save profile
+    setIsEditing(false);
+    setProfile((prev: any) => ({ ...prev, ...formData }));
+  };
+
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
       {/* Profile Header */}
       <motion.div variants={ITEM} className="glass-card-solid p-6 text-center">
         <div className="relative w-20 h-20 mx-auto mb-3">
           <div className="w-20 h-20 rounded-3xl bg-[#138b94]/10 flex items-center justify-center text-[#138b94] font-bold text-2xl">
-            {user.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+            {displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
           </div>
-          <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-[#138b94] text-white flex items-center justify-center shadow-lg">
+          <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-[#138b94] text-white flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
             <Camera className="h-3.5 w-3.5" />
           </button>
         </div>
-        <h3 className="text-lg font-bold text-foreground">{user.fullName}</h3>
-        <p className="text-xs text-muted-foreground mt-0.5">{user.location || 'Update your location'}</p>
+        <h3 className="text-lg font-bold text-foreground">{displayName}</h3>
+        <p className="text-xs text-muted-foreground mt-0.5">{location}</p>
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1 shrink-0"><Calendar className="h-3 w-3" /> Joined Mar 2025</span>
-          <span className="flex items-center gap-1 shrink-0"><Star className="h-3 w-3 text-amber-400" /> 4.9 rating</span>
+          <span className="flex items-center gap-1 shrink-0"><Calendar className="h-3 w-3" /> New Patient</span>
+          <span className="flex items-center gap-1 shrink-0"><Star className="h-3 w-3 text-amber-400" /> Unrated</span>
         </div>
       </motion.div>
 
       {/* Personal Info */}
       <motion.div variants={ITEM}>
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Personal Information</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Personal Information</h3>
+          {!isEditing ? (
+            <button onClick={() => setIsEditing(true)} className="text-xs text-[#138b94] font-medium flex items-center gap-1">
+              <Edit2 className="h-3 w-3" /> Edit
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button onClick={() => setIsEditing(false)} className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <X className="h-3 w-3" /> Cancel
+              </button>
+              <button onClick={handleSave} className="text-xs text-[#138b94] font-medium flex items-center gap-1">
+                <Check className="h-3 w-3" /> Save
+              </button>
+            </div>
+          )}
+        </div>
         <div className="glass-card-solid divide-y divide-gray-100/30">
           {[
-            { icon: User, label: "Full Name", value: user.fullName },
-            { icon: Mail, label: "Email", value: "sarah.mitchell@email.com" },
-            { icon: Phone, label: "Phone", value: "+1 (555) 234-5678" },
-            { icon: MapPin, label: "Location", value: user.location || "Dubai, UAE" },
+            { id: 'fullName', icon: User, label: "Full Name", value: profile?.fullName },
+            { id: 'age', icon: User, label: "Age", value: profile?.age?.toString() },
+            { id: 'email', icon: Mail, label: "Email", value: profile?.email || 'Not provided', readOnly: true },
+            { id: 'phone', icon: Phone, label: "Phone", value: profile?.phone || '' },
+            { id: 'location', icon: MapPin, label: "Location", value: profile?.location || '' },
+            { id: 'concern', icon: Stethoscope, label: "Primary Concern", value: profile?.concern || '' },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-3 p-4">
               <div className="w-9 h-9 rounded-xl bg-[#138b94]/8 flex items-center justify-center shrink-0">
@@ -73,9 +145,19 @@ export default function PatientProfileClient({ user }: Props) {
               </div>
               <div className="flex-1">
                 <p className="text-[10px] text-muted-foreground">{item.label}</p>
-                <p className="text-sm font-medium text-foreground">{item.value}</p>
+                {isEditing && !item.readOnly ? (
+                  <input
+                    type={item.id === 'age' ? 'number' : 'text'}
+                    value={formData[item.id as keyof typeof formData] || ''}
+                    onChange={(e) => setFormData({ ...formData, [item.id]: e.target.value })}
+                    className="w-full bg-transparent border-b border-[#138b94]/30 focus:border-[#138b94] outline-none text-sm font-medium text-foreground pb-1"
+                    placeholder={`Enter ${item.label.toLowerCase()}`}
+                  />
+                ) : (
+                  <p className="text-sm font-medium text-foreground">{item.value || <span className="text-gray-400 italic">Not set</span>}</p>
+                )}
               </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              {!isEditing && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
             </div>
           ))}
         </div>

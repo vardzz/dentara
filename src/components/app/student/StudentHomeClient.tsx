@@ -1,9 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Bell, Calendar, MessageCircle, ChevronRight } from 'lucide-react';
+import { Bell, Calendar, MessageCircle, ChevronRight, Loader2 } from 'lucide-react';
+import { useRole } from '@/lib/role-context';
+import { getCurrentUserProfile } from '@/app/actions/user';
+import { useNotificationCenter } from '@/lib/notification-context';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -14,36 +17,59 @@ const ITEM: Variants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
 
-const quotas = [
-  { name: "Tooth Replacement", done: 3, total: 5 },
-  { name: "Tooth Removal", done: 1, total: 10 },
-  { name: "Root Canal", done: 7, total: 8 },
-  { name: "Tooth Filling", done: 4, total: 12 },
-  { name: "Gum Care", done: 2, total: 6 },
-];
-
-const todaySchedule = [
-  { time: "9:00 AM", patient: "Sarah M.", procedure: "Tooth Replacement", room: "B-204" },
-  { time: "11:30 AM", patient: "Omar K.", procedure: "Tooth Removal", room: "A-101" },
-  { time: "2:00 PM", patient: "Fatima R.", procedure: "Gum Care", room: "C-305" },
-];
-
 interface Props {
-  user: { fullName: string; role: string; school?: string | null };
+  user: { id?: string; fullName: string; role: string; school?: string | null };
 }
 
-export default function StudentHomeClient({ user }: Props) {
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
+export default function StudentHomeClient({ user: initialUser }: Props) {
+  const { user: authUser } = useRole();
+  const { unreadCount } = useNotificationCenter();
+  const [mounted, setMounted] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setMounted(true);
+    async function loadData() {
+      if (!authUser?.id) return;
+      const data = await getCurrentUserProfile(authUser.id);
+      setProfile(data);
+      setLoading(false);
+    }
+    loadData();
+  }, [authUser?.id]);
 
   if (!mounted) return null;
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-[#138b94]" />
+        <p className="text-sm text-muted-foreground font-medium animate-pulse">Loading your dashboard...</p>
+      </div>
+    );
+  }
+
+  // Use profile data if available, fallback to initialUser for name
+  const displayName = profile?.fullName || initialUser.fullName;
+  const unreadMessages = unreadCount || 0;
+  const pendingRequests = unreadCount || 0;
+
+  let parsedCases = [];
+  try {
+    if (profile?.casesJson) {
+      parsedCases = JSON.parse(profile.casesJson);
+    }
+  } catch (e) {
+    console.error("Failed to parse casesJson");
+  }
 
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
       {/* Greeting */}
       <motion.div variants={ITEM} className="pt-2">
         <p className="text-muted-foreground text-sm font-medium">Welcome back,</p>
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">Student {user.fullName}</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">Student {displayName}</h2>
       </motion.div>
 
       {/* Alerts */}
@@ -54,7 +80,7 @@ export default function StudentHomeClient({ user }: Props) {
               <Bell className="h-4 w-4 text-[#138b94]" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">3 Requests</p>
+              <p className="text-sm font-semibold text-foreground">{pendingRequests} Requests</p>
               <p className="text-[10px] text-muted-foreground">New patient requests</p>
             </div>
           </div>
@@ -65,8 +91,8 @@ export default function StudentHomeClient({ user }: Props) {
               <MessageCircle className="h-4 w-4 text-[#0e2b5c]" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">5 Unread</p>
-              <p className="text-[10px] text-muted-foreground">Chat messages</p>
+              <p className="text-sm font-semibold text-foreground">{unreadMessages} Unread</p>
+              <p className="text-[10px] text-muted-foreground">Notifications</p>
             </div>
           </div>
         </div>
@@ -76,48 +102,32 @@ export default function StudentHomeClient({ user }: Props) {
       <motion.div variants={ITEM}>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Clinical Quota Progress</h3>
         <div className="glass-card-solid p-5 space-y-4">
-          {quotas.map((q, i) => {
-            const pct = Math.round((q.done / q.total) * 100);
-            return (
-              <div key={i} className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-foreground">{q.name}</span>
-                  <span className="text-xs text-muted-foreground tabular-nums">{q.done}/{q.total}</span>
+          {parsedCases.length > 0 ? (
+            parsedCases.map((q: any, i: number) => {
+              const total = q.total || 1;
+              const pct = Math.min(100, Math.round(((q.done || 0) / total) * 100));
+              return (
+                <div key={i} className="space-y-1.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-foreground">{q.name || 'Unknown Case'}</span>
+                    <span className="text-xs text-muted-foreground tabular-nums">{q.done || 0}/{q.total || 0}</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pct}%` }}
+                      transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      className="h-full bg-gradient-to-r from-[#138b94] to-[#0e2b5c]/60 rounded-full"
+                    />
+                  </div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${pct}%` }}
-                    transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    className="h-full bg-gradient-to-r from-[#138b94] to-[#0e2b5c]/60 rounded-full"
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </motion.div>
-
-      {/* Today's Schedule */}
-      <motion.div variants={ITEM}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Today&apos;s Schedule</h3>
-          <button className="text-xs text-[#138b94] font-medium flex items-center gap-0.5">
-            View all <ChevronRight className="h-3 w-3" />
-          </button>
-        </div>
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-          {todaySchedule.map((s, i) => (
-            <div key={i} className="glass-card-solid p-4 min-w-[180px] shrink-0 hover-lift cursor-pointer">
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="h-3.5 w-3.5 text-[#138b94]" />
-                <span className="text-xs font-semibold text-[#138b94]">{s.time}</span>
-              </div>
-              <p className="text-sm font-semibold text-foreground">{s.patient}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{s.procedure}</p>
-              <p className="text-[10px] text-muted-foreground mt-1">Room {s.room}</p>
+              );
+            })
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-sm text-muted-foreground">No cases tracked yet.</p>
             </div>
-          ))}
+          )}
         </div>
       </motion.div>
     </motion.div>

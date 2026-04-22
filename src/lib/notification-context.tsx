@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import {
   getNotificationStateAction,
   markAsReadAction,
@@ -18,7 +19,7 @@ type NotificationContextValue = {
   notifications: NotificationPayload[];
   pendingBookings: PendingBookingPayload[];
   isLoading: boolean;
-  refresh: () => Promise<void>;
+  refresh: () => Promise<number | null>;
   markAsRead: (notificationId: string) => Promise<void>;
   acceptOffer: (notificationId: string) => Promise<void>;
   rejectOffer: (notificationId: string) => Promise<void>;
@@ -28,6 +29,7 @@ type NotificationContextValue = {
 const NotificationContext = React.createContext<NotificationContextValue | null>(null);
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [notifications, setNotifications] = React.useState<NotificationPayload[]>([]);
   const [pendingBookings, setPendingBookings] = React.useState<PendingBookingPayload[]>([]);
@@ -113,22 +115,26 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const markAsRead = React.useCallback(async (notificationId: string) => {
     await markAsReadAction(notificationId);
     await refresh();
-  }, [refresh]);
+    router.refresh();
+  }, [refresh, router]);
 
   const acceptOffer = React.useCallback(async (notificationId: string) => {
     await acceptBookingNotificationAction(notificationId);
     await refresh();
-  }, [refresh]);
+    router.refresh();
+  }, [refresh, router]);
 
   const rejectOffer = React.useCallback(async (notificationId: string) => {
     await rejectBookingNotificationAction(notificationId);
     await refresh();
-  }, [refresh]);
+    router.refresh();
+  }, [refresh, router]);
 
   const completeOffer = React.useCallback(async (notificationId: string, scheduledAtIso: string, notes?: string) => {
     await completeOfferBookingAction(notificationId, scheduledAtIso, notes);
     await refresh();
-  }, [refresh]);
+    router.refresh();
+  }, [refresh, router]);
 
   const value = React.useMemo(
     () => ({

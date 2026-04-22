@@ -16,7 +16,7 @@ export type NotificationPayload = {
   };
   booking: {
     id: string;
-    status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+    status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
     scheduledAt: string;
     notes: string | null;
     studentId: string;
@@ -29,7 +29,7 @@ export type NotificationPayload = {
 
 export type PendingBookingPayload = {
   id: string;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
   scheduledAt: string;
   notes: string | null;
   student: { id: string; fullName: string };
