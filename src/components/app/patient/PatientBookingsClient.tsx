@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Calendar, Clock, MapPin, CheckCircle2, XCircle } from 'lucide-react';
-import type { BookingStatus } from '@prisma/client';
+import { BookingStatus } from '@prisma/client';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -28,10 +28,11 @@ type PatientBookingsClientProps = {
   bookings: PatientBookingItem[];
 };
 
-const statusConfig: Record<BookingStatus, { label: string; color: string }> = {
+const statusConfig: Record<string, { label: string; color: string }> = {
   PENDING: { label: 'Pending', color: 'bg-amber-500/10 text-amber-700' },
   CONFIRMED: { label: 'Confirmed', color: 'bg-emerald-500/10 text-emerald-700' },
   CANCELLED: { label: 'Cancelled', color: 'bg-red-100/70 text-red-600' },
+  COMPLETED: { label: 'Completed', color: 'bg-blue-500/10 text-blue-700' },
 };
 
 function formatDateLabel(iso: string): string {
@@ -50,7 +51,8 @@ function formatTimeLabel(iso: string): string {
 }
 
 function isUpcoming(status: BookingStatus, scheduledAtIso: string): boolean {
-  if (status === 'CANCELLED') return false;
+  const s = status as string;
+  if (s === 'CANCELLED' || s === 'COMPLETED') return false;
   return new Date(scheduledAtIso).getTime() >= Date.now();
 }
 
@@ -58,8 +60,9 @@ export default function PatientBookingsClient({ bookings }: PatientBookingsClien
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
 
   const upcomingCount = bookings.filter((booking) => isUpcoming(booking.status, booking.scheduledAt)).length;
-  const confirmedCount = bookings.filter((booking) => booking.status === 'CONFIRMED').length;
-  const cancelledCount = bookings.filter((booking) => booking.status === 'CANCELLED').length;
+  const confirmedCount = bookings.filter((booking) => (booking.status as string) === 'CONFIRMED').length;
+  const completedCount = bookings.filter((booking) => (booking.status as string) === 'COMPLETED').length;
+  const cancelledCount = bookings.filter((booking) => (booking.status as string) === 'CANCELLED').length;
 
   const filteredBookings = bookings.filter((booking) =>
     tab === 'upcoming' ? isUpcoming(booking.status, booking.scheduledAt) : !isUpcoming(booking.status, booking.scheduledAt),
@@ -73,10 +76,11 @@ export default function PatientBookingsClient({ bookings }: PatientBookingsClien
       </motion.div>
 
       {/* Summary Cards */}
-      <motion.div variants={ITEM} className="grid grid-cols-3 gap-3">
+      <motion.div variants={ITEM} className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Upcoming', value: String(upcomingCount), icon: Clock },
           { label: 'Confirmed', value: String(confirmedCount), icon: CheckCircle2 },
+          { label: 'Completed', value: String(completedCount), icon: CheckCircle2 },
           { label: 'Cancelled', value: String(cancelledCount), icon: XCircle },
         ].map((stat, i) => (
           <div key={i} className="glass-card-solid p-3 sm:p-4 text-center">
@@ -112,7 +116,8 @@ export default function PatientBookingsClient({ bookings }: PatientBookingsClien
           </div>
         ) : (
           filteredBookings.map((booking) => {
-            const sc = statusConfig[booking.status];
+            const s = booking.status as string;
+            const sc = statusConfig[s] || statusConfig['PENDING'];
 
             return (
               <div key={booking.id} className="glass-card-solid p-4 hover-lift cursor-pointer">

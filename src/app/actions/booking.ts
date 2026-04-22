@@ -300,3 +300,33 @@ export async function rejectBookingNotificationAction(notificationId: string) {
     notificationId: result.followup.id,
   };
 }
+
+export async function completeBookingAction(bookingId: string) {
+  const session = await requireSession();
+
+  if (session.user.role !== 'student') {
+    throw new Error('Only students can complete bookings');
+  }
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+  });
+
+  if (!booking || booking.studentId !== session.user.id) {
+    throw new Error('Booking not found');
+  }
+
+  if (booking.status !== BookingStatus.CONFIRMED) {
+    throw new Error('Only confirmed bookings can be completed');
+  }
+
+  const updatedBooking = await prisma.booking.update({
+    where: { id: bookingId },
+    data: { status: BookingStatus.COMPLETED },
+  });
+
+  return {
+    success: true as const,
+    bookingId: updatedBooking.id,
+  };
+}
