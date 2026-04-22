@@ -14,6 +14,7 @@ import {
   User2,
   ArrowLeft,
 } from 'lucide-react';
+import BookingTimePicker from '@/components/custom/BookingTimePicker';
 import { toPlainCaseLabel } from '@/lib/plain-language';
 
 export type ProfileRole = 'student' | 'patient';
@@ -36,6 +37,7 @@ export type StudentProfile = BaseProfile & {
   yearLevel?: string;
   clinicAddress: string;
   cases?: CaseRequirement[];
+  availabilityJson?: string | null;
 };
 
 export type PatientProfile = BaseProfile & {
@@ -50,7 +52,11 @@ type ProfileDetailModalProps = {
   open: boolean;
   onClose: () => void;
   selectedUser: ProfileModalUser | null;
-  onBookingAction?: (user: ProfileModalUser) => Promise<void> | void;
+  onBookingAction?: (payload: {
+    user: ProfileModalUser;
+    scheduledAt?: Date;
+    notes?: string;
+  }) => Promise<void> | void;
 };
 
 function getInitials(fullName: string): string {
@@ -84,11 +90,14 @@ export default function ProfileDetailModal({
   const [isMessageLoading, setIsMessageLoading] = useState(false);
   const [isBookingLoading, setIsBookingLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastTone, setToastTone] = useState<'success' | 'error' | 'info'>('success');
+  const [selectedSchedule, setSelectedSchedule] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!open) {
       setIsMessageLoading(false);
       setIsBookingLoading(false);
+      setSelectedSchedule(null);
     }
   }, [open]);
 
@@ -178,6 +187,12 @@ export default function ProfileDetailModal({
       return;
     }
 
+    if (activeUser.role === 'student' && !selectedSchedule) {
+      setToastTone('info');
+      setToastMessage('Please choose an available date and time first.');
+      return;
+    }
+
     setIsBookingLoading(true);
 
     try {
@@ -186,19 +201,37 @@ export default function ProfileDetailModal({
       // - emit the realtime payload that powers the live dashboard stream
       // - return the canonical booking id so the UI can reconcile optimistic state
       if (onBookingAction) {
-        await onBookingAction(activeUser);
+        await onBookingAction({
+          user: activeUser,
+          scheduledAt: selectedSchedule ?? undefined,
+        });
       } else {
         await new Promise((resolve) => window.setTimeout(resolve, 700));
       }
 
-      setToastMessage('Booking request sent to your live dashboard');
+      setToastTone('success');
+      setToastMessage(
+        activeUser.role === 'student'
+          ? 'Booking request sent to your live dashboard'
+          : 'Treatment offer sent to the patient',
+      );
       onClose();
-    } catch {
-      setToastMessage('Unable to send the request right now. Please try again.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to send the request right now. Please try again.';
+      setToastTone('error');
+      setToastMessage(message);
     } finally {
       setIsBookingLoading(false);
     }
   };
+
+  const toastTitle = toastTone === 'success' ? 'Success' : toastTone === 'error' ? 'Unable to book' : 'Action needed';
+  const toastAccentClass =
+    toastTone === 'success'
+      ? 'bg-[#138b94]/10 text-[#138b94]'
+      : toastTone === 'error'
+        ? 'bg-red-500/10 text-red-600'
+        : 'bg-amber-500/10 text-amber-600';
 
   return (
     <>
@@ -346,6 +379,17 @@ export default function ProfileDetailModal({
                         </div>
                       </div>
                     ) : null}
+
+                    {isStudent ? (
+                      <div className="mt-6">
+                        <BookingTimePicker
+                          availabilityJson={selectedUser.availabilityJson}
+                          value={selectedSchedule}
+                          onChange={setSelectedSchedule}
+                          title="Select From Available Slots"
+                        />
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="sticky bottom-0 border-t border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.7)_0%,rgba(248,250,252,0.98)_100%)] px-5 py-4 backdrop-blur-xl sm:px-7">
@@ -389,11 +433,11 @@ export default function ProfileDetailModal({
             className="fixed bottom-4 left-1/2 z-[140] w-[min(92vw,420px)] -translate-x-1/2 rounded-[24px] border border-white/70 bg-[linear-gradient(160deg,rgba(255,255,255,0.98)_0%,rgba(240,247,249,0.96)_100%)] px-4 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.12)] backdrop-blur-xl"
           >
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-2xl bg-[#138b94]/10 text-[#138b94]">
+              <div className={`flex size-10 items-center justify-center rounded-2xl ${toastAccentClass}`}>
                 <Sparkles className="size-4" />
               </div>
               <div>
-                <p className="text-sm font-bold tracking-tight text-[#0a1f44]">Success</p>
+                <p className="text-sm font-bold tracking-tight text-[#0a1f44]">{toastTitle}</p>
                 <p className="text-sm font-medium text-slate-500">{toastMessage}</p>
               </div>
             </div>

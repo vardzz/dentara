@@ -7,6 +7,8 @@ import { Home, Search, Calendar, MessageCircle, User, LogOut } from 'lucide-reac
 import { signOut } from 'next-auth/react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SignOutConfirmDialog from '@/components/custom/SignOutConfirmDialog';
+import NotificationBell from '@/components/custom/NotificationBell';
+import NotificationBellBoundary from '@/components/custom/NotificationBellBoundary';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -71,11 +73,23 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
 
           {/* Role badge */}
           <div className="mx-5 mb-6">
-            <div className="bg-gradient-to-r from-[#138b94]/10 to-transparent px-4 py-2.5 rounded-2xl border border-[#138b94]/10 flex items-center gap-2.5">
-              <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
-              <span className="text-[10px] font-black tracking-widest uppercase text-[#0e2b5c]">
-                {role}
-              </span>
+            <div className="bg-gradient-to-r from-[#138b94]/10 to-transparent px-4 py-2.5 rounded-2xl border border-[#138b94]/10 flex items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
+                <span className="text-[10px] font-black tracking-widest uppercase text-[#0e2b5c]">
+                  {role}
+                </span>
+              </div>
+              <NotificationBellBoundary>
+                <NotificationBell />
+              </NotificationBellBoundary>
+            </div>
+          </div>
+
+          <div className="mx-5 mb-4">
+            <div className="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 shadow-[0_14px_32px_-22px_rgba(10,31,68,0.35)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Live Alerts</p>
+              <p className="mt-1 text-xs font-medium text-slate-500">New booking requests and offers appear here instantly.</p>
             </div>
           </div>
 
@@ -172,11 +186,16 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
           <img src="/assets/icon.png" alt="Dentara" className="h-6 w-auto object-contain drop-shadow-sm" />
           <span className="text-lg font-bold tracking-tight text-[#0e2b5c]">DENTARA</span>
         </div>
-        <div className="bg-white/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/80 shadow-sm flex items-center gap-2">
-          <div className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
-          <span className="text-[10px] font-black tracking-widest uppercase text-[#0e2b5c]">
-            {role}
-          </span>
+        <div className="flex items-center gap-2">
+          <NotificationBellBoundary>
+            <NotificationBell />
+          </NotificationBellBoundary>
+          <div className="bg-white/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/80 shadow-sm flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
+            <span className="text-[10px] font-black tracking-widest uppercase text-[#0e2b5c]">
+              {role}
+            </span>
+          </div>
         </div>
       </header>
 

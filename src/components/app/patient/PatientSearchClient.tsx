@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Search, Star, MapPin } from 'lucide-react';
 import { searchStudents } from '@/app/actions/search';
+import { createBookingRequestAction } from '@/app/actions/booking';
 import ProfileDetailModal, { type ProfileModalUser } from '@/components/custom/ProfileDetailModal';
 import { PLAIN_CASE_FILTERS, matchesPlainCaseLabel, toPlainCaseLabel } from '@/lib/plain-language';
 
@@ -29,6 +30,7 @@ type StudentSearchItem = {
   yearLevel: string;
   clinicAddress: string;
   cases: CaseRequirement[];
+  availabilityJson: string | null;
 };
 
 function getInitials(fullName: string): string {
@@ -50,6 +52,16 @@ function getProfileMeta(id: string): { rating: string; reviews: number } {
   const rating = (4.5 + (seed % 5) * 0.1).toFixed(1);
   const reviews = 20 + (seed % 41);
   return { rating, reviews };
+}
+
+function formatLocalDateTime(date: Date): string {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  const hh = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}:00`;
 }
 
 export default function PatientSearchClient() {
@@ -153,6 +165,7 @@ export default function PatientSearchClient() {
             yearLevel: student.yearLevel,
             clinicAddress: student.clinicAddress,
             cases: student.cases,
+            availabilityJson: student.availabilityJson,
             chatId: `chat-${student.id}`,
           };
 
@@ -210,6 +223,13 @@ export default function PatientSearchClient() {
         open={selectedProfile !== null}
         onClose={() => setSelectedProfile(null)}
         selectedUser={selectedProfile}
+        onBookingAction={async ({ user, scheduledAt }) => {
+          if (user.role !== 'student' || !scheduledAt) {
+            throw new Error('Booking requires a student and selected schedule.');
+          }
+
+          await createBookingRequestAction(user.id, formatLocalDateTime(scheduledAt));
+        }}
       />
     </motion.div>
   );

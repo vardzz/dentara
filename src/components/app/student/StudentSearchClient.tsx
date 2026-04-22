@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { searchPatients } from '@/app/actions/search';
+import { createOfferAction } from '@/app/actions/booking';
 import ProfileDetailModal, { type ProfileModalUser } from '@/components/custom/ProfileDetailModal';
 import { toPlainCaseLabel } from '@/lib/plain-language';
 
@@ -196,8 +197,12 @@ export default function StudentSearchClient() {
         open={selectedProfile !== null}
         onClose={() => setSelectedProfile(null)}
         selectedUser={selectedProfile}
-        onBookingAction={async () => {
-          await new Promise((resolve) => setTimeout(resolve, 700));
+        onBookingAction={async ({ user }) => {
+          if (user.role !== 'patient') {
+            throw new Error('Offers can only be sent to patients.');
+          }
+
+          await createOfferAction(user.id);
         }}
       />
     </motion.div>

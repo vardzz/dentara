@@ -23,6 +23,7 @@ type StudentDiscoveryItem = {
   yearLevel: string;
   clinicAddress: string;
   cases: CaseRequirement[];
+  availabilityJson: string | null;
 };
 
 type SearchSuccess<T> = {
@@ -256,6 +257,7 @@ export async function searchStudents(
         { name: 'Prosthodontics', count: 2 },
         { name: 'Endodontics', count: 1 },
       ],
+      availabilityJson: JSON.stringify({ Mon: true, Tue: true, Wed: true, Thu: true, Fri: true }),
     },
     {
       id: 'mock-student-2',
@@ -267,6 +269,7 @@ export async function searchStudents(
         { name: 'Extraction', count: 3 },
         { name: 'Oral Prophylaxis', count: 2 },
       ],
+      availabilityJson: JSON.stringify({ Mon: true, Tue: true, Wed: false, Thu: true, Fri: true }),
     },
     {
       id: 'mock-student-3',
@@ -278,6 +281,7 @@ export async function searchStudents(
         { name: 'Operative Dentistry', count: 2 },
         { name: 'Crown Preparation', count: 1 },
       ],
+      availabilityJson: JSON.stringify({ Tue: true, Thu: true, Sat: true }),
     },
   ];
 
@@ -339,6 +343,7 @@ export async function searchStudents(
         yearLevel: true,
         clinicAddress: true,
         casesJson: true,
+        availabilityJson: true,
       },
       orderBy: {
         createdAt: 'desc',
@@ -368,6 +373,7 @@ export async function searchStudents(
       yearLevel: student.yearLevel ?? '',
       clinicAddress: student.clinicAddress ?? '',
       cases: parseCasesJson(student.casesJson),
+      availabilityJson: student.availabilityJson,
     }));
 
     const combined = [...normalizedDbStudents, ...filteredMockStudents];
