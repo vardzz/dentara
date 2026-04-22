@@ -53,6 +53,7 @@ enum NotificationStatus {
 enum BookingStatus {
   PENDING
   CONFIRMED
+  COMPLETED
   CANCELLED
 }
 
@@ -80,6 +81,7 @@ model Booking {
   patientId   String
   scheduledAt DateTime
   status      BookingStatus @default(PENDING)
+  caseLabel   String?
   notes       String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt

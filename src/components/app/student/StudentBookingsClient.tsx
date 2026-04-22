@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Calendar, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { Calendar, Clock, CheckCircle2, XCircle, MapPin } from 'lucide-react';
+import type { BookingStatus } from '@prisma/client';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -14,21 +15,55 @@ const ITEM: Variants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
 
-const bookings = [
-  { patient: "Sarah Mitchell", procedure: "Tooth Replacement", date: "Mar 26, 2026", time: "10:30 AM", location: "Clinic B, Room 204", status: "upcoming" as const, quota: "Tooth Replacement" },
-  { patient: "James Peterson", procedure: "Tooth Removal", date: "Mar 27, 2026", time: "9:00 AM", location: "Clinic D, Room 101", status: "upcoming" as const, quota: "Tooth Removal" },
-  { patient: "Maria Garcia", procedure: "Gum Care", date: "Mar 20, 2026", time: "2:00 PM", location: "Clinic A, Room 105", status: "completed" as const, quota: "Gum Care" },
-  { patient: "Robert Kim", procedure: "Root Canal", date: "Mar 14, 2026", time: "10:00 AM", location: "Clinic C, Room 301", status: "completed" as const, quota: "Root Canal" },
-];
-
-const statusConfig = {
-  upcoming: { label: "Upcoming", color: "bg-[#138b94]/10 text-[#138b94]" },
-  completed: { label: "Completed", color: "bg-emerald-500/10 text-emerald-600" },
-  cancelled: { label: "Cancelled", color: "bg-red-100/60 text-red-600" },
+type StudentBookingItem = {
+  id: string;
+  status: BookingStatus;
+  scheduledAt: string;
+  notes: string | null;
+  patientName: string;
+  clinicAddress: string | null;
 };
 
-export default function StudentBookingsClient() {
+type StudentBookingsClientProps = {
+  bookings: StudentBookingItem[];
+};
+
+const statusConfig: Record<BookingStatus, { label: string; color: string }> = {
+  PENDING: { label: 'Pending', color: 'bg-amber-500/10 text-amber-700' },
+  CONFIRMED: { label: 'Confirmed', color: 'bg-emerald-500/10 text-emerald-700' },
+  CANCELLED: { label: 'Cancelled', color: 'bg-red-100/70 text-red-600' },
+};
+
+function formatDateLabel(iso: string): string {
+  return new Date(iso).toLocaleDateString([], {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function formatTimeLabel(iso: string): string {
+  return new Date(iso).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function isUpcoming(status: BookingStatus, scheduledAtIso: string): boolean {
+  if (status === 'CANCELLED') return false;
+  return new Date(scheduledAtIso).getTime() >= Date.now();
+}
+
+export default function StudentBookingsClient({ bookings }: StudentBookingsClientProps) {
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+
+  const upcomingCount = bookings.filter((booking) => isUpcoming(booking.status, booking.scheduledAt)).length;
+  const confirmedCount = bookings.filter((booking) => booking.status === 'CONFIRMED').length;
+  const cancelledCount = bookings.filter((booking) => booking.status === 'CANCELLED').length;
+
+  const filteredBookings = bookings.filter((booking) =>
+    tab === 'upcoming' ? isUpcoming(booking.status, booking.scheduledAt) : !isUpcoming(booking.status, booking.scheduledAt),
+  );
 
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
@@ -39,9 +74,9 @@ export default function StudentBookingsClient() {
 
       <motion.div variants={ITEM} className="grid grid-cols-3 gap-3">
         {[
-          { label: "Upcoming", value: "2", icon: Clock },
-          { label: "Completed", value: "12", icon: CheckCircle2 },
-          { label: "Cancelled", value: "1", icon: XCircle },
+          { label: 'Upcoming', value: String(upcomingCount), icon: Clock },
+          { label: 'Confirmed', value: String(confirmedCount), icon: CheckCircle2 },
+          { label: 'Cancelled', value: String(cancelledCount), icon: XCircle },
         ].map((stat, i) => (
           <div key={i} className="glass-card-solid p-3 sm:p-4 text-center">
             <stat.icon className="h-4 w-4 text-[#138b94] mx-auto mb-1.5" />
@@ -66,29 +101,35 @@ export default function StudentBookingsClient() {
       </motion.div>
 
       <motion.div variants={ITEM} className="space-y-3">
-        {bookings
-          .filter(b => tab === "upcoming" ? b.status === "upcoming" : b.status !== "upcoming")
-          .map((b, i) => {
-            const sc = statusConfig[b.status];
+        {!filteredBookings.length ? (
+          <div className="glass-card-solid p-4">
+            <p className="text-sm font-medium text-muted-foreground">
+              {tab === 'upcoming' ? 'No upcoming bookings yet.' : 'No past bookings yet.'}
+            </p>
+          </div>
+        ) : (
+          filteredBookings.map((booking) => {
+            const sc = statusConfig[booking.status];
+
             return (
-              <div key={i} className="glass-card-solid p-4 hover-lift cursor-pointer">
+              <div key={booking.id} className="glass-card-solid p-4 hover-lift cursor-pointer">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h4 className="font-semibold text-foreground text-sm">{b.patient}</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">{b.procedure}</p>
+                    <h4 className="font-semibold text-foreground text-sm">{booking.patientName}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">Patient</p>
                   </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sc.color}`}>{sc.label}</span>
-                    <span className="text-[10px] bg-[#0e2b5c]/10 text-[#0e2b5c] px-2 py-0.5 rounded-full font-medium">{b.quota}</span>
-                  </div>
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sc.color}`}>{sc.label}</span>
                 </div>
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{b.date}</span>
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{b.time}</span>
+                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{formatDateLabel(booking.scheduledAt)}</span>
+                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatTimeLabel(booking.scheduledAt)}</span>
+                  <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{booking.clinicAddress || 'Clinic location not available'}</span>
                 </div>
+                {booking.notes ? <p className="mt-2 text-xs text-muted-foreground">Notes: {booking.notes}</p> : null}
               </div>
             );
-          })}
+          })
+        )}
       </motion.div>
     </motion.div>
   );
