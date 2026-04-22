@@ -86,12 +86,6 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
             </div>
           </div>
 
-          <div className="mx-5 mb-4">
-            <div className="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 shadow-[0_14px_32px_-22px_rgba(10,31,68,0.35)]">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Live Alerts</p>
-              <p className="mt-1 text-xs font-medium text-slate-500">New booking requests and offers appear here instantly.</p>
-            </div>
-          </div>
 
           {/* Nav Items */}
           <nav className="flex-1 px-3 space-y-1">
