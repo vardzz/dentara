@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { searchPatients } from '@/app/actions/search';
+import ProfileDetailModal, { type ProfileModalUser } from '@/components/custom/ProfileDetailModal';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -50,6 +51,7 @@ export default function StudentSearchClient() {
   const [patients, setPatients] = useState<PatientSearchItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<ProfileModalUser | null>(null);
 
   React.useEffect(() => {
     let isCancelled = false;
@@ -133,9 +135,29 @@ export default function StudentSearchClient() {
         {!isLoading && !error && patients.map((patient) => {
           const priority = getPriorityFromConcern(patient.concern);
           const isMock = patient.id.startsWith('mock-');
+          const selectedPatient: ProfileModalUser = {
+            id: patient.id,
+            fullName: patient.fullName,
+            role: 'patient',
+            concern: patient.concern,
+            location: patient.location,
+            chatId: `chat-${patient.id}`,
+          };
 
           return (
-            <div key={patient.id} className="glass-card-solid p-4 hover-lift cursor-pointer">
+            <div
+              key={patient.id}
+              className="glass-card-solid p-4 hover-lift cursor-pointer"
+              onClick={() => setSelectedProfile(selectedPatient)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setSelectedProfile(selectedPatient);
+                }
+              }}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-[#0e2b5c]/10 flex items-center justify-center text-[#138b94] font-bold text-xs shrink-0">
@@ -168,6 +190,15 @@ export default function StudentSearchClient() {
           );
         })}
       </motion.div>
+
+      <ProfileDetailModal
+        open={selectedProfile !== null}
+        onClose={() => setSelectedProfile(null)}
+        selectedUser={selectedProfile}
+        onBookingAction={async () => {
+          await new Promise((resolve) => setTimeout(resolve, 700));
+        }}
+      />
     </motion.div>
   );
 }

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Search, Star, MapPin } from 'lucide-react';
 import { searchStudents } from '@/app/actions/search';
+import ProfileDetailModal, { type ProfileModalUser } from '@/components/custom/ProfileDetailModal';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -84,6 +85,7 @@ export default function PatientSearchClient() {
   const [students, setStudents] = useState<StudentSearchItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<ProfileModalUser | null>(null);
 
   React.useEffect(() => {
     let isCancelled = false;
@@ -170,9 +172,31 @@ export default function PatientSearchClient() {
           const isMock = student.id.startsWith('mock-');
           const specialty = getPrimarySpecialty(student.cases);
           const profileMeta = getProfileMeta(student.id);
+          const selectedStudent: ProfileModalUser = {
+            id: student.id,
+            fullName: student.fullName,
+            role: 'student',
+            school: student.school,
+            yearLevel: student.yearLevel,
+            clinicAddress: student.clinicAddress,
+            cases: student.cases,
+            chatId: `chat-${student.id}`,
+          };
 
           return (
-            <div key={student.id} className="glass-card-solid p-4 hover-lift cursor-pointer">
+            <div
+              key={student.id}
+              className="glass-card-solid p-4 hover-lift cursor-pointer"
+              onClick={() => setSelectedProfile(selectedStudent)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setSelectedProfile(selectedStudent);
+                }
+              }}
+            >
               <div className="flex items-start gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-[#138b94]/10 flex items-center justify-center text-[#138b94] font-bold text-sm shrink-0">
                   {getInitials(student.fullName)}
@@ -208,6 +232,12 @@ export default function PatientSearchClient() {
           );
         })}
       </motion.div>
+
+      <ProfileDetailModal
+        open={selectedProfile !== null}
+        onClose={() => setSelectedProfile(null)}
+        selectedUser={selectedProfile}
+      />
     </motion.div>
   );
 }
