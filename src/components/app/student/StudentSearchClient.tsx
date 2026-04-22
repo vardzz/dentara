@@ -136,7 +136,6 @@ export default function StudentSearchClient() {
 
         {!isLoading && !error && patients.map((patient) => {
           const priority = getPriorityFromConcern(patient.concern);
-          const isMock = patient.id.startsWith('mock-');
           const selectedPatient: ProfileModalUser = {
             id: patient.id,
             fullName: patient.fullName,
@@ -184,7 +183,7 @@ export default function StudentSearchClient() {
                     {priority} Priority
                   </span>
                   <span className="text-[10px] text-muted-foreground">
-                    {isMock ? 'Premium Mock' : 'Verified User'}
+                    Verified User
                   </span>
                 </div>
               </div>

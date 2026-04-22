@@ -154,7 +154,6 @@ export default function PatientSearchClient() {
         )}
 
         {!isLoading && !error && visibleStudents.map((student) => {
-          const isMock = student.id.startsWith('mock-');
           const specialty = getPrimarySpecialty(student.cases);
           const profileMeta = getProfileMeta(student.id);
           const selectedStudent: ProfileModalUser = {
@@ -190,12 +189,8 @@ export default function PatientSearchClient() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <h4 className="font-semibold text-foreground text-sm truncate">{student.fullName}</h4>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                      isMock
-                        ? 'bg-[#138b94]/10 text-[#138b94]'
-                        : 'bg-emerald-100/70 text-emerald-700'
-                    }`}>
-                      {isMock ? 'Premium Mock' : 'Verified User'}
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100/70 text-emerald-700">
+                      Verified User
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">

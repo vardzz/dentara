@@ -127,27 +127,6 @@ export async function searchPatients(
   query?: string,
   locationFilter?: string,
 ): Promise<SearchResponse<PatientDiscoveryItem>> {
-  const mockPatients: PatientDiscoveryItem[] = [
-    {
-      id: 'mock-patient-1',
-      fullName: 'Isabella Torres',
-      concern: 'Impacted Wisdom Tooth',
-      location: 'Makati City',
-    },
-    {
-      id: 'mock-patient-2',
-      fullName: 'Daniel Cruz',
-      concern: 'Deep Dental Cleaning',
-      location: 'Taguig City',
-    },
-    {
-      id: 'mock-patient-3',
-      fullName: 'Sofia Ramirez',
-      concern: 'Front Tooth Restoration',
-      location: 'Quezon City',
-    },
-  ];
-
   try {
     const session = await auth();
     const normalizedQuery = normalize(query);
@@ -193,27 +172,13 @@ export async function searchPatients(
       },
     });
 
-    const filteredMockPatients = mockPatients.filter((patient) => {
-      const matchesQuery =
-        !normalizedQuery ||
-        normalize(patient.fullName).includes(normalizedQuery) ||
-        normalize(patient.concern).includes(normalizedQuery);
-
-      const matchesLocation =
-        !normalizedLocation ||
-        normalize(patient.location).includes(normalizedLocation);
-
-      return matchesQuery && matchesLocation;
-    });
-
-    const normalizedDbPatients: PatientDiscoveryItem[] = dbPatients.map((patient) => ({
+    const combined: PatientDiscoveryItem[] = dbPatients.map((patient) => ({
       id: patient.id,
       fullName: patient.fullName,
       concern: patient.concern ?? '',
       location: patient.location ?? '',
     }));
 
-    const combined = [...normalizedDbPatients, ...filteredMockPatients];
     const ranked = combined
       .map((patient, index) => ({
         patient,
@@ -246,45 +211,6 @@ export async function searchStudents(
   schoolFilter?: string,
   locationFilter?: string,
 ): Promise<SearchResponse<StudentDiscoveryItem>> {
-  const mockStudents: StudentDiscoveryItem[] = [
-    {
-      id: 'mock-student-1',
-      fullName: 'Clinician Mateo',
-      school: 'UP College of Dentistry',
-      yearLevel: '5th Year',
-      clinicAddress: 'Pedro Gil, Manila',
-      cases: [
-        { name: 'Prosthodontics', count: 2 },
-        { name: 'Endodontics', count: 1 },
-      ],
-      availabilityJson: JSON.stringify({ Mon: true, Tue: true, Wed: true, Thu: true, Fri: true }),
-    },
-    {
-      id: 'mock-student-2',
-      fullName: 'Ariana Delgado',
-      school: 'Centro Escolar University School of Dentistry',
-      yearLevel: '4th Year',
-      clinicAddress: 'Mendiola, Manila',
-      cases: [
-        { name: 'Extraction', count: 3 },
-        { name: 'Oral Prophylaxis', count: 2 },
-      ],
-      availabilityJson: JSON.stringify({ Mon: true, Tue: true, Wed: false, Thu: true, Fri: true }),
-    },
-    {
-      id: 'mock-student-3',
-      fullName: 'Liam Bautista',
-      school: 'University of the East College of Dentistry',
-      yearLevel: '5th Year',
-      clinicAddress: 'Caloocan City',
-      cases: [
-        { name: 'Operative Dentistry', count: 2 },
-        { name: 'Crown Preparation', count: 1 },
-      ],
-      availabilityJson: JSON.stringify({ Tue: true, Thu: true, Sat: true }),
-    },
-  ];
-
   try {
     const session = await auth();
     const normalizedQuery = normalize(query);
@@ -350,23 +276,7 @@ export async function searchStudents(
       },
     });
 
-    const filteredMockStudents = mockStudents.filter((student) => {
-      const matchesQuery =
-        !normalizedQuery ||
-        normalize(student.fullName).includes(normalizedQuery) ||
-        normalize(student.clinicAddress).includes(normalizedQuery);
-
-      const matchesSchool =
-        !normalizedSchool || normalize(student.school) === normalizedSchool;
-
-      const matchesLocation =
-        !normalizedLocation ||
-        normalize(student.clinicAddress).includes(normalizedLocation);
-
-      return matchesQuery && matchesSchool && matchesLocation;
-    });
-
-    const normalizedDbStudents: StudentDiscoveryItem[] = dbStudents.map((student) => ({
+    const combined: StudentDiscoveryItem[] = dbStudents.map((student) => ({
       id: student.id,
       fullName: student.fullName,
       school: student.school ?? '',
@@ -376,7 +286,6 @@ export async function searchStudents(
       availabilityJson: student.availabilityJson,
     }));
 
-    const combined = [...normalizedDbStudents, ...filteredMockStudents];
     const ranked = combined
       .map((student, index) => {
         const studentKeywords = getCaseKeywords(student.cases);

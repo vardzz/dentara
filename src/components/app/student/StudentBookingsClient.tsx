@@ -153,7 +153,7 @@ export default function StudentBookingsClient({ bookings }: StudentBookingsClien
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h4 className="font-semibold text-foreground text-sm">{booking.patientName}</h4>
-                      <p className="text-xs text-muted-foreground mt-0.5">Patient</p>
+
                     </div>
                     <div className="flex flex-col items-end gap-2">
                       <motion.span 

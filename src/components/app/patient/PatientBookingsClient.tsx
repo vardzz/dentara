@@ -124,7 +124,7 @@ export default function PatientBookingsClient({ bookings }: PatientBookingsClien
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h4 className="font-semibold text-foreground text-sm">{booking.studentName}</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">Doctor / Student Dentist</p>
+
                   </div>
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sc.color}`}>{sc.label}</span>
                 </div>

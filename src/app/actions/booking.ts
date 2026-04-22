@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { isSlotAvailableForDate } from '@/lib/availability';
 import { prisma } from '@/lib/prisma';
 import { BookingStatus, NotificationStatus, NotificationType } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
 
 async function requireSession() {
   const session = await auth();
@@ -187,6 +188,11 @@ export async function completeOfferBookingAction(
       data: { status: NotificationStatus.READ },
     });
 
+    revalidatePath('/app/student/bookings');
+    revalidatePath('/app/patient/bookings');
+    revalidatePath('/app/student');
+    revalidatePath('/app/patient');
+
     const acknowledgement = await tx.notification.create({
       data: {
         userId: booking.studentId,
@@ -233,6 +239,11 @@ export async function acceptBookingNotificationAction(notificationId: string) {
       where: { id: notificationId },
       data: { status: NotificationStatus.READ },
     });
+
+    revalidatePath('/app/student/bookings');
+    revalidatePath('/app/patient/bookings');
+    revalidatePath('/app/student');
+    revalidatePath('/app/patient');
 
     const followup = await tx.notification.create({
       data: {
@@ -281,6 +292,11 @@ export async function rejectBookingNotificationAction(notificationId: string) {
       data: { status: NotificationStatus.READ },
     });
 
+    revalidatePath('/app/student/bookings');
+    revalidatePath('/app/patient/bookings');
+    revalidatePath('/app/student');
+    revalidatePath('/app/patient');
+
     const followup = await tx.notification.create({
       data: {
         userId: booking.patientId,
@@ -322,8 +338,13 @@ export async function completeBookingAction(bookingId: string) {
 
   const updatedBooking = await prisma.booking.update({
     where: { id: bookingId },
-    data: { status: BookingStatus.COMPLETED },
+    data: { status: 'COMPLETED' as BookingStatus },
   });
+
+  revalidatePath('/app/student/bookings');
+  revalidatePath('/app/patient/bookings');
+  revalidatePath('/app/student');
+  revalidatePath('/app/patient');
 
   return {
     success: true as const,
