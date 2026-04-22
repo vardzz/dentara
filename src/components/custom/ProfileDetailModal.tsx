@@ -14,6 +14,7 @@ import {
   User2,
   ArrowLeft,
 } from 'lucide-react';
+import { toPlainCaseLabel } from '@/lib/plain-language';
 
 export type ProfileRole = 'student' | 'patient';
 
@@ -61,34 +62,12 @@ function getInitials(fullName: string): string {
     .join('');
 }
 
-function toTitleCase(value: string): string {
-  return value
-    .toLowerCase()
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-function normalizeSpecialty(value: string): string {
-  const lower = value.toLowerCase();
-
-  if (lower.includes('oral surgery') || lower.includes('surgery')) return 'Oral Surgery';
-  if (lower.includes('orthodont')) return 'Orthodontics';
-  if (lower.includes('endodont')) return 'Endodontics';
-  if (lower.includes('periodont')) return 'Periodontics';
-  if (lower.includes('prosthodont')) return 'Prosthodontics';
-  if (lower.includes('restor')) return 'Restorative Dentistry';
-  if (lower.includes('clean')) return 'Oral Prophylaxis';
-
-  return toTitleCase(value);
-}
-
 function getPrimarySpecialty(cases?: CaseRequirement[]): string {
   if (!cases?.length) {
-    return 'General Practice';
+    return 'General Care';
   }
 
-  return normalizeSpecialty(cases[0].name);
+  return toPlainCaseLabel(cases[0].name);
 }
 
 function formatCount(count: number): string {
@@ -345,7 +324,7 @@ export default function ProfileDetailModal({
                         <div className="mb-3 flex items-center justify-between gap-3">
                           <div>
                             <h3 className="text-sm font-bold tracking-tight text-[#0a1f44]">Case Focus</h3>
-                            <p className="mt-1 text-xs font-medium text-slate-500">A quick view of the disciplines this profile is prioritizing</p>
+                            <p className="mt-1 text-xs font-medium text-slate-500">A quick view of the care needs this profile is prioritizing</p>
                           </div>
                           <div className="rounded-full bg-[#138b94]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#138b94]">
                             Live-ready
@@ -359,7 +338,7 @@ export default function ProfileDetailModal({
                               className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-[0_8px_24px_-18px_rgba(10,31,68,0.25)]"
                             >
                               <span className="size-2 rounded-full bg-[#138b94]" />
-                              {normalizeSpecialty(item.name)}
+                              {toPlainCaseLabel(item.name)}
                               <span className="font-medium text-slate-400">•</span>
                               <span className="font-medium text-slate-500">{item.count}</span>
                             </span>

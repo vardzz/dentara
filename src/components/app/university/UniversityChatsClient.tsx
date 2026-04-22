@@ -16,7 +16,7 @@ const ITEM: Variants = {
 
 const chats = [
   { name: "Dr. Ahmed Khalil", lastMsg: "Submitted 3 case reports for review.", time: "1h", unread: 1, avatar: "AK", online: true },
-  { name: "Dr. Reem Nasser", lastMsg: "Request for quota extension.", time: "3h", unread: 1, avatar: "RN", online: false },
+  { name: "Dr. Reem Nasser", lastMsg: "Request for case limit extension.", time: "3h", unread: 1, avatar: "RN", online: false },
   { name: "Billing Department", lastMsg: "Invoice #1247 has been processed.", time: "1d", unread: 0, avatar: "BD", online: true },
   { name: "Platform Support", lastMsg: "Your feature request has been noted.", time: "2d", unread: 0, avatar: "PS", online: false },
 ];
@@ -24,7 +24,7 @@ const chats = [
 const mockMessages = [
   { id: 1, sender: "them", text: "I've submitted 3 case reports for review.", time: "10:12 AM" },
   { id: 2, sender: "me", text: "Thank you, we'll review them within 48 hours.", time: "10:14 AM" },
-  { id: 3, sender: "them", text: "I also need a quota extension for Prosthodontics.", time: "10:15 AM" },
+  { id: 3, sender: "them", text: "I also need a case limit extension for Tooth Replacement.", time: "10:15 AM" },
   { id: 4, sender: "me", text: "I'll process that. You'll receive a confirmation email soon.", time: "10:18 AM" },
   { id: 5, sender: "them", text: "Thank you for the quick response!", time: "10:22 AM" },
 ];

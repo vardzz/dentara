@@ -93,7 +93,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
   /* ── Form State (for non-RHF fields: cases, availability) ── */
   const [cases, setCases] = useState<CaseRequirement[]>([
     { id: 1, name: "Tooth Removal", count: 0 },
-    { id: 2, name: "Teeth Cleaning", count: 0 },
+    { id: 2, name: "Gum Care", count: 0 },
     { id: 3, name: "Tooth Filling", count: 0 },
     { id: 4, name: "Tooth Replacement", count: 0 },
   ]);

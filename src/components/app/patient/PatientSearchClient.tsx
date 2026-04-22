@@ -6,6 +6,7 @@ import type { Variants } from 'framer-motion';
 import { Search, Star, MapPin } from 'lucide-react';
 import { searchStudents } from '@/app/actions/search';
 import ProfileDetailModal, { type ProfileModalUser } from '@/components/custom/ProfileDetailModal';
+import { PLAIN_CASE_FILTERS, matchesPlainCaseLabel, toPlainCaseLabel } from '@/lib/plain-language';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -15,8 +16,6 @@ const ITEM: Variants = {
   hidden: { opacity: 0, y: 15 },
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
-
-const specialties = ["General", "Prosthodontics", "Orthodontics", "Endodontics", "Periodontics", "Oral Surgery"];
 
 type CaseRequirement = {
   name: string;
@@ -41,35 +40,9 @@ function getInitials(fullName: string): string {
     .join('');
 }
 
-function toTitleCase(value: string): string {
-  return value
-    .toLowerCase()
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-function normalizeSpecialty(value: string): string {
-  const lower = value.toLowerCase();
-  if (lower.includes('oral surgery') || lower.includes('surgery')) return 'Oral Surgery';
-  if (lower.includes('orthodont')) return 'Orthodontics';
-  if (lower.includes('endodont')) return 'Endodontics';
-  if (lower.includes('periodont')) return 'Periodontics';
-  if (lower.includes('prosthodont')) return 'Prosthodontics';
-  return toTitleCase(value);
-}
-
 function getPrimarySpecialty(cases: CaseRequirement[]): string {
-  if (!cases.length) return 'General';
-  return normalizeSpecialty(cases[0].name);
-}
-
-function hasSpecialty(cases: CaseRequirement[], specialty: string): boolean {
-  if (specialty === 'General') {
-    return !cases.length;
-  }
-
-  return cases.some((item) => normalizeSpecialty(item.name) === specialty);
+  if (!cases.length) return 'General Care';
+  return toPlainCaseLabel(cases[0].name);
 }
 
 function getProfileMeta(id: string): { rating: string; reviews: number } {
@@ -120,7 +93,7 @@ export default function PatientSearchClient() {
   const visibleStudents =
     activeFilter === 'All'
       ? students
-      : students.filter((student) => hasSpecialty(student.cases, activeFilter));
+      : students.filter((student) => student.cases.some((item) => matchesPlainCaseLabel(item.name, activeFilter)));
 
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
@@ -140,7 +113,7 @@ export default function PatientSearchClient() {
       </motion.div>
 
       <motion.div variants={ITEM} className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 no-scrollbar scrollbar-hide">
-        {["All", ...specialties].map((s) => (
+        {PLAIN_CASE_FILTERS.map((s) => (
           <button
             key={s}
             onClick={() => setActiveFilter(s)}

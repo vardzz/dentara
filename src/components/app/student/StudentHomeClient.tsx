@@ -23,9 +23,9 @@ const quotas = [
 ];
 
 const todaySchedule = [
-  { time: "9:00 AM", patient: "Sarah M.", procedure: "Crown Fitting", room: "B-204" },
-  { time: "11:30 AM", patient: "Omar K.", procedure: "Extraction", room: "A-101" },
-  { time: "2:00 PM", patient: "Fatima R.", procedure: "Cleaning", room: "C-305" },
+  { time: "9:00 AM", patient: "Sarah M.", procedure: "Tooth Replacement", room: "B-204" },
+  { time: "11:30 AM", patient: "Omar K.", procedure: "Tooth Removal", room: "A-101" },
+  { time: "2:00 PM", patient: "Fatima R.", procedure: "Gum Care", room: "C-305" },
 ];
 
 interface Props {

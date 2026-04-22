@@ -60,7 +60,7 @@ export default function PatientHomeClient({ user }: Props) {
             <div className="space-y-3">
               <div>
                 <p className="font-semibold text-foreground">Dr. Ahmed Khalil</p>
-                <p className="text-xs text-muted-foreground">4th Year · Prosthodontics</p>
+                <p className="text-xs text-muted-foreground">4th Year · Tooth Replacement</p>
               </div>
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
@@ -73,7 +73,7 @@ export default function PatientHomeClient({ user }: Props) {
                 </span>
               </div>
             </div>
-            <span className="text-[10px] font-semibold uppercase bg-[#138b94]/10 text-[#138b94] px-2.5 py-1 rounded-full">Crown Fitting</span>
+            <span className="text-[10px] font-semibold uppercase bg-[#138b94]/10 text-[#138b94] px-2.5 py-1 rounded-full">Tooth Replacement</span>
           </div>
         </div>
       </motion.div>
@@ -84,7 +84,7 @@ export default function PatientHomeClient({ user }: Props) {
         <div className="glass-card-solid divide-y divide-gray-100/50">
           {[
             { title: "Message from Dr. Khalil", sub: "Your x-ray results look great!", time: "2h ago", icon: MessageCircle },
-            { title: "Cleaning completed", sub: "Scaling & polishing · Dr. Reem Nasser", time: "3 days ago", icon: Clock },
+            { title: "Gum care completed", sub: "Scaling & polishing · Dr. Reem Nasser", time: "3 days ago", icon: Clock },
             { title: "New message", sub: "Appointment reminder for tomorrow", time: "5 days ago", icon: MessageCircle },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-3 p-4 hover:bg-gray-50/30 transition-colors duration-200 cursor-pointer first:rounded-t-3xl last:rounded-b-3xl">

@@ -6,6 +6,7 @@ import type { Variants } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { searchPatients } from '@/app/actions/search';
 import ProfileDetailModal, { type ProfileModalUser } from '@/components/custom/ProfileDetailModal';
+import { toPlainCaseLabel } from '@/lib/plain-language';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -166,7 +167,7 @@ export default function StudentSearchClient() {
                   <div>
                     <h4 className="font-semibold text-foreground text-sm">{patient.fullName}</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {patient.concern || 'General Consultation'}
+                      {patient.concern ? toPlainCaseLabel(patient.concern) : 'General Care'}
                     </p>
                     <p className="text-[11px] text-muted-foreground mt-1">
                       {patient.location || 'Location not specified'}

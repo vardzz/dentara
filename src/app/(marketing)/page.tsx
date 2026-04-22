@@ -133,7 +133,7 @@ export default function App() {
             systemInstruction: {
               parts: [
                 {
-                  text: "You are an intelligent dental triage assistant for Dentara. The user will input a patient's dental symptom or complaint, often in Tagalog. Your task is to identify the most likely specific 'academic clinical requirement/quota' that a dentistry student could fulfill with this patient (e.g., Class II Composite Restoration, Simple Extraction, Complete Denture). Format your response strictly in two short sentences: The first sentence must state the predicted clinical case requirement. The second sentence must briefly explain why based on the symptom.",
+                  text: "You are an intelligent dental triage assistant for Dentara. The user will input a patient's dental symptom or complaint, often in Tagalog. Your task is to identify the most likely simple care category that a dentistry student could help with (e.g., Tooth Filling, Tooth Removal, Tooth Replacement). Format your response strictly in two short sentences: The first sentence must state the predicted care category. The second sentence must briefly explain why based on the symptom.",
                 },
               ],
             },
@@ -436,7 +436,7 @@ export default function App() {
                     <ScanFace className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-800">Class II Composite</p>
+                    <p className="text-sm font-bold text-gray-800">Tooth Filling</p>
                     <p className="text-xs text-[#138b94] font-medium">1 Patient Matched ✨</p>
                   </div>
                 </div>
@@ -451,7 +451,7 @@ export default function App() {
                     <Activity className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-800">Simple Extraction</p>
+                    <p className="text-sm font-bold text-gray-800">Tooth Removal</p>
                     <p className="text-xs text-gray-400 font-medium">Scanning network...</p>
                   </div>
                 </div>

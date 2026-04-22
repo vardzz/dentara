@@ -15,10 +15,10 @@ const ITEM: Variants = {
 };
 
 const bookings = [
-  { student: "Dr. Ahmed Khalil", patient: "Sarah Mitchell", procedure: "Crown Fitting", date: "Mar 26", status: "upcoming" as const },
-  { student: "Dr. Reem Nasser", patient: "James Peterson", procedure: "Extraction", date: "Mar 27", status: "upcoming" as const },
+  { student: "Dr. Ahmed Khalil", patient: "Sarah Mitchell", procedure: "Tooth Replacement", date: "Mar 26", status: "upcoming" as const },
+  { student: "Dr. Reem Nasser", patient: "James Peterson", procedure: "Tooth Removal", date: "Mar 27", status: "upcoming" as const },
   { student: "Dr. Omar Farid", patient: "Maria Garcia", procedure: "Root Canal", date: "Mar 20", status: "completed" as const },
-  { student: "Dr. Lina Mansour", patient: "Robert Kim", procedure: "Cleaning", date: "Mar 14", status: "completed" as const },
+  { student: "Dr. Lina Mansour", patient: "Robert Kim", procedure: "Gum Care", date: "Mar 14", status: "completed" as const },
 ];
 
 const statusConfig = {

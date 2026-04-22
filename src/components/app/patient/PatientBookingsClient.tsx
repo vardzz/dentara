@@ -15,10 +15,10 @@ const ITEM: Variants = {
 };
 
 const bookings = [
-  { student: "Dr. Ahmed Khalil", procedure: "Crown Fitting", date: "Mar 26, 2026", time: "10:30 AM", location: "Clinic B, Room 204", status: "upcoming" as const },
-  { student: "Dr. Reem Nasser", procedure: "Orthodontic Check", date: "Apr 2, 2026", time: "2:00 PM", location: "Clinic A, Room 105", status: "upcoming" as const },
+  { student: "Dr. Ahmed Khalil", procedure: "Tooth Replacement", date: "Mar 26, 2026", time: "10:30 AM", location: "Clinic B, Room 204", status: "upcoming" as const },
+  { student: "Dr. Reem Nasser", procedure: "Alignment Check", date: "Apr 2, 2026", time: "2:00 PM", location: "Clinic A, Room 105", status: "upcoming" as const },
   { student: "Dr. Omar Farid", procedure: "Root Canal", date: "Mar 15, 2026", time: "9:00 AM", location: "Clinic C, Room 301", status: "completed" as const },
-  { student: "Dr. Lina Mansour", procedure: "Deep Cleaning", date: "Mar 10, 2026", time: "11:00 AM", location: "Clinic A, Room 102", status: "completed" as const },
+  { student: "Dr. Lina Mansour", procedure: "Gum Care", date: "Mar 10, 2026", time: "11:00 AM", location: "Clinic A, Room 102", status: "completed" as const },
   { student: "Dr. Ahmed Khalil", procedure: "Consultation", date: "Feb 28, 2026", time: "3:30 PM", location: "Clinic B, Room 204", status: "cancelled" as const },
 ];
 
