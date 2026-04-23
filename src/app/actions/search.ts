@@ -123,6 +123,21 @@ function scoreByKeywordOverlap(text: string, keywords: string[]): number {
   return score;
 }
 
+function scoreFieldMatch(value: string, query?: string): number {
+  const normalizedValue = normalize(value);
+  const normalizedQuery = normalize(query);
+
+  if (!normalizedValue || !normalizedQuery) {
+    return 0;
+  }
+
+  if (normalizedValue.includes(normalizedQuery)) {
+    return 3;
+  }
+
+  return tokenize(normalizedQuery).reduce((acc, token) => acc + (normalizedValue.includes(token) ? 1 : 0), 0);
+}
+
 export async function searchPatients(
   query?: string,
   locationFilter?: string,
@@ -142,25 +157,8 @@ export async function searchPatients(
       studentNeedKeywords = getCaseKeywords(parseCasesJson(studentProfile?.casesJson));
     }
 
-    const where: Prisma.UserWhereInput = {
-      role: 'patient',
-      ...(normalizedQuery
-        ? {
-            OR: [
-              { fullName: { contains: normalizedQuery, mode: 'insensitive' } },
-              { concern: { contains: normalizedQuery, mode: 'insensitive' } },
-            ],
-          }
-        : {}),
-      ...(normalizedLocation
-        ? {
-            location: { contains: normalizedLocation, mode: 'insensitive' },
-          }
-        : {}),
-    };
-
     const dbPatients = await prisma.user.findMany({
-      where,
+      where: { role: 'patient' },
       select: {
         id: true,
         fullName: true,
@@ -183,7 +181,10 @@ export async function searchPatients(
       .map((patient, index) => ({
         patient,
         index,
-        score: scoreByKeywordOverlap(patient.concern, studentNeedKeywords),
+        score:
+          scoreByKeywordOverlap(patient.concern, studentNeedKeywords) * 4 +
+          scoreFieldMatch(`${patient.fullName} ${patient.concern}`, normalizedQuery) * 2 +
+          scoreFieldMatch(patient.location, normalizedLocation),
       }))
       .sort((a, b) => {
         if (b.score !== a.score) {
@@ -208,13 +209,13 @@ export async function searchPatients(
 
 export async function searchStudents(
   query?: string,
-  schoolFilter?: string,
+  specialtyFilter?: string,
   locationFilter?: string,
 ): Promise<SearchResponse<StudentDiscoveryItem>> {
   try {
     const session = await auth();
     const normalizedQuery = normalize(query);
-    const normalizedSchool = normalize(schoolFilter);
+    const normalizedSpecialty = normalize(specialtyFilter);
     const normalizedLocation = normalize(locationFilter);
 
     let patientNeedKeywords: string[] = [];
@@ -227,41 +228,8 @@ export async function searchStudents(
       patientNeedKeywords = tokenize(patientProfile?.concern ?? '');
     }
 
-    const where: Prisma.UserWhereInput = {
-      role: 'student',
-      ...(normalizedQuery
-        ? {
-            OR: [
-              { fullName: { contains: normalizedQuery, mode: 'insensitive' } },
-              {
-                clinicAddress: {
-                  contains: normalizedQuery,
-                  mode: 'insensitive',
-                },
-              },
-            ],
-          }
-        : {}),
-      ...(normalizedSchool
-        ? {
-            school: {
-              equals: schoolFilter?.trim(),
-              mode: 'insensitive',
-            },
-          }
-        : {}),
-      ...(normalizedLocation
-        ? {
-            clinicAddress: {
-              contains: normalizedLocation,
-              mode: 'insensitive',
-            },
-          }
-        : {}),
-    };
-
     const dbStudents = await prisma.user.findMany({
-      where,
+      where: { role: 'student' },
       select: {
         id: true,
         fullName: true,
@@ -290,13 +258,23 @@ export async function searchStudents(
       .map((student, index) => {
         const studentKeywords = getCaseKeywords(student.cases);
         const score = patientNeedKeywords.length
-          ? scoreByKeywordOverlap(studentKeywords.join(' '), patientNeedKeywords)
+          ? scoreByKeywordOverlap(studentKeywords.join(' '), patientNeedKeywords) * 4
           : 0;
+
+        const specialtyBoost = normalizedSpecialty
+          ? student.cases.some((item) => item.name && item.name.trim().length > 0 && item.name.trim().toLowerCase().includes(normalizedSpecialty)) ||
+            student.cases.some((item) => item.name && item.name.trim().length > 0 && item.name.trim().toLowerCase() === normalizedSpecialty)
+            ? 2
+            : 0
+          : 0;
+
+        const queryBoost = scoreFieldMatch(`${student.fullName} ${student.clinicAddress}`, normalizedQuery) * 2;
+        const locationBoost = scoreFieldMatch(student.clinicAddress, normalizedLocation);
 
         return {
           student,
           index,
-          score,
+          score: score + specialtyBoost + queryBoost + locationBoost,
         };
       })
       .sort((a, b) => {

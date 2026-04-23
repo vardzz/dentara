@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Search } from 'lucide-react';
+import { Search, Star } from 'lucide-react';
 import { searchPatients } from '@/app/actions/search';
 import { createOfferAction } from '@/app/actions/booking';
 import ProfileDetailModal, { type ProfileModalUser } from '@/components/custom/ProfileDetailModal';
@@ -134,7 +134,7 @@ export default function StudentSearchClient() {
           </div>
         )}
 
-        {!isLoading && !error && patients.map((patient) => {
+        {!isLoading && !error && patients.map((patient, index) => {
           const priority = getPriorityFromConcern(patient.concern);
           const selectedPatient: ProfileModalUser = {
             id: patient.id,
@@ -148,7 +148,7 @@ export default function StudentSearchClient() {
           return (
             <div
               key={patient.id}
-              className="glass-card-solid p-4 hover-lift cursor-pointer"
+              className="glass-card-solid p-4 hover-lift cursor-pointer relative"
               onClick={() => setSelectedProfile(selectedPatient)}
               role="button"
               tabIndex={0}
@@ -159,6 +159,11 @@ export default function StudentSearchClient() {
                 }
               }}
             >
+              {index === 0 && (
+                <div className="absolute -top-2 -left-2 z-10 rounded-full bg-yellow-400/15 p-1.5 shadow-[0_0_18px_rgba(250,204,21,0.85),0_0_30px_rgba(250,204,21,0.42)] ring-1 ring-yellow-300/70">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-300 drop-shadow-[0_0_8px_rgba(250,204,21,0.95)]" />
+                </div>
+              )}
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-[#0e2b5c]/10 flex items-center justify-center text-[#138b94] font-bold text-xs shrink-0">

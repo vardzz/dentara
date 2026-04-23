@@ -7,7 +7,7 @@ import { Search, Star, MapPin } from 'lucide-react';
 import { searchStudents } from '@/app/actions/search';
 import { createBookingRequestAction } from '@/app/actions/booking';
 import ProfileDetailModal, { type ProfileModalUser } from '@/components/custom/ProfileDetailModal';
-import { PLAIN_CASE_FILTERS, matchesPlainCaseLabel, toPlainCaseLabel } from '@/lib/plain-language';
+import { PLAIN_CASE_FILTERS, toPlainCaseLabel } from '@/lib/plain-language';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -79,7 +79,7 @@ export default function PatientSearchClient() {
       setIsLoading(true);
       setError(null);
 
-      const result = await searchStudents(searchQuery, undefined, undefined);
+      const result = await searchStudents(searchQuery, activeFilter === 'All' ? undefined : activeFilter, undefined);
 
       if (isCancelled) {
         return;
@@ -101,11 +101,6 @@ export default function PatientSearchClient() {
       clearTimeout(timeoutId);
     };
   }, [searchQuery]);
-
-  const visibleStudents =
-    activeFilter === 'All'
-      ? students
-      : students.filter((student) => student.cases.some((item) => matchesPlainCaseLabel(item.name, activeFilter)));
 
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
@@ -149,11 +144,11 @@ export default function PatientSearchClient() {
           <div className="glass-card-solid p-4 text-sm text-red-600">{error}</div>
         )}
 
-        {!isLoading && !error && visibleStudents.length === 0 && (
+        {!isLoading && !error && students.length === 0 && (
           <div className="glass-card-solid p-4 text-sm text-muted-foreground">No matching clinicians found.</div>
         )}
 
-        {!isLoading && !error && visibleStudents.map((student) => {
+        {!isLoading && !error && students.map((student) => {
           const specialty = getPrimarySpecialty(student.cases);
           const profileMeta = getProfileMeta(student.id);
           const selectedStudent: ProfileModalUser = {
@@ -212,6 +207,67 @@ export default function PatientSearchClient() {
             </div>
           );
         })}
+          {!isLoading && !error && patients.map((patient, index) => {
+            const priority = getPriorityFromConcern(patient.concern);
+            const selectedPatient: ProfileModalUser = {
+              id: patient.id,
+              fullName: patient.fullName,
+              role: 'patient',
+              concern: patient.concern,
+              location: patient.location,
+              chatId: `chat-${patient.id}`,
+            };
+
+            return (
+              <div
+                key={patient.id}
+                className="glass-card-solid p-4 hover-lift cursor-pointer relative"
+                onClick={() => setSelectedProfile(selectedPatient)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setSelectedProfile(selectedPatient);
+                  }
+                }}
+              >
+                {index === 0 && (
+                  <div className="absolute -top-2 -left-2 z-10 rounded-full bg-yellow-400/15 p-1.5 shadow-[0_0_18px_rgba(250,204,21,0.85),0_0_30px_rgba(250,204,21,0.42)] ring-1 ring-yellow-300/70">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-300 drop-shadow-[0_0_8px_rgba(250,204,21,0.95)]" />
+                  </div>
+                )}
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-[#0e2b5c]/10 flex items-center justify-center text-[#138b94] font-bold text-xs shrink-0">
+                      {getInitials(patient.fullName)}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground text-sm">{patient.fullName}</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {patient.concern ? toPlainCaseLabel(patient.concern) : 'General Care'}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {patient.location || 'Location not specified'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                      priority === 'High' ? 'bg-red-100/60 text-red-600' :
+                      priority === 'Medium' ? 'bg-amber-500/10 text-amber-600' :
+                      'bg-[#138b94]/10 text-[#138b94]'
+                    }`}>
+                      {priority} Priority
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      Verified User
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
       </motion.div>
 
       <ProfileDetailModal
