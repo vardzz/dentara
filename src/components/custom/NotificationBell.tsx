@@ -4,9 +4,10 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, Check, Loader2, MessageSquare, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import BookingTimePicker from '@/components/custom/BookingTimePicker';
 import { useNotificationCenter } from '@/lib/notification-context';
+import { findOrCreateConversation } from '@/app/actions/chat';
 
 type NotificationBellProps = {
   className?: string;
@@ -48,6 +49,13 @@ function formatLocalDateTime(date: Date): string {
 
 export default function NotificationBell({ className }: NotificationBellProps) {
   const router = useRouter();
+  const pathname = usePathname();
+    const basePath = React.useMemo(() => {
+      if (pathname.startsWith('/app/student')) return '/app/student';
+      if (pathname.startsWith('/app/university')) return '/app/university';
+      return '/app/patient';
+    }, [pathname]);
+
   const {
     unreadCount,
     notifications,
@@ -284,7 +292,11 @@ export default function NotificationBell({ className }: NotificationBellProps) {
                             </button>
                             <button
                               type="button"
-                              onClick={() => router.push(`/app/chats/${item.booking?.id ?? item.sender.id}`)}
+                              onClick={async () => {
+                                const result = await findOrCreateConversation(item.sender.id);
+                                router.push(`${basePath}/chats/${result.conversationId}`);
+                                setOpen(false);
+                              }}
                               className="inline-flex items-center justify-center gap-1 rounded-lg border border-slate-200/80 bg-white px-2.5 py-2 text-xs font-semibold text-slate-600"
                               aria-label="Message sender"
                             >

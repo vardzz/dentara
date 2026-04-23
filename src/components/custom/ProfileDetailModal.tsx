@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   CalendarPlus,
   GraduationCap,
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import BookingTimePicker from '@/components/custom/BookingTimePicker';
 import { toPlainCaseLabel } from '@/lib/plain-language';
+import { findOrCreateConversation } from '@/app/actions/chat';
 
 export type ProfileRole = 'student' | 'patient';
 
@@ -87,6 +88,7 @@ export default function ProfileDetailModal({
   onBookingAction,
 }: ProfileDetailModalProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isMessageLoading, setIsMessageLoading] = useState(false);
   const [isBookingLoading, setIsBookingLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -162,15 +164,15 @@ export default function ProfileDetailModal({
     setIsMessageLoading(true);
 
     try {
-      // Supabase RPC / Server Action injection point:
-      // - create or fetch the canonical chat row for these two participants
-      // - persist the participant edges and any initial metadata
-      // - broadcast the room creation over realtime so the chat inbox updates instantly
-      const chatId = activeUser.chatId ?? activeUser.id;
+      const result = await findOrCreateConversation(activeUser.id);
 
-      await new Promise((resolve) => window.setTimeout(resolve, 650));
+      const basePath = pathname.startsWith('/app/student')
+        ? '/app/student'
+        : pathname.startsWith('/app/university')
+          ? '/app/university'
+          : '/app/patient';
 
-      router.push(`/app/chats/${chatId}`);
+      router.push(`${basePath}/chats/${result.conversationId}`);
     } finally {
       setIsMessageLoading(false);
     }

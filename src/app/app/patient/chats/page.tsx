@@ -1,10 +1,5 @@
-import { auth } from "@/auth";
-import PatientChatsClient from "@/components/app/patient/PatientChatsClient";
-import { redirect } from "next/navigation";
+import ChatInbox from '@/components/app/chat/ChatInbox';
 
-export default async function PatientChatsPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/app/login");
-
-  return <PatientChatsClient />;
+export default function PatientChatsPage() {
+  return <ChatInbox basePath="/app/patient" />;
 }

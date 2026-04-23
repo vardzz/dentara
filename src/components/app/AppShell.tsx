@@ -28,6 +28,17 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
     setMounted(true);
   }, []);
 
+  const handleConfirmSignOut = React.useCallback(async () => {
+    try {
+      setIsSigningOut(true);
+      await signOut({ callbackUrl: '/app/login' });
+    } catch {
+      setIsSigningOut(false);
+      setShowSignOutConfirm(false);
+      router.push('/app/login');
+    }
+  }, [router]);
+
   // Avoid hydration mismatch by rendering a stable shell until mounted
   if (!mounted) {
     return (
@@ -46,17 +57,6 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
   ];
 
   const activeId = NAV_ITEMS.find(n => pathname.startsWith(n.href))?.id ?? 'home';
-
-  const handleConfirmSignOut = React.useCallback(async () => {
-    try {
-      setIsSigningOut(true);
-      await signOut({ callbackUrl: '/app/login' });
-    } catch {
-      setIsSigningOut(false);
-      setShowSignOutConfirm(false);
-      router.push('/app/login');
-    }
-  }, [router]);
 
   /* ──────────────────── DESKTOP LAYOUT ──────────────────── */
   if (!isMobile) {
