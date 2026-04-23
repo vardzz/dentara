@@ -87,8 +87,6 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
   /** Login-only server error (wrong credentials); cleared when user types again */
   const [serverError, setServerError] = useState<string | null>(null);
   const registerSectionRef = useRef<HTMLDivElement>(null);
-  const roleRegRef = useRef<{ role: UserRole; regStep: number }>({ role: null, regStep: 1 });
-  roleRegRef.current = { role, regStep };
 
   /* ── Form State (for non-RHF fields: cases, availability) ── */
   const [cases, setCases] = useState<CaseRequirement[]>([
@@ -125,11 +123,10 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
   });
 
   /* ── Step-aware resolver: validates only the current step's schema ── */
-  const stepResolver = (
+  const stepResolver = React.useCallback((
     values: Record<string, unknown>,
     _context: unknown
   ): { values: Record<string, unknown>; errors: Record<string, { message: string }> } => {
-    const { role, regStep } = roleRegRef.current;
     const trimmed = Object.fromEntries(
       Object.entries(values).map(([k, v]) => [k, typeof v === "string" ? (v as string).trim() : v])
     ) as Record<string, unknown>;
@@ -216,7 +213,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
       }
     }
     return { values, errors: {} };
-  };
+  }, [role, regStep]);
 
   /* ── Register Form (RHF for student/patient flows) with step-aware validation ── */
   const registerForm = useForm({
