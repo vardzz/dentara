@@ -523,7 +523,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
    * Render
    * ───────────────────────────────────────── */
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-brand-surface overflow-hidden font-sans selection:bg-brand-teal/20">
+    <div suppressHydrationWarning className="min-h-screen w-full flex flex-col items-center justify-center bg-brand-surface overflow-hidden font-sans selection:bg-brand-teal/20">
       <div className="fixed top-[-5%] left-[-5%] w-[45%] h-[45%] bg-brand-teal/5 blur-[100px] rounded-full pointer-events-none" />
       <div className="fixed bottom-[-5%] right-[-5%] w-[45%] h-[45%] bg-brand-navy/5 blur-[100px] rounded-full pointer-events-none" />
 

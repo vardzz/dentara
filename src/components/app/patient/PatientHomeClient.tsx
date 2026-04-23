@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Search, Clock, ChevronRight, CheckCircle2 } from 'lucide-react';
@@ -56,6 +57,7 @@ function formatTimeLabel(iso: string): string {
 }
 
 export default function PatientHomeClient({ user, bookings }: Props) {
+  const router = useRouter();
   const concern = user.concern || 'Not specified';
   const pendingBookings = bookings.filter((booking) => booking.status === 'PENDING');
   const completedBookings = bookings.filter((booking) => booking.status === 'COMPLETED');
@@ -77,7 +79,11 @@ export default function PatientHomeClient({ user, bookings }: Props) {
         </div>
       </motion.div>
 
-      <motion.div variants={ITEM} className="glass-card p-6 bg-gradient-to-br from-brand-teal/10 via-white/80 to-brand-navy/5 hover-lift cursor-pointer">
+      <motion.div 
+        variants={ITEM} 
+        onClick={() => router.push('/app/patient/search')}
+        className="glass-card p-6 bg-gradient-to-br from-brand-teal/10 via-white/80 to-brand-navy/5 hover-lift cursor-pointer"
+      >
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-brand-teal/10 flex items-center justify-center">
             <Search className="h-6 w-6 text-brand-teal" />

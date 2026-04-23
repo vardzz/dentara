@@ -3,7 +3,7 @@ import PatientBookingsClient from "@/components/app/patient/PatientBookingsClien
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
-export default async function PatientBookingsPage() {
+export default async function PatientBookingsPageFixed() {
   const session = await auth();
   if (!session?.user) redirect("/app/login");
 
@@ -30,5 +30,10 @@ export default async function PatientBookingsPage() {
     clinicAddress: booking.student.clinicAddress,
   }));
 
-  return <PatientBookingsClient bookings={bookingItems} />;
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Debug Bookings</h1>
+      <PatientBookingsClient bookings={bookingItems} />
+    </div>
+  );
 }
