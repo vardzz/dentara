@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
@@ -58,14 +58,22 @@ function formatTimeLabel(iso: string): string {
 
 export default function PatientHomeClient({ user, bookings }: Props) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const concern = user.concern || 'Not specified';
   const pendingBookings = bookings.filter((booking) => booking.status === 'PENDING');
   const completedBookings = bookings.filter((booking) => booking.status === 'COMPLETED');
 
+  const greeting = mounted ? getGreeting() : 'Welcome';
+
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
       <motion.div variants={ITEM} className="pt-2">
-        <p className="text-muted-foreground text-sm font-medium">{getGreeting()},</p>
+        <p className="text-muted-foreground text-sm font-medium">{greeting},</p>
         <h2 className="text-2xl font-bold tracking-tight text-foreground">{user.fullName}</h2>
       </motion.div>
 
@@ -114,7 +122,7 @@ export default function PatientHomeClient({ user, bookings }: Props) {
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">Pending review by {booking.studentName}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {formatDateLabel(booking.scheduledAt)} · {formatTimeLabel(booking.scheduledAt)}
+                        {mounted ? formatDateLabel(booking.scheduledAt) : '...'} · {mounted ? formatTimeLabel(booking.scheduledAt) : '...'}
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-1 truncate">
                         {toPlainCaseLabel(booking.caseLabel || concern)}
@@ -149,7 +157,7 @@ export default function PatientHomeClient({ user, bookings }: Props) {
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">Completed by {booking.studentName}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {formatDateLabel(booking.updatedAt)} · {formatTimeLabel(booking.updatedAt)}
+                        {mounted ? formatDateLabel(booking.updatedAt) : '...'} · {mounted ? formatTimeLabel(booking.updatedAt) : '...'}
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-1 truncate">
                         {toPlainCaseLabel(booking.caseLabel || concern)}

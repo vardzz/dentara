@@ -58,6 +58,11 @@ function isUpcoming(status: BookingStatus, scheduledAtIso: string): boolean {
 
 export default function PatientBookingsClient({ bookings }: PatientBookingsClientProps) {
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const [mounted, setMounted] = useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const upcomingCount = bookings.filter((booking) => isUpcoming(booking.status, booking.scheduledAt)).length;
   const confirmedCount = bookings.filter((booking) => (booking.status as string) === 'CONFIRMED').length;
@@ -129,8 +134,8 @@ export default function PatientBookingsClient({ bookings }: PatientBookingsClien
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${sc.color}`}>{sc.label}</span>
                 </div>
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{formatDateLabel(booking.scheduledAt)}</span>
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatTimeLabel(booking.scheduledAt)}</span>
+                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{mounted ? formatDateLabel(booking.scheduledAt) : '...'}</span>
+                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{mounted ? formatTimeLabel(booking.scheduledAt) : '...'}</span>
                   <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{booking.clinicAddress || 'Clinic location not available'}</span>
                 </div>
                 {booking.notes ? <p className="mt-2 text-xs text-muted-foreground">Notes: {booking.notes}</p> : null}

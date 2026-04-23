@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Search, Calendar, MessageCircle, User, LogOut } from 'lucide-react';
@@ -67,7 +69,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
           <aside className="fixed top-0 left-0 z-50 h-screen w-[260px] flex flex-col bg-white/60 backdrop-blur-2xl border-r border-white/50 shadow-[4px_0_30px_rgba(0,0,0,0.02)]">
           {/* Logo */}
           <div className="flex items-center gap-2.5 px-7 pt-8 pb-6">
-            <img src="/assets/icon.png" alt="Dentara" className="h-7 w-auto object-contain drop-shadow-sm" />
+            <Image src="/assets/icon.png" alt="Dentara" width={28} height={28} className="h-7 w-auto object-contain drop-shadow-sm" />
             <span className="text-lg font-bold tracking-tight text-brand-navy">DENTARA</span>
           </div>
 
@@ -93,11 +95,11 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
               const Icon = tab.icon;
               const isActive = activeId === tab.id;
               return (
-                <motion.button
+                <Link
                   key={tab.id}
-                  onClick={() => router.push(tab.href)}
-                  whileTap={{ scale: 0.97 }}
-                  className={`relative w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all duration-200 group ${
+                  href={tab.href}
+                  prefetch={true}
+                  className={`relative w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all duration-200 group active:scale-[0.97] ${
                     isActive
                       ? 'bg-brand-accent text-brand-teal'
                       : 'text-gray-400 hover:text-brand-navy hover:bg-brand-accent/50'
@@ -114,7 +116,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
                   <span className={`text-sm ${isActive ? 'font-bold' : 'font-medium'}`}>
                     {tab.label}
                   </span>
-                </motion.button>
+                </Link>
               );
             })}
           </nav>
@@ -177,7 +179,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
       {/* Glass Header */}
       <header className="fixed top-0 left-0 right-0 z-40 px-6 pt-10 pb-4 bg-white/40 backdrop-blur-2xl border-b border-white/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <img src="/assets/icon.png" alt="Dentara" className="h-6 w-auto object-contain drop-shadow-sm" />
+          <Image src="/assets/icon.png" alt="Dentara" width={24} height={24} className="h-6 w-auto object-contain drop-shadow-sm" />
           <span className="text-lg font-bold tracking-tight text-brand-navy">DENTARA</span>
         </div>
         <div className="flex items-center gap-2">
@@ -216,11 +218,11 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
             const Icon = tab.icon;
             const isActive = activeId === tab.id;
             return (
-              <motion.button
+              <Link
                 key={tab.id}
-                onClick={() => router.push(tab.href)}
-                whileTap={{ scale: 0.92 }}
-                className="relative flex flex-col items-center justify-center w-14 h-14 rounded-full focus:outline-none"
+                href={tab.href}
+                prefetch={true}
+                className="relative flex flex-col items-center justify-center w-14 h-14 rounded-full focus:outline-none active:scale-[0.92]"
               >
                 {isActive && (
                   <motion.div layoutId="dock-indicator" className="absolute inset-0 bg-white rounded-full shadow-sm border border-gray-100/50" transition={{ type: 'spring', stiffness: 300, damping: 24 }} />
@@ -233,7 +235,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
                     {tab.label}
                   </motion.span>
                 )}
-              </motion.button>
+              </Link>
             );
           })}
         </nav>

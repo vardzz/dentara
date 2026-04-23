@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Plus, UserPlus, FileSignature, CheckCircle2, ChevronRight, Activity } from 'lucide-react';
@@ -23,12 +23,20 @@ interface StudentDashboardProps {
 }
 
 export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboardProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const getGreeting = () => {
     const hr = new Date().getHours();
     if (hr < 12) return 'Good morning';
     if (hr < 18) return 'Good afternoon';
     return 'Good evening';
   };
+
+  const greeting = mounted ? getGreeting() : 'Welcome';
 
   return (
     <motion.div 
@@ -44,7 +52,7 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
       >
         <div className="absolute top-0 right-0 w-32 h-32 bg-teal-400/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3" />
         
-        <p className="text-sm font-medium text-gray-500 mb-1">{getGreeting()},</p>
+        <p className="text-sm font-medium text-gray-500 mb-1">{greeting},</p>
         <h1 className="text-3xl font-black text-brand-navy tracking-tight">{userName}</h1>
         
         <div className="mt-6 flex items-center justify-between">

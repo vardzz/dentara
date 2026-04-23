@@ -1,13 +1,26 @@
 'use server';
 
+import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
-export async function getCurrentUserProfile(userId: string) {
-  if (!userId) return null;
+/**
+ * Fetches the current user's profile from the database.
+ *
+ * SECURITY: This action no longer accepts a userId parameter.
+ * It derives the user ID exclusively from the authenticated session,
+ * preventing IDOR (Insecure Direct Object Reference) attacks where
+ * an attacker could enumerate other users' profiles.
+ */
+export async function getCurrentUserProfile() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return null;
+  }
 
   try {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: session.user.id },
       select: {
         id: true,
         fullName: true,

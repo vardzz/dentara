@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { MapPin, ShieldCheck, ChevronRight, Search, Activity } from 'lucide-react';
@@ -23,12 +23,20 @@ interface PatientDashboardProps {
 }
 
 export default function PatientDashboard({ userName = 'Patient' }: PatientDashboardProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const getGreeting = () => {
     const hr = new Date().getHours();
     if (hr < 12) return 'Good morning';
     if (hr < 18) return 'Good afternoon';
     return 'Good evening';
   };
+
+  const greeting = mounted ? getGreeting() : 'Welcome';
 
   return (
     <motion.div 
@@ -44,7 +52,7 @@ export default function PatientDashboard({ userName = 'Patient' }: PatientDashbo
       >
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         
-        <p className="text-sm font-medium text-teal-100 mb-1">{getGreeting()},</p>
+        <p className="text-sm font-medium text-teal-100 mb-1">{greeting},</p>
         <h1 className="text-3xl font-black text-white tracking-tight">{userName}</h1>
         
         <div className="mt-6 p-4 bg-white/10 border border-white/20 backdrop-blur-md rounded-[20px] flex items-center justify-between">

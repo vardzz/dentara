@@ -196,8 +196,8 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
                         {booking.patient.fullName}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {formatDateLabel(booking.scheduledAt)}
-                        {booking.scheduledAt && ` · ${formatTimeLabel(booking.scheduledAt)}`}
+                        {mounted ? formatDateLabel(booking.scheduledAt) : '...'}
+                        {mounted && booking.scheduledAt && ` · ${formatTimeLabel(booking.scheduledAt)}`}
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-1 truncate">
                         {toPlainCaseLabel(booking.caseLabel || booking.patient.concern || 'General Care')}
@@ -237,7 +237,7 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
                         Completed: {booking.patient.fullName}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {formatDateLabel(booking.updatedAt)} · {formatTimeLabel(booking.updatedAt)}
+                        {mounted ? formatDateLabel(booking.updatedAt) : '...'} · {mounted ? formatTimeLabel(booking.updatedAt) : '...'}
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-1 truncate">
                         {toPlainCaseLabel(booking.caseLabel || booking.patient.concern || 'General Care')}

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const PLATFORM_LINKS = [
@@ -44,9 +45,11 @@ export default function Footer() {
                     {/* Brand Column */}
                     <div className="lg:col-span-2">
                         <div className="flex items-center gap-2 mb-4">
-                            <img
+                            <Image
                                 src="/assets/icon.png"
                                 alt="Dentara Icon"
+                                width={24}
+                                height={24}
                                 className="w-6 h-6 object-contain"
                             />
                             <span className="text-lg font-bold tracking-tight text-brand-navy">

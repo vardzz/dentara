@@ -46,7 +46,7 @@ export default function PatientProfileClient({ user: initialUser }: Props) {
     setMounted(true);
     async function loadData() {
       if (!authUser?.id) return;
-      const data = await getCurrentUserProfile(authUser.id);
+      const data = await getCurrentUserProfile();
       setProfile(data);
       setFormData({
         fullName: data?.fullName || '',
