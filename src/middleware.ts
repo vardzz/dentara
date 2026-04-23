@@ -1,28 +1,90 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { rateLimit } from '@/lib/rate-limit';
 
 /**
  * Dentara Security Middleware
  *
- * Injects strict HTTP security headers on every response and provides
- * additional CSRF hardening for Server Action POST requests.
- *
- * Headers applied:
- * - Content-Security-Policy  (strict, report-only-friendly)
- * - Strict-Transport-Security  (HSTS with 1-year max-age)
- * - X-Frame-Options  (DENY — no iframing)
- * - X-Content-Type-Options  (nosniff)
- * - Referrer-Policy  (strict-origin-when-cross-origin)
- * - Permissions-Policy  (deny camera, microphone, geolocation)
- * - X-DNS-Prefetch-Control  (on — performance boost)
+ * Three layers of protection:
+ * 1. Rate Limiting    — Sliding window per-IP throttling on auth & API routes
+ * 2. CSRF Hardening   — Origin validation for all POST requests
+ * 3. Security Headers — Full suite of HTTP hardening headers
  */
 
+// ── Rate Limit Configurations ──
+const AUTH_LIMIT   = { maxRequests: 10, windowSeconds: 60 };   // 10 login/register attempts per minute
+const API_LIMIT    = { maxRequests: 30, windowSeconds: 60 };   // 30 server action calls per minute
+const GLOBAL_LIMIT = { maxRequests: 120, windowSeconds: 60 };  // 120 total requests per minute
+
+function getClientIp(request: NextRequest): string {
+  return (
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    request.headers.get('x-real-ip') ||
+    'anonymous'
+  );
+}
+
 export function middleware(request: NextRequest) {
+  const { pathname, method } = { pathname: request.nextUrl.pathname, method: request.method };
+  const ip = getClientIp(request);
+
+  // ── 1. Rate Limiting ──
+  const isAuthRoute = pathname.startsWith('/app/login') || pathname.startsWith('/app/register');
+  const isServerAction = method === 'POST' && request.headers.get('next-action') !== null;
+
+  if (isAuthRoute && method === 'POST') {
+    // Strict limit on login/register attempts
+    const result = rateLimit(`auth:${ip}`, AUTH_LIMIT);
+    if (!result.allowed) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Too many attempts. Please wait a moment and try again.' }),
+        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': String(Math.ceil((result.resetAt - Date.now()) / 1000)) } }
+      );
+    }
+  } else if (isServerAction) {
+    // Moderate limit on all Server Action calls
+    const result = rateLimit(`api:${ip}`, API_LIMIT);
+    if (!result.allowed) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Rate limit exceeded. Please slow down.' }),
+        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': String(Math.ceil((result.resetAt - Date.now()) / 1000)) } }
+      );
+    }
+  } else {
+    // Global limit for all other traffic (DDoS protection)
+    const result = rateLimit(`global:${ip}`, GLOBAL_LIMIT);
+    if (!result.allowed) {
+      return new NextResponse('Too Many Requests', { status: 429 });
+    }
+  }
+
+  // ── 2. CSRF Hardening for POST requests ──
+  if (method === 'POST') {
+    const origin = request.headers.get('origin');
+    const host = request.headers.get('host');
+
+    // Block null-origin requests (CVE GHSA-mq59 mitigation)
+    if (origin === 'null' || origin === '') {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
+    // Ensure origin matches our host
+    if (origin && host) {
+      try {
+        const originHost = new URL(origin).host;
+        if (originHost !== host) {
+          return new NextResponse('Forbidden', { status: 403 });
+        }
+      } catch {
+        return new NextResponse('Forbidden', { status: 403 });
+      }
+    }
+  }
+
+  // ── 3. Security Headers ──
   const response = NextResponse.next();
 
-  // ── Content-Security-Policy ──
-  // Allow self, Next.js scripts, Google Fonts, Supabase, and inline styles
-  // needed for Framer Motion and Tailwind CSS.
+  // Content-Security-Policy
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
@@ -37,58 +99,12 @@ export function middleware(request: NextRequest) {
   ].join('; ');
 
   response.headers.set('Content-Security-Policy', csp);
-
-  // ── Strict Transport Security ──
-  // Force HTTPS for 1 year, include subdomains, allow preload list
-  response.headers.set(
-    'Strict-Transport-Security',
-    'max-age=31536000; includeSubDomains; preload'
-  );
-
-  // ── Prevent clickjacking ──
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   response.headers.set('X-Frame-Options', 'DENY');
-
-  // ── Prevent MIME-type sniffing ──
   response.headers.set('X-Content-Type-Options', 'nosniff');
-
-  // ── Referrer Policy ──
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-
-  // ── Permissions Policy ──
-  // Deny access to sensitive browser APIs unless explicitly needed
-  response.headers.set(
-    'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=(), interest-cohort=()'
-  );
-
-  // ── DNS Prefetch Control ──
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
   response.headers.set('X-DNS-Prefetch-Control', 'on');
-
-  // ── CSRF Hardening for Server Actions ──
-  // Block POST requests to Server Actions with suspicious origins.
-  // Next.js checks Origin automatically, but we add defense-in-depth
-  // against the null-origin CVE (GHSA-mq59) on older versions.
-  if (request.method === 'POST') {
-    const origin = request.headers.get('origin');
-    const host = request.headers.get('host');
-
-    // Block null-origin requests (CVE mitigation)
-    if (origin === 'null' || origin === '') {
-      return new NextResponse('Forbidden', { status: 403 });
-    }
-
-    // If origin is present, ensure it matches our host
-    if (origin && host) {
-      try {
-        const originHost = new URL(origin).host;
-        if (originHost !== host) {
-          return new NextResponse('Forbidden', { status: 403 });
-        }
-      } catch {
-        return new NextResponse('Forbidden', { status: 403 });
-      }
-    }
-  }
 
   return response;
 }
