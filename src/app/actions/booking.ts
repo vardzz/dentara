@@ -2,6 +2,7 @@
 
 import { auth } from '@/auth';
 import { isSlotAvailableForDate } from '@/lib/availability';
+import { toPlainCaseLabel } from '@/lib/plain-language';
 import { prisma } from '@/lib/prisma';
 import { BookingStatus, NotificationStatus, NotificationType } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
@@ -35,18 +36,21 @@ export async function createOfferAction(patientId: string, notes?: string) {
 
   const patient = await prisma.user.findUnique({
     where: { id: patientId },
-    select: { id: true, role: true },
+    select: { id: true, role: true, concern: true },
   });
 
   if (!patient || patient.role !== 'patient') {
     throw new Error('Invalid patient');
   }
 
+  const caseLabel = patient.concern?.trim() ? toPlainCaseLabel(patient.concern) : null;
+
   const result = await prisma.$transaction(async (tx) => {
     const booking = await tx.booking.create({
       data: {
         studentId: session.user.id,
         patientId,
+        caseLabel,
         // Placeholder until the patient chooses the final slot in Complete Booking.
         scheduledAt: new Date(),
         status: BookingStatus.PENDING,
@@ -104,11 +108,21 @@ export async function createBookingRequestAction(
     throw new Error('Selected slot is not available');
   }
 
+  const patientProfile = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { concern: true },
+  });
+
+  const caseLabel = patientProfile?.concern?.trim()
+    ? toPlainCaseLabel(patientProfile.concern)
+    : null;
+
   const result = await prisma.$transaction(async (tx) => {
     const booking = await tx.booking.create({
       data: {
         studentId,
         patientId: session.user.id,
+        caseLabel,
         scheduledAt,
         status: BookingStatus.PENDING,
         notes: notes?.trim() || null,
@@ -336,9 +350,25 @@ export async function completeBookingAction(bookingId: string) {
     throw new Error('Only confirmed bookings can be completed');
   }
 
+  let caseLabel = booking.caseLabel?.trim() || null;
+
+  if (!caseLabel) {
+    const patient = await prisma.user.findUnique({
+      where: { id: booking.patientId },
+      select: { concern: true },
+    });
+
+    if (patient?.concern?.trim()) {
+      caseLabel = toPlainCaseLabel(patient.concern);
+    }
+  }
+
   const updatedBooking = await prisma.booking.update({
     where: { id: bookingId },
-    data: { status: 'COMPLETED' as BookingStatus },
+    data: {
+      status: 'COMPLETED' as BookingStatus,
+      caseLabel,
+    },
   });
 
   revalidatePath('/app/student/bookings');

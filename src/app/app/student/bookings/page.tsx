@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import StudentBookingsClient from "@/components/app/student/StudentBookingsClient";
+import { toPlainCaseLabel } from "@/lib/plain-language";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
@@ -14,6 +15,7 @@ export default async function StudentBookingsPage() {
         select: {
           id: true,
           fullName: true,
+          concern: true,
         },
       },
       student: {
@@ -30,6 +32,12 @@ export default async function StudentBookingsPage() {
     status: booking.status,
     scheduledAt: booking.scheduledAt.toISOString(),
     notes: booking.notes,
+    caseLabel:
+      booking.caseLabel?.trim() || booking.patient.concern?.trim() || booking.notes?.trim()
+        ? toPlainCaseLabel(
+            booking.caseLabel?.trim() || booking.patient.concern?.trim() || booking.notes?.trim() || ""
+          )
+        : null,
     patientName: booking.patient.fullName,
     clinicAddress: booking.student.clinicAddress,
   }));

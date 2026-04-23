@@ -1,6 +1,6 @@
 const CASE_LABELS = [
   { label: 'Root Canal', terms: ['root canal', 'endodont', 'pulp'] },
-  { label: 'Tooth Filling', terms: ['fill', 'restoration', 'restorative', 'operative', 'composite'] },
+  { label: 'Tooth Filling', terms: ['fill', 'filling', 'restoration', 'restorative', 'operative', 'composite', 'decay', 'caries', 'cavity'] },
   { label: 'Tooth Replacement', terms: ['prosthodont', 'crown', 'bridge', 'denture', 'prosthetic', 'replacement'] },
   { label: 'Tooth Removal', terms: ['extract', 'removal', 'remove', 'impacted', 'wisdom', 'surgery'] },
   { label: 'Gum Care', terms: ['gum', 'periodont', 'clean', 'prophylaxis', 'hygiene'] },

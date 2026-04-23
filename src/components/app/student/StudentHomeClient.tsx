@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Bell, Calendar, MessageCircle, ChevronRight, Loader2 } from 'lucide-react';
-import { useRole } from '@/lib/role-context';
-import { getCurrentUserProfile } from '@/app/actions/user';
+import { Bell, MessageCircle } from 'lucide-react';
 import { useNotificationCenter } from '@/lib/notification-context';
+import { toPlainCaseLabel } from '@/lib/plain-language';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -18,50 +17,65 @@ const ITEM: Variants = {
 };
 
 interface Props {
-  user: { id?: string; fullName: string; role: string; school?: string | null };
+  user: {
+    fullName: string;
+    role: string;
+    school?: string | null;
+    casesJson?: string | null;
+  };
+  progress: Record<string, number>;
 }
 
-export default function StudentHomeClient({ user: initialUser }: Props) {
-  const { user: authUser } = useRole();
+const QUOTA_LABELS = ['Tooth Removal', 'Gum Care', 'Tooth Filling', 'Tooth Replacement'] as const;
+
+export default function StudentHomeClient({ user, progress }: Props) {
   const { unreadCount } = useNotificationCenter();
   const [mounted, setMounted] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setMounted(true);
-    async function loadData() {
-      if (!authUser?.id) return;
-      const data = await getCurrentUserProfile(authUser.id);
-      setProfile(data);
-      setLoading(false);
-    }
-    loadData();
-  }, [authUser?.id]);
+  }, []);
 
   if (!mounted) return null;
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-[#138b94]" />
-        <p className="text-sm text-muted-foreground font-medium animate-pulse">Loading your dashboard...</p>
-      </div>
-    );
-  }
-
-  // Use profile data if available, fallback to initialUser for name
-  const displayName = profile?.fullName || initialUser.fullName;
+  const displayName = user.fullName;
   const unreadMessages = unreadCount || 0;
   const pendingRequests = unreadCount || 0;
 
-  let parsedCases = [];
+  let parsedCases: { name: string; count?: number; required?: number }[] = [];
   try {
-    if (profile?.casesJson) {
-      parsedCases = JSON.parse(profile.casesJson);
+    if (user.casesJson) {
+      parsedCases = JSON.parse(user.casesJson);
     }
   } catch (e) {
-    console.error("Failed to parse casesJson");
+    console.error("Failed to parse casesJson", e);
+  }
+
+  const requiredByLabel = QUOTA_LABELS.reduce((acc, label) => {
+    acc[label] = 0;
+    return acc;
+  }, {} as Record<(typeof QUOTA_LABELS)[number], number>);
+
+  for (const entry of parsedCases) {
+    const normalizedLabel = toPlainCaseLabel(String(entry.name ?? ''));
+
+    if (QUOTA_LABELS.includes(normalizedLabel as (typeof QUOTA_LABELS)[number])) {
+      const quotaTarget = Number(entry.count ?? entry.required ?? 0);
+      requiredByLabel[normalizedLabel as (typeof QUOTA_LABELS)[number]] = Math.max(0, quotaTarget);
+    }
+  }
+
+  const normalizedProgress = QUOTA_LABELS.reduce((acc, label) => {
+    acc[label] = 0;
+    return acc;
+  }, {} as Record<(typeof QUOTA_LABELS)[number], number>);
+
+  for (const [label, count] of Object.entries(progress)) {
+    const normalizedLabel = toPlainCaseLabel(label);
+
+    if (QUOTA_LABELS.includes(normalizedLabel as (typeof QUOTA_LABELS)[number])) {
+      normalizedProgress[normalizedLabel as (typeof QUOTA_LABELS)[number]] += Number(count) || 0;
+    }
   }
 
   return (
@@ -100,34 +114,32 @@ export default function StudentHomeClient({ user: initialUser }: Props) {
 
       {/* Clinical Quota Progress */}
       <motion.div variants={ITEM}>
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Clinical Quota Progress</h3>
-        <div className="glass-card-solid p-5 space-y-4">
-          {parsedCases.length > 0 ? (
-            parsedCases.map((q: any, i: number) => {
-              const total = q.total || 1;
-              const pct = Math.min(100, Math.round(((q.done || 0) / total) * 100));
-              return (
-                <div key={i} className="space-y-1.5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-foreground">{q.name || 'Unknown Case'}</span>
-                    <span className="text-xs text-muted-foreground tabular-nums">{q.done || 0}/{q.total || 0}</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${pct}%` }}
-                      transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                      className="h-full bg-gradient-to-r from-[#138b94] to-[#0e2b5c]/60 rounded-full"
-                    />
-                  </div>
+        <h3 className="text-sm font-semibold uppercase text-muted-foreground tracking-wider mb-3">
+          Clinical Quota Progress
+        </h3>
+        <div className="glass-card-solid p-4 space-y-4">
+          {QUOTA_LABELS.map((label) => {
+            const current = normalizedProgress[label] || 0;
+            const required = requiredByLabel[label] || 0;
+            const progressPercentage = required > 0 ? Math.min((current / required) * 100, 100) : 0;
+
+            return (
+              <div key={label}>
+                <div className="flex justify-between items-center mb-1">
+                  <p className="font-medium text-sm text-foreground">{label}</p>
+                  <p className="text-xs font-mono text-muted-foreground">
+                    {current}/{required}
+                  </p>
                 </div>
-              );
-            })
-          ) : (
-            <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">No cases tracked yet.</p>
-            </div>
-          )}
+                <div className="w-full bg-gray-200/50 rounded-full h-1.5 dark:bg-gray-700">
+                  <div
+                    className="bg-gradient-to-r from-[#138b94] to-[#0e2b5c] h-1.5 rounded-full"
+                    style={{ width: `${progressPercentage}%` }}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </motion.div>
     </motion.div>

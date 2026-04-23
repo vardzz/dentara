@@ -22,6 +22,7 @@ type StudentBookingItem = {
   status: BookingStatus;
   scheduledAt: string;
   notes: string | null;
+  caseLabel: string | null;
   patientName: string;
   clinicAddress: string | null;
 };
@@ -153,6 +154,9 @@ export default function StudentBookingsClient({ bookings }: StudentBookingsClien
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h4 className="font-semibold text-foreground text-sm">{booking.patientName}</h4>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        Case: {booking.caseLabel || 'General Care'}
+                      </p>
 
                     </div>
                     <div className="flex flex-col items-end gap-2">
