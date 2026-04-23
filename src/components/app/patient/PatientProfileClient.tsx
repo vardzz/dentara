@@ -30,7 +30,8 @@ export default function PatientProfileClient({ user: initialUser }: Props) {
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const [mounted, setMounted] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
+  type UserProfile = Awaited<ReturnType<typeof getCurrentUserProfile>>;
+  const [profile, setProfile] = useState<UserProfile>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -88,7 +89,7 @@ export default function PatientProfileClient({ user: initialUser }: Props) {
   const handleSave = async () => {
     // Optional: Add server action call to save profile
     setIsEditing(false);
-    setProfile((prev: any) => ({ ...prev, ...formData }));
+    setProfile((prev) => prev ? { ...prev, ...formData, age: formData.age ? parseInt(formData.age, 10) : prev.age } : prev);
   };
 
   return (

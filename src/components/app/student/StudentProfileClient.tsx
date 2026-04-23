@@ -30,7 +30,8 @@ export default function StudentProfileClient({ user: initialUser }: Props) {
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const [mounted, setMounted] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
+  type UserProfile = Awaited<ReturnType<typeof getCurrentUserProfile>>;
+  const [profile, setProfile] = useState<UserProfile>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -87,9 +88,9 @@ export default function StudentProfileClient({ user: initialUser }: Props) {
   try {
     if (profile?.casesJson) {
       const parsed = JSON.parse(profile.casesJson);
-      totalCases = parsed.reduce((acc: number, curr: any) => acc + (curr.done || 0), 0);
+      totalCases = parsed.reduce((acc: number, curr: { done?: number }) => acc + (curr.done || 0), 0);
     }
-  } catch (e) {}
+  } catch { /* casesJson parse failure — safe to ignore */ }
 
   const patientCount = profile?._count?.studentBookings || 0;
 
@@ -98,7 +99,7 @@ export default function StudentProfileClient({ user: initialUser }: Props) {
     // await updateUserProfile(authUser.id, formData);
     setIsEditing(false);
     // Optimistically update profile state
-    setProfile((prev: any) => ({ ...prev, ...formData }));
+    setProfile((prev) => prev ? { ...prev, ...formData } : prev);
   };
 
   return (
