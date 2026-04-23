@@ -31,20 +31,57 @@ export default async function StudentHomePage() {
 
   if (!user || user.role !== "student") redirect("/app/login");
 
+  const unreadChatCount = await prisma.message.count({
+    where: {
+      isRead: false,
+      senderId: { not: sessionUserId },
+      conversation: {
+        OR: [
+          { participant1Id: sessionUserId },
+          { participant2Id: sessionUserId }
+        ]
+      }
+    }
+  });
+
   const completedBookings = await prisma.booking.findMany({
     where: {
       studentId: sessionUserId,
       status: "COMPLETED",
     },
     select: {
+      id: true,
       caseLabel: true,
       notes: true,
+      updatedAt: true,
       patient: {
         select: {
+          fullName: true,
           concern: true,
         },
       },
     },
+    orderBy: { updatedAt: "desc" },
+  });
+
+  const upcomingBookings = await prisma.booking.findMany({
+    where: {
+      studentId: sessionUserId,
+      status: "CONFIRMED",
+    },
+    select: {
+      id: true,
+      caseLabel: true,
+      notes: true,
+      scheduledAt: true,
+      patient: {
+        select: {
+          fullName: true,
+          concern: true,
+        },
+      },
+    },
+    orderBy: { scheduledAt: "asc" },
   });
 
   const progress = completedBookings.reduce(
@@ -61,5 +98,13 @@ export default async function StudentHomePage() {
     {} as Record<string, number>
   );
 
-  return <StudentHomeClient user={user} progress={progress} />;
+  return (
+    <StudentHomeClient 
+      user={user} 
+      progress={progress} 
+      unreadChatCount={unreadChatCount}
+      upcomingCases={upcomingBookings}
+      recentActivities={completedBookings}
+    />
+  );
 }

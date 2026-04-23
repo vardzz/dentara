@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Bell, MessageCircle } from 'lucide-react';
+import { Bell, MessageCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { useNotificationCenter } from '@/lib/notification-context';
 import { toPlainCaseLabel } from '@/lib/plain-language';
 
@@ -16,6 +16,16 @@ const ITEM: Variants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
 
+type BaseBooking = {
+  id: string;
+  caseLabel: string | null;
+  notes: string | null;
+  patient: {
+    fullName: string;
+    concern: string | null;
+  };
+};
+
 interface Props {
   user: {
     fullName: string;
@@ -24,11 +34,31 @@ interface Props {
     casesJson?: string | null;
   };
   progress: Record<string, number>;
+  unreadChatCount?: number;
+  upcomingCases?: (BaseBooking & { scheduledAt: Date | null })[];
+  recentActivities?: (BaseBooking & { updatedAt: Date })[];
 }
 
 const QUOTA_LABELS = ['Tooth Removal', 'Gum Care', 'Tooth Filling', 'Tooth Replacement'] as const;
 
-export default function StudentHomeClient({ user, progress }: Props) {
+function formatDateLabel(iso: string | Date | null): string {
+  if (!iso) return 'Date not specified';
+  return new Date(iso).toLocaleDateString([], {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function formatTimeLabel(iso: string | Date | null): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+export default function StudentHomeClient({ user, progress, unreadChatCount = 0, upcomingCases = [], recentActivities = [] }: Props) {
   const { unreadCount } = useNotificationCenter();
   const [mounted, setMounted] = useState(false);
 
@@ -39,7 +69,7 @@ export default function StudentHomeClient({ user, progress }: Props) {
   if (!mounted) return null;
 
   const displayName = user.fullName;
-  const unreadMessages = unreadCount || 0;
+  const unreadMessages = unreadChatCount;
   const pendingRequests = unreadCount || 0;
 
   let parsedCases: { name: string; count?: number; required?: number }[] = [];
@@ -140,6 +170,87 @@ export default function StudentHomeClient({ user, progress }: Props) {
               </div>
             );
           })}
+        </div>
+      </motion.div>
+
+      {/* Upcoming Cases */}
+      <motion.div variants={ITEM}>
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          Upcoming Cases
+        </h3>
+        <div className="space-y-3">
+          {upcomingCases.length === 0 ? (
+            <div className="glass-card-solid p-5 flex items-center justify-center h-24">
+              <p className="text-sm text-muted-foreground">No upcoming confirmed cases.</p>
+            </div>
+          ) : (
+            upcomingCases.map((booking) => (
+              <div key={booking.id} className="glass-card-solid p-5 border border-[#3b82f6]/15 bg-[#3b82f6]/6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="w-11 h-11 rounded-2xl bg-[#3b82f6]/15 flex items-center justify-center text-[#3b82f6] shrink-0">
+                      <Clock className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">
+                        {booking.patient.fullName}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {formatDateLabel(booking.scheduledAt)}
+                        {booking.scheduledAt && ` · ${formatTimeLabel(booking.scheduledAt)}`}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1 truncate">
+                        {toPlainCaseLabel(booking.caseLabel || booking.patient.concern || 'General Care')}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#3b82f6]/10 text-[#3b82f6] whitespace-nowrap">
+                    Confirmed
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </motion.div>
+
+      {/* Recent Activity */}
+      <motion.div variants={ITEM}>
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          Recent Activity
+        </h3>
+        <div className="space-y-3">
+          {recentActivities.length === 0 ? (
+            <div className="glass-card-solid p-5 flex items-center justify-center h-24">
+              <p className="text-sm text-muted-foreground">No recent activity.</p>
+            </div>
+          ) : (
+            recentActivities.slice(0, 5).map((booking) => (
+              <div key={booking.id} className="glass-card-solid p-5 border border-emerald-200/60 bg-emerald-50/35">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="w-11 h-11 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                      <CheckCircle2 className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">
+                        Completed: {booking.patient.fullName}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {formatDateLabel(booking.updatedAt)} · {formatTimeLabel(booking.updatedAt)}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1 truncate">
+                        {toPlainCaseLabel(booking.caseLabel || booking.patient.concern || 'General Care')}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 whitespace-nowrap">
+                    Completed
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </motion.div>
     </motion.div>
