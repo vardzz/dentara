@@ -36,7 +36,7 @@ export default function UniversitySearchClient() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search universities..."
-          className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/80 border border-gray-100/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#138b94]/30 transition-all duration-200"
+          className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/80 border border-gray-100/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-teal/30 transition-all duration-200"
         />
       </motion.div>
 
@@ -44,8 +44,8 @@ export default function UniversitySearchClient() {
         {mockUniversities.map((u, i) => (
           <div key={i} className="glass-card-solid p-5 hover-lift cursor-pointer">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#0e2b5c]/10 flex items-center justify-center shrink-0">
-                <Building2 className="h-5 w-5 text-[#0e2b5c]" />
+              <div className="w-12 h-12 rounded-2xl bg-brand-navy/10 flex items-center justify-center shrink-0">
+                <Building2 className="h-5 w-5 text-brand-navy" />
               </div>
               <div className="flex-1">
                 <h4 className="font-semibold text-foreground">{u.name}</h4>

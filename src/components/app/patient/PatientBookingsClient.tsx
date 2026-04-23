@@ -84,7 +84,7 @@ export default function PatientBookingsClient({ bookings }: PatientBookingsClien
           { label: 'Cancelled', value: String(cancelledCount), icon: XCircle },
         ].map((stat, i) => (
           <div key={i} className="glass-card-solid p-3 sm:p-4 text-center">
-            <stat.icon className="h-4 w-4 text-[#138b94] mx-auto mb-1.5" />
+            <stat.icon className="h-4 w-4 text-brand-teal mx-auto mb-1.5" />
             <p className="text-xl font-bold text-foreground">{stat.value}</p>
             <p className="text-[10px] text-muted-foreground font-medium">{stat.label}</p>
           </div>

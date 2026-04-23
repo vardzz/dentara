@@ -117,7 +117,7 @@ export default function ChatActiveClient({ currentUserId, conversationId, initia
           </button>
           
           <div className="relative">
-            <div className="h-10 w-10 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-sm">
+            <div className="h-10 w-10 rounded-full bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm">
               {initials(otherUser.fullName)}
             </div>
           </div>
@@ -148,7 +148,7 @@ export default function ChatActiveClient({ currentUserId, conversationId, initia
               <div
                 className={`max-w-[75%] px-4 py-2.5 shadow-sm text-sm ${
                   mine
-                    ? 'bg-[#138b94] text-white rounded-2xl rounded-br-sm'
+                    ? 'bg-brand-teal text-white rounded-2xl rounded-br-sm'
                     : 'bg-white text-gray-800 border border-gray-50 rounded-2xl rounded-bl-sm'
                 }`}
               >
@@ -190,7 +190,7 @@ export default function ChatActiveClient({ currentUserId, conversationId, initia
           <button
             onClick={() => void onSend()}
             disabled={sending || !messageInput.trim()}
-            className="h-10 w-10 bg-[#138b94] text-white rounded-full flex items-center justify-center hover:bg-[#0f737a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+            className="h-10 w-10 bg-brand-teal text-white rounded-full flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             <Send className="h-4 w-4 ml-0.5" />
           </button>

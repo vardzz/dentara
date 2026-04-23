@@ -108,7 +108,7 @@ export default function StudentBookingsClient({ bookings }: StudentBookingsClien
           { label: 'Cancelled', value: String(cancelledCount), icon: XCircle },
         ].map((stat, i) => (
           <div key={i} className="glass-card-solid p-3 sm:p-4 text-center">
-            <stat.icon className="h-4 w-4 text-[#138b94] mx-auto mb-1.5" />
+            <stat.icon className="h-4 w-4 text-brand-teal mx-auto mb-1.5" />
             <p className="text-xl font-bold text-foreground">{stat.value}</p>
             <p className="text-[10px] text-muted-foreground font-medium">{stat.label}</p>
           </div>
@@ -181,7 +181,7 @@ export default function StudentBookingsClient({ bookings }: StudentBookingsClien
                               handleComplete(booking.id);
                             }}
                             disabled={loadingId === booking.id}
-                            className="py-1 px-3 bg-white shadow-[0_2px_10px_rgba(19,139,148,0.1)] dark:bg-black/20 text-[#138b94] hover:bg-[#138b94] hover:text-white text-[10px] font-bold rounded-full transition-all duration-300 border border-[#138b94]/20 flex items-center gap-1.5 disabled:opacity-50 hover:shadow-[0_4px_12px_rgba(19,139,148,0.25)] whitespace-nowrap overflow-hidden"
+                            className="py-1 px-3 bg-white shadow-[0_2px_10px_var(--color-brand-teal)] dark:bg-black/20 text-brand-teal hover:bg-brand-teal hover:text-white text-[10px] font-bold rounded-full transition-all duration-300 border border-brand-teal/20 flex items-center gap-1.5 disabled:opacity-50 hover:shadow-[0_4px_12px_var(--color-brand-teal)] whitespace-nowrap overflow-hidden"
                           >
                             {loadingId === booking.id ? (
                               <Clock className="h-3 w-3 animate-spin" />

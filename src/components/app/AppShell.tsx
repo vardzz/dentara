@@ -42,8 +42,8 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
   // Avoid hydration mismatch by rendering a stable shell until mounted
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-[#138b94]/20 border-t-[#138b94] rounded-full animate-spin" />
+      <div className="min-h-screen bg-brand-surface flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-brand-teal/20 border-t-brand-teal rounded-full animate-spin" />
       </div>
     );
   }
@@ -62,21 +62,21 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
   if (!isMobile) {
     return (
       <>
-        <div className="flex min-h-screen bg-[#f8fafc] text-[#0e2b5c] font-sans selection:bg-teal-100 selection:text-teal-900">
+        <div className="flex min-h-screen bg-brand-surface text-brand-navy font-sans selection:bg-brand-teal/20 selection:text-brand-navy">
           {/* ── Sidebar ── */}
           <aside className="fixed top-0 left-0 z-50 h-screen w-[260px] flex flex-col bg-white/60 backdrop-blur-2xl border-r border-white/50 shadow-[4px_0_30px_rgba(0,0,0,0.02)]">
           {/* Logo */}
           <div className="flex items-center gap-2.5 px-7 pt-8 pb-6">
             <img src="/assets/icon.png" alt="Dentara" className="h-7 w-auto object-contain drop-shadow-sm" />
-            <span className="text-lg font-bold tracking-tight text-[#0e2b5c]">DENTARA</span>
+            <span className="text-lg font-bold tracking-tight text-brand-navy">DENTARA</span>
           </div>
 
           {/* Role badge */}
           <div className="mx-5 mb-6">
-            <div className="bg-gradient-to-r from-[#138b94]/10 to-transparent px-4 py-2.5 rounded-2xl border border-[#138b94]/10 flex items-center justify-between gap-2.5">
+            <div className="bg-brand-teal/10 px-4 py-2.5 rounded-2xl border border-brand-teal/10 flex items-center justify-between gap-2.5">
               <div className="flex items-center gap-2.5">
-                <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
-                <span className="text-[10px] font-black tracking-widest uppercase text-[#0e2b5c]">
+                <div className="w-2 h-2 bg-brand-teal rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
+                <span className="text-[10px] font-black tracking-widest uppercase text-brand-navy">
                   {role}
                 </span>
               </div>
@@ -99,14 +99,14 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
                   whileTap={{ scale: 0.97 }}
                   className={`relative w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all duration-200 group ${
                     isActive
-                      ? 'bg-gradient-to-r from-[#138b94]/10 to-transparent text-[#138b94]'
-                      : 'text-gray-400 hover:text-[#0e2b5c] hover:bg-gray-50/80'
+                      ? 'bg-brand-accent text-brand-teal'
+                      : 'text-gray-400 hover:text-brand-navy hover:bg-brand-accent/50'
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="sidebar-pill"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#138b94] rounded-r-full"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-teal rounded-r-full"
                       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                     />
                   )}
@@ -167,7 +167,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
 
   /* ──────────────────── MOBILE LAYOUT ──────────────────── */
   return (
-    <div className="min-h-[100dvh] bg-[#f8fafc] text-[#0e2b5c] font-sans overflow-x-hidden relative selection:bg-teal-100 selection:text-teal-900">
+    <div className="min-h-[100dvh] bg-brand-surface text-brand-navy font-sans overflow-x-hidden relative selection:bg-brand-teal/20 selection:text-brand-navy">
       {/* Ambient Mesh Gradients */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-teal-400/10 blur-[100px]" />
@@ -178,15 +178,15 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
       <header className="fixed top-0 left-0 right-0 z-40 px-6 pt-10 pb-4 bg-white/40 backdrop-blur-2xl border-b border-white/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/assets/icon.png" alt="Dentara" className="h-6 w-auto object-contain drop-shadow-sm" />
-          <span className="text-lg font-bold tracking-tight text-[#0e2b5c]">DENTARA</span>
+          <span className="text-lg font-bold tracking-tight text-brand-navy">DENTARA</span>
         </div>
         <div className="flex items-center gap-2">
           <NotificationBellBoundary>
             <NotificationBell />
           </NotificationBellBoundary>
           <div className="bg-white/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/80 shadow-sm flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
-            <span className="text-[10px] font-black tracking-widest uppercase text-[#0e2b5c]">
+            <div className="w-1.5 h-1.5 bg-brand-teal rounded-full animate-pulse shadow-[0_0_8px_#14b8a6]" />
+            <span className="text-[10px] font-black tracking-widest uppercase text-brand-navy">
               {role}
             </span>
           </div>
@@ -225,11 +225,11 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
                 {isActive && (
                   <motion.div layoutId="dock-indicator" className="absolute inset-0 bg-white rounded-full shadow-sm border border-gray-100/50" transition={{ type: 'spring', stiffness: 300, damping: 24 }} />
                 )}
-                <motion.div animate={{ y: isActive ? -2 : 0, scale: isActive ? 1.05 : 1 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }} className={`relative z-10 transition-colors duration-200 ${isActive ? 'text-[#138b94]' : 'text-gray-400'}`}>
+                <motion.div animate={{ y: isActive ? -2 : 0, scale: isActive ? 1.05 : 1 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }} className={`relative z-10 transition-colors duration-200 ${isActive ? 'text-brand-teal' : 'text-gray-400'}`}>
                   <Icon size={isActive ? 20 : 22} strokeWidth={isActive ? 2.5 : 2} />
                 </motion.div>
                 {isActive && (
-                  <motion.span initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 text-[9px] font-black tracking-widest uppercase text-[#138b94] mt-0.5">
+                  <motion.span initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 text-[9px] font-black tracking-widest uppercase text-brand-teal mt-0.5">
                     {tab.label}
                   </motion.span>
                 )}

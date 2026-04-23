@@ -50,8 +50,8 @@ export default function BookingTimePicker({
   return (
     <div className="rounded-[26px] border border-slate-200/70 bg-white/85 p-4 shadow-[0_14px_34px_-28px_rgba(10,31,68,0.45)]">
       <div className="flex items-center gap-2">
-        <CalendarDays className="size-4 text-[#138b94]" />
-        <h4 className="text-sm font-bold tracking-tight text-[#0a1f44]">{title}</h4>
+        <CalendarDays className="size-4 text-brand-teal" />
+        <h4 className="text-sm font-bold tracking-tight text-brand-navy">{title}</h4>
       </div>
 
       {!availability.length ? (
@@ -74,8 +74,8 @@ export default function BookingTimePicker({
                   }}
                   className={`rounded-2xl border px-3 py-2 text-left text-xs font-semibold whitespace-nowrap transition-all ${
                     isActive
-                      ? 'border-[#138b94]/30 bg-[#138b94]/10 text-[#0a1f44]'
-                      : 'border-slate-200/80 bg-white text-slate-600 hover:border-[#138b94]/20'
+                      ? 'border-brand-teal/30 bg-brand-teal/10 text-brand-navy'
+                      : 'border-slate-200/80 bg-white text-slate-600 hover:border-brand-teal/20'
                   }`}
                 >
                   {formatDayLabel(item.date, item.day)}
@@ -105,8 +105,8 @@ export default function BookingTimePicker({
                     }}
                     className={`rounded-xl px-3 py-2 text-xs font-bold transition-all ${
                       isSelected
-                        ? 'bg-[#138b94] text-white shadow-[0_14px_30px_-16px_rgba(19,139,148,0.85)]'
-                        : 'border border-slate-200/80 bg-white text-slate-600 hover:border-[#138b94]/25'
+                        ? 'bg-brand-teal text-white shadow-[0_14px_30px_-16px_var(--color-brand-teal)]'
+                        : 'border border-slate-200/80 bg-white text-slate-600 hover:border-brand-teal/25'
                     }`}
                   >
                     {slot}

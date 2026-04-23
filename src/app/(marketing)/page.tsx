@@ -157,7 +157,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#fafcff] text-gray-800 antialiased selection:bg-[#138b94] selection:text-white flex flex-col min-h-screen overflow-x-hidden font-sans">
+    <div className="bg-[#fafcff] text-gray-800 antialiased selection:bg-[var(--color-brand-teal)] selection:text-white flex flex-col min-h-screen overflow-x-hidden font-sans">
       <style>{`
         html { scroll-behavior: smooth; }
         ::-webkit-scrollbar { width: 8px; }
@@ -165,7 +165,7 @@ export default function App() {
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .text-gradient {
-          background: linear-gradient(90deg, #0e2b5c 0%, #138b94 100%);
+          background: linear-gradient(90deg, var(--color-brand-navy) 0%, var(--color-brand-teal) 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -191,27 +191,27 @@ export default function App() {
               className="w-8 h-8 object-contain"
               style={{ imageRendering: 'crisp-edges' }}
             />
-            <span className="text-xl font-bold tracking-tight text-[#0e2b5c]">
+            <span className="text-xl font-bold tracking-tight text-[var(--color-brand-navy)]">
               DENTARA
             </span>
           </div>
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-            <a href="#features" className="hover:text-[#138b94] transition-colors duration-200">Features</a>
-            <a href="#how-it-works" className="hover:text-[#138b94] transition-colors duration-200">How it Works</a>
-            <a href="#demo" className="hover:text-[#138b94] transition-colors duration-200">AI Demo</a>
-            <a href="#faq" className="hover:text-[#138b94] transition-colors duration-200">FAQ</a>
+            <a href="#features" className="hover:text-[var(--color-brand-teal)] transition-colors duration-200">Features</a>
+            <a href="#how-it-works" className="hover:text-[var(--color-brand-teal)] transition-colors duration-200">How it Works</a>
+            <a href="#demo" className="hover:text-[var(--color-brand-teal)] transition-colors duration-200">AI Demo</a>
+            <a href="#faq" className="hover:text-[var(--color-brand-teal)] transition-colors duration-200">FAQ</a>
           </div>
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
-            <a href="/app/login" className="text-sm font-semibold text-[#0e2b5c] hover:text-[#3b82f6] transition-colors duration-200">
+            <a href="/app/login" className="text-sm font-semibold text-[var(--color-brand-navy)] hover:text-[var(--color-brand-blue)] transition-colors duration-200">
               Log In
             </a>
             <a
               href="/app/register"
-              className="bg-[#3b82f6] hover:bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5"
+              className="bg-[var(--color-brand-blue)] hover:bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5"
             >
               Join Waitlist
             </a>
@@ -259,13 +259,13 @@ export default function App() {
                     alt="Dentara Icon"
                     className="w-8 h-8 object-contain"
                   />
-                  <span className="text-xl font-bold tracking-tight text-[#0e2b5c]">
+                  <span className="text-xl font-bold tracking-tight text-[var(--color-brand-navy)]">
                     DENTARA
                   </span>
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2 text-gray-400 hover:text-[#0e2b5c] transition-colors"
+                  className="p-2 text-gray-400 hover:text-[var(--color-brand-navy)] transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -294,7 +294,7 @@ export default function App() {
                       hidden: { opacity: 0, x: 20 },
                       visible: { opacity: 1, x: 0 }
                     }}
-                    className="text-2xl font-bold text-[#0e2b5c] hover:text-[#138b94] transition-colors py-2"
+                    className="text-2xl font-bold text-[var(--color-brand-navy)] hover:text-[var(--color-brand-teal)] transition-colors py-2"
                   >
                     {link.name}
                   </motion.a>
@@ -311,13 +311,13 @@ export default function App() {
                 >
                   <a
                     href="/app/login"
-                    className="flex items-center justify-center py-4 rounded-xl border border-gray-200 text-[#0e2b5c] font-bold hover:bg-gray-50 transition-all"
+                    className="flex items-center justify-center py-4 rounded-xl border border-gray-200 text-[var(--color-brand-navy)] font-bold hover:bg-gray-50 transition-all"
                   >
                     Log In
                   </a>
                   <a
                     href="/app/register"
-                    className="flex items-center justify-center py-4 rounded-xl bg-[#3b82f6] text-white font-bold shadow-lg hover:bg-blue-600 transition-all"
+                    className="flex items-center justify-center py-4 rounded-xl bg-[var(--color-brand-blue)] text-white font-bold shadow-lg hover:bg-blue-600 transition-all"
                   >
                     Join Waitlist
                   </a>
@@ -352,7 +352,7 @@ export default function App() {
 
           <motion.h1
             variants={fadeUp}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#0e2b5c] mb-6 leading-[1.15]"
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--color-brand-navy)] mb-6 leading-[1.15]"
           >
             Turn Clinical <br className="hidden lg:block" />{' '}
             <span className="text-gradient">Quotas</span> Into{' '}
@@ -375,11 +375,11 @@ export default function App() {
                   type="email"
                   placeholder="Enter your .edu email"
                   required
-                  className="w-full sm:flex-1 px-4 py-3.5 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#3b82f6] focus:border-[#3b82f6] outline-none text-gray-800 placeholder-gray-400 transition-all duration-200"
+                  className="w-full sm:flex-1 px-4 py-3.5 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-[var(--color-brand-blue)] focus:border-[var(--color-brand-blue)] outline-none text-gray-800 placeholder-gray-400 transition-all duration-200"
                 />
                 <button
                   type="submit"
-                  className="w-full sm:w-auto bg-[#3b82f6] hover:bg-blue-600 text-white font-semibold px-6 py-3.5 rounded-xl shadow-[0_10px_15px_-3px_rgba(59,130,246,0.3)] hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex items-center justify-center gap-2 whitespace-nowrap"
+                  className="w-full sm:w-auto bg-[var(--color-brand-blue)] hover:bg-blue-600 text-white font-semibold px-6 py-3.5 rounded-xl shadow-[0_10px_15px_-3px_rgba(59,130,246,0.3)] hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex items-center justify-center gap-2 whitespace-nowrap"
                 >
                   Start Matching <ArrowRight className="w-4 h-4" />
                 </button>
@@ -395,9 +395,9 @@ export default function App() {
           <motion.div variants={fadeUp} className="mt-6 flex items-center justify-center lg:justify-start gap-4">
             <a
               href="#demo"
-              className="text-[#475569] font-medium text-sm hover:text-[#138b94] transition-colors duration-200 flex items-center gap-2"
+              className="text-[#475569] font-medium text-sm hover:text-[var(--color-brand-teal)] transition-colors duration-200 flex items-center gap-2"
             >
-              <PlayCircle className="w-4 h-4 text-[#138b94]" /> Try AI Triage Demo
+              <PlayCircle className="w-4 h-4 text-[var(--color-brand-teal)]" /> Try AI Triage Demo
             </a>
           </motion.div>
 
@@ -408,7 +408,7 @@ export default function App() {
 
         {/* Floating UI Mockup */}
         <div className="flex-1 w-full max-w-lg relative z-10 hidden md:block">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-[#138b94]/20 to-[#3b82f6]/20 rounded-full blur-[80px] -z-10 pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-[var(--color-brand-teal)]/20 to-[var(--color-brand-blue)]/20 rounded-full blur-[80px] -z-10 pointer-events-none" />
 
           <motion.div
             animate={shouldReduceMotion ? {} : floatAnimation}
@@ -424,23 +424,23 @@ export default function App() {
 
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-bold text-[#0e2b5c]">Pending Quotas</h3>
-                <span className="text-xs bg-blue-100 text-[#3b82f6] px-2 py-1 rounded-md font-bold">
+                <h3 className="font-bold text-[var(--color-brand-navy)]">Pending Quotas</h3>
+                <span className="text-xs bg-blue-100 text-[var(--color-brand-blue)] px-2 py-1 rounded-md font-bold">
                   2/5 Completed
                 </span>
               </div>
 
-              <div className="bg-[#f0f7f9]/50 border border-[#138b94]/20 rounded-xl p-4 flex items-center justify-between">
+              <div className="bg-[#f0f7f9]/50 border border-[var(--color-brand-teal)]/20 rounded-xl p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center text-[#138b94]">
+                  <div className="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center text-[var(--color-brand-teal)]">
                     <ScanFace className="w-5 h-5" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-800">Tooth Filling</p>
-                    <p className="text-xs text-[#138b94] font-medium">1 Patient Matched ✨</p>
+                    <p className="text-xs text-[var(--color-brand-teal)] font-medium">1 Patient Matched ✨</p>
                   </div>
                 </div>
-                <button className="bg-[#0e2b5c] text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-all duration-200 ease-in-out hover:bg-[#0a1f45]">
+                <button className="bg-[var(--color-brand-navy)] text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-all duration-200 ease-in-out hover:bg-[#0a1f45]">
                   Claim
                 </button>
               </div>
@@ -490,8 +490,8 @@ export default function App() {
             viewport={{ once: true, amount: 0.3 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-bold text-[#0e2b5c] mb-4">
-              4 Ways We Secure Your <span className="text-[#3b82f6]">Licensure</span>
+            <h2 className="text-3xl font-bold text-[var(--color-brand-navy)] mb-4">
+              4 Ways We Secure Your <span className="text-[var(--color-brand-blue)]">Licensure</span>
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto">
               We industrialize the clinical supply chain, turning the stressful hunt for patients into a structured, reliable process.
@@ -510,13 +510,13 @@ export default function App() {
                 icon: <GitMerge className="w-6 h-6" />,
                 title: 'Smart Quota Matching',
                 desc: 'Our algorithm pairs your specific syllabus requirements directly with patients needing that exact procedure.',
-                color: 'bg-[#f0f7f9] text-[#138b94]',
+                color: 'bg-[#f0f7f9] text-[var(--color-brand-teal)]',
               },
               {
                 icon: <BrainCircuit className="w-6 h-6" />,
                 title: 'AI Digital Triage',
                 desc: 'Patients are pre-screened via text and photos before stepping into the clinic, preventing case mismatches.',
-                color: 'bg-blue-50 text-[#3b82f6]',
+                color: 'bg-blue-50 text-[var(--color-brand-blue)]',
               },
               {
                 icon: <ShieldCheck className="w-6 h-6" />,
@@ -560,8 +560,8 @@ export default function App() {
             className="flex flex-wrap justify-between items-center gap-8 text-center divide-x-0 md:divide-x divide-gray-200"
           >
             {[
-              { icon: <Users className="w-4 h-4" />, label: 'TAM', val: '6,200+', desc: 'Clinical Students', textCol: 'text-[#3b82f6]' },
-              { icon: <Building className="w-4 h-4" />, label: 'Network', val: '31', desc: 'Accredited Schools', textCol: 'text-[#138b94]' },
+              { icon: <Users className="w-4 h-4" />, label: 'TAM', val: '6,200+', desc: 'Clinical Students', textCol: 'text-[var(--color-brand-blue)]' },
+              { icon: <Building className="w-4 h-4" />, label: 'Network', val: '31', desc: 'Accredited Schools', textCol: 'text-[var(--color-brand-teal)]' },
               { icon: <AlertTriangle className="w-4 h-4" />, label: 'Demand', val: '92%', desc: 'PH Untreated Decay', textCol: 'text-red-400' },
               { icon: <CheckCircle className="w-4 h-4" />, label: 'Goal', val: '100%', desc: 'Verified Matches', textCol: 'text-green-500' },
             ].map((stat, i) => (
@@ -570,7 +570,7 @@ export default function App() {
                   {stat.icon}
                   <span className="text-xs font-bold uppercase tracking-wider">{stat.label}</span>
                 </div>
-                <p className="text-3xl font-extrabold text-[#0e2b5c]">{stat.val}</p>
+                <p className="text-3xl font-extrabold text-[var(--color-brand-navy)]">{stat.val}</p>
                 <p className="text-xs text-gray-500 font-medium">{stat.desc}</p>
               </motion.div>
             ))}
@@ -589,8 +589,8 @@ export default function App() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
           >
-            <h2 className="text-3xl font-bold text-[#0e2b5c] mb-4">
-              Launch in <span className="text-[#3b82f6]">3 Simple Steps</span>
+            <h2 className="text-3xl font-bold text-[var(--color-brand-navy)] mb-4">
+              Launch in <span className="text-[var(--color-brand-blue)]">3 Simple Steps</span>
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto mb-16">
               No more stress. No more &ldquo;Looking for patient&rdquo; Facebook posts. Just a streamlined
@@ -602,9 +602,9 @@ export default function App() {
             <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-gray-100 -z-10" />
 
             {[
-              { step: 1, icon: <ListTodo className="w-10 h-10 stroke-[1.5]" />, title: 'Input Your Quotas', desc: 'Log into the student dashboard and list your exact syllabus requirements for the semester.', col: 'text-[#0e2b5c]' },
-              { step: 2, icon: <Bot className="w-10 h-10 stroke-[1.5]" />, title: 'AI Pre-Screens Patients', desc: 'Patients via LGU submit their symptoms. Our AI translates local complaints into academic case tags.', col: 'text-[#138b94]' },
-              { step: 3, icon: <CalendarCheck className="w-10 h-10 stroke-[1.5]" />, title: 'Match & Treat', desc: 'Accept a verified match, digitally sign liability waivers, and treat the patient securely in the clinic.', col: 'text-[#3b82f6]' },
+              { step: 1, icon: <ListTodo className="w-10 h-10 stroke-[1.5]" />, title: 'Input Your Quotas', desc: 'Log into the student dashboard and list your exact syllabus requirements for the semester.', col: 'text-[var(--color-brand-navy)]' },
+              { step: 2, icon: <Bot className="w-10 h-10 stroke-[1.5]" />, title: 'AI Pre-Screens Patients', desc: 'Patients via LGU submit their symptoms. Our AI translates local complaints into academic case tags.', col: 'text-[var(--color-brand-teal)]' },
+              { step: 3, icon: <CalendarCheck className="w-10 h-10 stroke-[1.5]" />, title: 'Match & Treat', desc: 'Accept a verified match, digitally sign liability waivers, and treat the patient securely in the clinic.', col: 'text-[var(--color-brand-blue)]' },
             ].map((s) => (
               <motion.div
                 key={s.step}
@@ -620,7 +620,7 @@ export default function App() {
                 <div className={`w-24 h-24 bg-white border border-gray-100 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] flex items-center justify-center mb-6 ${s.col}`}>
                   {s.icon}
                 </div>
-                <h3 className="text-lg font-bold text-[#0e2b5c] mb-2">{s.title}</h3>
+                <h3 className="text-lg font-bold text-[var(--color-brand-navy)] mb-2">{s.title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed max-w-xs">{s.desc}</p>
               </motion.div>
             ))}
@@ -640,8 +640,8 @@ export default function App() {
             viewport={{ once: true, amount: 0.3 }}
             className="text-center mb-10"
           >
-            <h2 className="text-3xl font-bold text-[#0e2b5c] mb-4">
-              See <span className="text-[#138b94]">Dentara AI</span> in Action
+            <h2 className="text-3xl font-bold text-[var(--color-brand-navy)] mb-4">
+              See <span className="text-[var(--color-brand-teal)]">Dentara AI</span> in Action
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto">
               Test our MVP Digital Triage system right here. Type a patient&apos;s complaint in Tagalog,
@@ -649,7 +649,7 @@ export default function App() {
             </p>
           </motion.div>
 
-          <div className="bg-[#0e2b5c] rounded-2xl shadow-2xl overflow-hidden border border-[#0e2b5c]/20 flex flex-col md:flex-row">
+          <div className="bg-[var(--color-brand-navy)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-brand-navy)]/20 flex flex-col md:flex-row">
             {/* Sidebar */}
             <div className="w-full md:w-64 bg-black/20 p-6 hidden md:block">
               <div className="flex items-center gap-2 text-white mb-8 opacity-50">
@@ -661,8 +661,8 @@ export default function App() {
                 <div className="h-8 bg-white/10 rounded-lg flex items-center px-4">
                   <span className="text-xs text-white/70 font-medium">Dashboard</span>
                 </div>
-                <div className="h-8 bg-[#138b94]/30 border border-[#138b94]/50 rounded-lg flex items-center px-4">
-                  <span className="text-xs text-[#138b94] font-bold">AI Triage (Active)</span>
+                <div className="h-8 bg-[var(--color-brand-teal)]/30 border border-[var(--color-brand-teal)]/50 rounded-lg flex items-center px-4">
+                  <span className="text-xs text-[var(--color-brand-teal)] font-bold">AI Triage (Active)</span>
                 </div>
                 <div className="h-8 bg-white/5 rounded-lg flex items-center px-4">
                   <span className="text-xs text-white/50">My Quotas</span>
@@ -682,7 +682,7 @@ export default function App() {
 
               <div className="relative z-10 max-w-xl mx-auto">
                 <div className="bg-white rounded-xl shadow-lg p-6">
-                  <label htmlFor="symptomInput" className="block text-sm font-bold text-[#0e2b5c] mb-2">
+                  <label htmlFor="symptomInput" className="block text-sm font-bold text-[var(--color-brand-navy)] mb-2">
                     Patient Intake Form (Try in Tagalog!)
                   </label>
                   <p className="text-xs text-gray-500 mb-4">
@@ -695,7 +695,7 @@ export default function App() {
                     value={symptom}
                     onChange={(e) => setSymptom(e.target.value)}
                     placeholder="e.g., 'Masakit po yung bagang ko pag umiinom ng malamig, parang may butas na malalim.'"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#138b94] focus:border-[#138b94] transition-all duration-200 mb-4 resize-none"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] focus:border-[var(--color-brand-teal)] transition-all duration-200 mb-4 resize-none"
                   />
 
                   <AnimatePresence>
@@ -715,7 +715,7 @@ export default function App() {
                   <button
                     onClick={analyzeSymptoms}
                     disabled={isAnalyzing}
-                    className="w-full bg-[#138b94] hover:bg-[#107a82] text-white font-bold py-3.5 rounded-lg shadow-md transition-all duration-200 ease-in-out flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full bg-[var(--color-brand-teal)] hover:bg-[#107a82] text-white font-bold py-3.5 rounded-lg shadow-md transition-all duration-200 ease-in-out flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {isAnalyzing ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing...</>
@@ -732,17 +732,17 @@ export default function App() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 12 }}
                         transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-                        className="mt-4 p-4 rounded-lg bg-[#f0f7f9] border border-[#138b94]/20"
+                        className="mt-4 p-4 rounded-lg bg-[#f0f7f9] border border-[var(--color-brand-teal)]/20"
                       >
                         <div className="flex gap-3 items-start">
-                          <div className="w-8 h-8 rounded-full bg-[#138b94]/10 flex items-center justify-center shrink-0 border border-[#138b94]/30">
-                            <BrainCircuit className="w-4 h-4 text-[#138b94]" />
+                          <div className="w-8 h-8 rounded-full bg-[var(--color-brand-teal)]/10 flex items-center justify-center shrink-0 border border-[var(--color-brand-teal)]/30">
+                            <BrainCircuit className="w-4 h-4 text-[var(--color-brand-teal)]" />
                           </div>
                           <div>
-                            <p className="text-[10px] font-bold text-[#3b82f6] uppercase tracking-wider mb-1">
+                            <p className="text-[10px] font-bold text-[var(--color-brand-blue)] uppercase tracking-wider mb-1">
                               Quota Match Identified
                             </p>
-                            <p className="text-[#0e2b5c] text-sm leading-relaxed font-medium">{aiResult}</p>
+                            <p className="text-[var(--color-brand-navy)] text-sm leading-relaxed font-medium">{aiResult}</p>
                           </div>
                         </div>
                       </motion.div>
@@ -761,13 +761,13 @@ export default function App() {
             className="mt-10 flex flex-wrap justify-center gap-4 text-sm font-medium text-gray-500"
           >
             <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 shadow-sm">
-              <Check className="w-4 h-4 text-[#3b82f6]" /> LLM Powered (Gemini)
+              <Check className="w-4 h-4 text-[var(--color-brand-blue)]" /> LLM Powered (Gemini)
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 shadow-sm">
-              <Check className="w-4 h-4 text-[#3b82f6]" /> No Manual Screening
+              <Check className="w-4 h-4 text-[var(--color-brand-blue)]" /> No Manual Screening
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 shadow-sm">
-              <Check className="w-4 h-4 text-[#3b82f6]" /> Instant Tagging
+              <Check className="w-4 h-4 text-[var(--color-brand-blue)]" /> Instant Tagging
             </div>
           </motion.div>
         </div>
@@ -785,7 +785,7 @@ export default function App() {
             viewport={{ once: true, amount: 0.3 }}
             className="text-center mb-14"
           >
-            <h2 className="text-3xl font-bold text-[#0e2b5c] mb-4">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold text-[var(--color-brand-navy)] mb-4">Frequently Asked Questions</h2>
             <p className="text-gray-500">Everything you need to know about how Dentara works.</p>
           </motion.div>
 
@@ -846,7 +846,7 @@ export default function App() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
           >
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#0e2b5c] mb-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-[var(--color-brand-navy)] mb-4">
               Ready to Complete Your Quotas?
             </h2>
             <p className="text-gray-500 mb-10 text-lg">
@@ -863,11 +863,11 @@ export default function App() {
                   type="email"
                   placeholder="Enter your .edu email"
                   required
-                  className="flex-1 px-4 py-3.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#3b82f6] focus:border-[#3b82f6] outline-none text-gray-800 placeholder-gray-400 transition-all duration-200"
+                  className="flex-1 px-4 py-3.5 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[var(--color-brand-blue)] focus:border-[var(--color-brand-blue)] outline-none text-gray-800 placeholder-gray-400 transition-all duration-200"
                 />
                 <button
                   type="submit"
-                  className="bg-[#3b82f6] hover:bg-blue-600 text-white font-bold px-8 py-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 ease-in-out hover:-translate-y-0.5 flex items-center justify-center gap-2 whitespace-nowrap"
+                  className="bg-[var(--color-brand-blue)] hover:bg-blue-600 text-white font-bold px-8 py-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 ease-in-out hover:-translate-y-0.5 flex items-center justify-center gap-2 whitespace-nowrap"
                 >
                   Start Matching <ArrowRight className="w-4 h-4" />
                 </button>

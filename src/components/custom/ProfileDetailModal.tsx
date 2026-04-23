@@ -230,7 +230,7 @@ export default function ProfileDetailModal({
   const toastTitle = toastTone === 'success' ? 'Success' : toastTone === 'error' ? 'Unable to book' : 'Action needed';
   const toastAccentClass =
     toastTone === 'success'
-      ? 'bg-[#138b94]/10 text-[#138b94]'
+      ? 'bg-brand-teal/10 text-brand-teal'
       : toastTone === 'error'
         ? 'bg-red-500/10 text-red-600'
         : 'bg-amber-500/10 text-amber-600';
@@ -259,8 +259,8 @@ export default function ProfileDetailModal({
             >
               <div className="relative w-full overflow-hidden rounded-t-[32px] border border-white/80 bg-[linear-gradient(160deg,rgba(255,255,255,0.98)_0%,rgba(248,250,252,0.96)_100%)] shadow-[0_20px_50px_rgba(0,0,0,0.1)] sm:max-w-3xl sm:rounded-[32px]">
                 <div className="pointer-events-none absolute inset-0">
-                  <div className="absolute -left-16 -top-20 h-48 w-48 rounded-full bg-[#138b94]/10 blur-3xl" />
-                  <div className="absolute -right-16 top-10 h-40 w-40 rounded-full bg-[#0a1f44]/8 blur-3xl" />
+                  <div className="absolute -left-16 -top-20 h-48 w-48 rounded-full bg-brand-teal/10 blur-3xl" />
+                  <div className="absolute -right-16 top-10 h-40 w-40 rounded-full bg-brand-navy/10 blur-3xl" />
                   <div className="absolute bottom-0 right-0 h-44 w-44 rounded-full bg-white/60 blur-3xl" />
                 </div>
 
@@ -270,7 +270,7 @@ export default function ProfileDetailModal({
                       type="button"
                       onClick={onClose}
                       aria-label="Close profile modal"
-                      className="inline-flex size-11 items-center justify-center rounded-2xl border border-slate-200/80 bg-white/85 text-[#0a1f44] shadow-[0_10px_30px_-20px_rgba(10,31,68,0.3)] transition-all duration-200 hover:-translate-x-0.5 hover:border-[#138b94]/25 hover:bg-white"
+                      className="inline-flex size-11 items-center justify-center rounded-2xl border border-slate-200/80 bg-white/85 text-brand-navy shadow-[0_10px_30px_-20px_var(--color-brand-navy)] transition-all duration-200 hover:-translate-x-0.5 hover:border-brand-teal/25 hover:bg-white"
                     >
                       <ArrowLeft className="size-4" />
                     </button>
@@ -283,20 +283,20 @@ export default function ProfileDetailModal({
 
                     <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
                       <div className="flex items-start gap-4 sm:gap-5">
-                        <div className="relative flex size-16 shrink-0 items-center justify-center rounded-[24px] bg-[linear-gradient(180deg,rgba(19,139,148,0.14)_0%,rgba(10,31,68,0.08)_100%)] text-xl font-extrabold tracking-[-0.05em] text-[#0a1f44] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:size-20">
+                        <div className="relative flex size-16 shrink-0 items-center justify-center rounded-[24px] bg-gradient-to-b from-brand-teal/[0.14] to-brand-navy/[0.08] text-xl font-extrabold tracking-[-0.05em] text-brand-navy shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:size-20">
                           {initials}
-                          <div className="absolute -right-1 -bottom-1 flex size-6 items-center justify-center rounded-full border border-white bg-[#138b94] text-white shadow-lg">
+                          <div className="absolute -right-1 -bottom-1 flex size-6 items-center justify-center rounded-full border border-white bg-brand-teal text-white shadow-lg">
                             <RoleBadgeIcon className="size-3.5" />
                           </div>
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <div className="inline-flex items-center gap-2 rounded-full border border-[#138b94]/15 bg-[#138b94]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#138b94]">
+                          <div className="inline-flex items-center gap-2 rounded-full border border-brand-teal/15 bg-brand-teal/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-teal">
                             <Sparkles className="size-3.5" />
                             {roleBadgeLabel}
                           </div>
 
-                          <h2 className="mt-3 text-[32px] font-black leading-[0.96] tracking-[-0.05em] text-[#0a1f44] sm:text-[42px]">
+                          <h2 className="mt-3 text-[32px] font-black leading-[0.96] tracking-[-0.05em] text-brand-navy sm:text-[42px]">
                             {selectedUser.fullName}
                           </h2>
 
@@ -356,7 +356,7 @@ export default function ProfileDetailModal({
                       <div className="mt-6 rounded-[28px] border border-slate-200/70 bg-white/80 p-4 sm:p-5">
                         <div className="mb-3 flex items-center justify-between gap-3">
                           <div>
-                            <h3 className="text-sm font-bold tracking-tight text-[#0a1f44]">Case Focus</h3>
+                            <h3 className="text-sm font-bold tracking-tight text-brand-navy">Case Focus</h3>
                             <p className="mt-1 text-xs font-medium text-slate-500">A quick view of the care needs this profile is prioritizing</p>
                           </div>
                         </div>
@@ -367,7 +367,7 @@ export default function ProfileDetailModal({
                               key={item.name}
                               className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-[0_8px_24px_-18px_rgba(10,31,68,0.25)]"
                             >
-                              <span className="size-2 rounded-full bg-[#138b94]" />
+                              <span className="size-2 rounded-full bg-brand-teal" />
                               {toPlainCaseLabel(item.name)}
                               <span className="font-medium text-slate-400">•</span>
                               <span className="font-medium text-slate-500">{item.count}</span>
@@ -395,7 +395,7 @@ export default function ProfileDetailModal({
                         type="button"
                         onClick={handleMessage}
                         disabled={isMessageLoading || isBookingLoading}
-                        className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200/80 bg-white/80 px-5 text-sm font-bold text-[#0a1f44] shadow-[0_12px_30px_-20px_rgba(10,31,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#138b94]/25 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200/80 bg-white/80 px-5 text-sm font-bold text-brand-navy shadow-[0_12px_30px_-20px_var(--color-brand-navy)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-teal/25 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {isMessageLoading ? <Loader2 className="size-4 animate-spin" /> : <MessageSquare className="size-4" />}
                         Send Message
@@ -405,7 +405,7 @@ export default function ProfileDetailModal({
                         type="button"
                         onClick={handleBooking}
                         disabled={isMessageLoading || isBookingLoading}
-                        className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#138b94] px-5 text-sm font-bold text-white shadow-[0_18px_40px_-20px_rgba(19,139,148,0.9)] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-brand-teal px-5 text-sm font-bold text-white shadow-[0_18px_40px_-20px_var(--color-brand-teal)] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {isBookingLoading ? <Loader2 className="size-4 animate-spin" /> : <CalendarPlus className="size-4" />}
                         {primaryActionLabel}
@@ -434,7 +434,7 @@ export default function ProfileDetailModal({
                 <Sparkles className="size-4" />
               </div>
               <div>
-                <p className="text-sm font-bold tracking-tight text-[#0a1f44]">{toastTitle}</p>
+                <p className="text-sm font-bold tracking-tight text-brand-navy">{toastTitle}</p>
                 <p className="text-sm font-medium text-slate-500">{toastMessage}</p>
               </div>
             </div>
@@ -459,13 +459,13 @@ function ProfileInfoCard({
   return (
     <div className="rounded-[28px] border border-slate-200/70 bg-white/80 p-4 shadow-[0_18px_40px_-30px_rgba(10,31,68,0.35)] backdrop-blur-sm">
       <div className="flex items-start gap-3">
-        <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#138b94]/10 text-[#138b94]">
+        <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-brand-teal/10 text-brand-teal">
           <Icon className="size-4" />
         </div>
 
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{label}</p>
-          <p className="mt-1 text-sm font-bold leading-6 tracking-tight text-[#0a1f44] sm:text-[15px]">{value}</p>
+          <p className="mt-1 text-sm font-bold leading-6 tracking-tight text-brand-navy sm:text-[15px]">{value}</p>
           {note ? <p className="mt-1 text-xs font-medium leading-5 text-slate-500">{note}</p> : null}
         </div>
       </div>

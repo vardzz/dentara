@@ -120,8 +120,8 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
       <motion.div variants={ITEM} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="glass-card-solid flex-1 p-4 hover-lift cursor-pointer">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#138b94]/10 flex items-center justify-center">
-              <Bell className="h-4 w-4 text-[#138b94]" />
+            <div className="w-9 h-9 rounded-xl bg-brand-teal/10 flex items-center justify-center">
+              <Bell className="h-4 w-4 text-brand-teal" />
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">{pendingRequests} Requests</p>
@@ -131,8 +131,8 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
         </div>
         <div className="glass-card-solid flex-1 p-4 hover-lift cursor-pointer">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#0e2b5c]/10 flex items-center justify-center">
-              <MessageCircle className="h-4 w-4 text-[#0e2b5c]" />
+            <div className="w-9 h-9 rounded-xl bg-brand-navy/10 flex items-center justify-center">
+              <MessageCircle className="h-4 w-4 text-brand-navy" />
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">{unreadMessages} Unread</p>
@@ -163,7 +163,7 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
                 </div>
                 <div className="w-full bg-gray-200/50 rounded-full h-1.5 dark:bg-gray-700">
                   <div
-                    className="bg-gradient-to-r from-[#138b94] to-[#0e2b5c] h-1.5 rounded-full"
+                    className="bg-gradient-to-r from-brand-teal to-brand-navy h-1.5 rounded-full"
                     style={{ width: `${progressPercentage}%` }}
                   ></div>
                 </div>
@@ -185,10 +185,10 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
             </div>
           ) : (
             upcomingCases.map((booking) => (
-              <div key={booking.id} className="glass-card-solid p-5 border border-[#3b82f6]/15 bg-[#3b82f6]/6">
+              <div key={booking.id} className="glass-card-solid p-5 border border-brand-blue/15 bg-brand-blue/5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-11 h-11 rounded-2xl bg-[#3b82f6]/15 flex items-center justify-center text-[#3b82f6] shrink-0">
+                    <div className="w-11 h-11 rounded-2xl bg-brand-blue/15 flex items-center justify-center text-brand-blue shrink-0">
                       <Clock className="h-5 w-5" />
                     </div>
                     <div className="min-w-0">
@@ -204,7 +204,7 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
                       </p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#3b82f6]/10 text-[#3b82f6] whitespace-nowrap">
+                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-brand-blue/10 text-brand-blue whitespace-nowrap">
                     Confirmed
                   </span>
                 </div>

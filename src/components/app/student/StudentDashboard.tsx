@@ -45,11 +45,11 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
         <div className="absolute top-0 right-0 w-32 h-32 bg-teal-400/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3" />
         
         <p className="text-sm font-medium text-gray-500 mb-1">{getGreeting()},</p>
-        <h1 className="text-3xl font-black text-[#0e2b5c] tracking-tight">{userName}</h1>
+        <h1 className="text-3xl font-black text-brand-navy tracking-tight">{userName}</h1>
         
         <div className="mt-6 flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[#138b94] mb-1">
+            <p className="text-[10px] font-black uppercase tracking-widest text-brand-teal mb-1">
               Progress
             </p>
             <p className="text-xs font-medium text-gray-600">32 of 50 Cases</p>
@@ -62,11 +62,11 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
               <circle 
                 cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="6" fill="transparent" 
                 strokeDasharray="150" strokeDashoffset={150 - (150 * 32) / 50}
-                className="text-[#138b94] transition-all duration-1000 ease-out" 
+                className="text-brand-teal transition-all duration-1000 ease-out" 
                 strokeLinecap="round"
               />
             </svg>
-            <span className="absolute text-xs font-black text-[#0e2b5c]">64%</span>
+            <span className="absolute text-xs font-black text-brand-navy">64%</span>
           </div>
         </div>
       </motion.div>
@@ -74,16 +74,16 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
       {/* ── Quick Actions ── */}
       <motion.div variants={ITEM_ANIM} className="grid grid-cols-2 gap-4">
         <button className="flex flex-col items-center justify-center gap-3 bg-white/60 backdrop-blur-md border border-white/40 shadow-sm p-5 rounded-[24px] active:scale-95 transition-transform">
-          <div className="w-10 h-10 rounded-full bg-teal-50 border border-teal-100/50 flex items-center justify-center text-[#138b94]">
+          <div className="w-10 h-10 rounded-full bg-teal-50 border border-teal-100/50 flex items-center justify-center text-brand-teal">
             <Plus strokeWidth={2.5} size={20} />
           </div>
-          <span className="text-xs font-bold text-[#0e2b5c]">Add Case</span>
+          <span className="text-xs font-bold text-brand-navy">Add Case</span>
         </button>
         <button className="flex flex-col items-center justify-center gap-3 bg-white/60 backdrop-blur-md border border-white/40 shadow-sm p-5 rounded-[24px] active:scale-95 transition-transform">
           <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100/50 flex items-center justify-center text-blue-600">
             <UserPlus strokeWidth={2.5} size={20} />
           </div>
-          <span className="text-xs font-bold text-[#0e2b5c]">Add Patient</span>
+          <span className="text-xs font-bold text-brand-navy">Add Patient</span>
         </button>
       </motion.div>
 
@@ -91,7 +91,7 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
       <motion.div variants={ITEM_ANIM} className="mt-2">
         <div className="flex items-center justify-between mb-4 px-2">
           <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Recent Activity</h2>
-          <button className="text-xs font-bold text-[#3b82f6]">View All</button>
+          <button className="text-xs font-bold text-brand-blue">View All</button>
         </div>
         
         <div className="space-y-3">
@@ -105,7 +105,7 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
                 <item.icon size={18} strokeWidth={2.5} />
               </div>
               <div className="ml-4 flex-1">
-                <p className="text-sm font-bold text-[#0e2b5c]">{item.title}</p>
+                <p className="text-sm font-bold text-brand-navy">{item.title}</p>
                 <p className="text-xs font-medium text-gray-400 mt-0.5">{item.desc}</p>
               </div>
               <ChevronRight size={18} className="text-gray-300" strokeWidth={3} />

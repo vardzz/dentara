@@ -42,10 +42,10 @@ export default function UniversityProfileClient({ user }: Props) {
       {/* Profile Header */}
       <motion.div variants={ITEM} className="glass-card-solid p-6 text-center">
         <div className="relative w-20 h-20 mx-auto mb-3">
-          <div className="w-20 h-20 rounded-3xl bg-[#0e2b5c]/10 flex items-center justify-center">
-            <Building2 className="h-8 w-8 text-[#0e2b5c]" />
+          <div className="w-20 h-20 rounded-3xl bg-brand-navy/10 flex items-center justify-center">
+            <Building2 className="h-8 w-8 text-brand-navy" />
           </div>
-          <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-[#138b94] text-white flex items-center justify-center shadow-lg">
+          <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-brand-teal text-white flex items-center justify-center shadow-lg">
             <Camera className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -68,8 +68,8 @@ export default function UniversityProfileClient({ user }: Props) {
             { icon: CreditCard, label: "Plan", value: "Enterprise · $4,500/mo" },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-3 p-4">
-              <div className="w-9 h-9 rounded-xl bg-[#138b94]/8 flex items-center justify-center shrink-0">
-                <item.icon className="h-4 w-4 text-[#138b94]" />
+              <div className="w-9 h-9 rounded-xl bg-brand-teal/10 flex items-center justify-center shrink-0">
+                <item.icon className="h-4 w-4 text-brand-teal" />
               </div>
               <div className="flex-1">
                 <p className="text-[10px] text-muted-foreground">{item.label}</p>

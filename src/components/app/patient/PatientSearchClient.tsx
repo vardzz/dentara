@@ -115,7 +115,7 @@ export default function PatientSearchClient() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by name or clinic location..."
-          className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/80 border border-gray-100/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#138b94]/30 transition-all duration-200"
+          className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/80 border border-gray-100/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-teal/30 transition-all duration-200"
         />
       </motion.div>
 
@@ -126,7 +126,7 @@ export default function PatientSearchClient() {
             onClick={() => setActiveFilter(s)}
             className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
               activeFilter === s
-                ? "bg-[#138b94] text-white shadow-lg"
+                ? "bg-brand-teal text-white shadow-lg"
                 : "bg-white/80 border border-gray-100/50 text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -183,7 +183,7 @@ export default function PatientSearchClient() {
                 </div>
               )}
               <div className="flex items-start gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-[#138b94]/10 flex items-center justify-center text-[#138b94] font-bold text-sm shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-brand-teal/10 flex items-center justify-center text-brand-teal font-bold text-sm shrink-0">
                   {getInitials(student.fullName)}
                 </div>
                 <div className="flex-1 min-w-0">

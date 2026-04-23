@@ -43,20 +43,20 @@ export default function Navbar() {
                         height={32}
                         className="w-8 h-8 object-contain transition-transform group-hover:scale-110 duration-300"
                     />
-                    <span className="text-2xl font-bold tracking-tight text-brand-dark group-hover:text-brand-teal transition-colors">DENTARA</span>
+                    <span className="text-2xl font-bold tracking-tight text-brand-navy group-hover:text-brand-teal transition-colors">DENTARA</span>
                 </Link>
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-8">
                     <Link
                         href="/"
-                        className={`text-sm ${isHome ? 'font-bold text-brand-teal' : 'font-medium text-gray-500 hover:text-brand-dark'} transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] transition-all duration-300 ${isHome ? 'after:w-full after:bg-brand-teal' : 'after:w-0 after:bg-brand-dark hover:after:w-full'}`}
+                        className={`text-sm ${isHome ? 'font-bold text-brand-teal' : 'font-medium text-gray-500 hover:text-brand-navy'} transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] transition-all duration-300 ${isHome ? 'after:w-full after:bg-brand-teal' : 'after:w-0 after:bg-brand-navy hover:after:w-full'}`}
                     >
                         Home
                     </Link>
                     <Link
                         href="/roadmap"
-                        className={`text-sm ${isRoadmap ? 'font-bold text-brand-teal' : 'font-medium text-gray-500 hover:text-brand-dark'} transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] transition-all duration-300 ${isRoadmap ? 'after:w-full after:bg-brand-teal' : 'after:w-0 after:bg-brand-dark hover:after:w-full'}`}
+                        className={`text-sm ${isRoadmap ? 'font-bold text-brand-teal' : 'font-medium text-gray-500 hover:text-brand-navy'} transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] transition-all duration-300 ${isRoadmap ? 'after:w-full after:bg-brand-teal' : 'after:w-0 after:bg-brand-navy hover:after:w-full'}`}
                     >
                         Roadmap
                     </Link>
@@ -68,7 +68,7 @@ export default function Navbar() {
                     </button>
                     <Link
                         href="/login"
-                        className="bg-brand-teal hover:bg-brand-dark flex items-center justify-center text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 shadow-md hover:shadow-lg h-11"
+                        className="bg-brand-teal hover:bg-brand-navy flex items-center justify-center text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 shadow-md hover:shadow-lg h-11"
                     >
                         Visit App
                     </Link>
@@ -77,7 +77,7 @@ export default function Navbar() {
                 {/* Mobile Menu Toggle (44px min target) */}
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="md:hidden flex items-center justify-center w-11 h-11 text-brand-dark hover:text-brand-teal transition-colors z-50 pointer-events-auto bg-gray-50/50 rounded-lg border border-gray-100/50"
+                    className="md:hidden flex items-center justify-center w-11 h-11 text-brand-navy hover:text-brand-teal transition-colors z-50 pointer-events-auto bg-gray-50/50 rounded-lg border border-gray-100/50"
                     aria-label="Toggle Mobile Menu"
                 >
                     {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -123,14 +123,14 @@ export default function Navbar() {
                                     handleLinkClick();
                                     alert('Waitlist joined successfully!');
                                 }}
-                                className="flex items-center justify-center w-full min-h-[60px] rounded-2xl text-xl font-bold bg-[#3b82f6] text-white shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all"
+                                className="flex items-center justify-center w-full min-h-[60px] rounded-2xl text-xl font-bold bg-brand-blue text-white shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all"
                             >
                                 Get Early Access
                             </button>
                             <Link
                                 href="/login"
                                 onClick={handleLinkClick}
-                                className="flex items-center justify-center w-full min-h-[60px] rounded-2xl text-xl font-bold bg-brand-teal hover:bg-brand-dark text-white shadow-lg shadow-teal-500/20 active:scale-[0.98] transition-all mt-2"
+                                className="flex items-center justify-center w-full min-h-[60px] rounded-2xl text-xl font-bold bg-brand-teal hover:bg-brand-navy text-white shadow-lg shadow-teal-500/20 active:scale-[0.98] transition-all mt-2"
                             >
                                 Visit App
                             </Link>

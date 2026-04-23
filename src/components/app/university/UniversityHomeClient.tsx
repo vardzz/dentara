@@ -61,13 +61,13 @@ export default function UniversityHomeClient({ user }: Props) {
         {metrics.map((m, i) => (
           <div key={i} className="glass-card-solid p-5 hover-lift">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#138b94]/10 flex items-center justify-center">
-                <m.icon className="h-5 w-5 text-[#138b94]" />
+              <div className="w-10 h-10 rounded-2xl bg-brand-teal/10 flex items-center justify-center">
+                <m.icon className="h-5 w-5 text-brand-teal" />
               </div>
             </div>
             <p className="text-2xl font-bold text-foreground tracking-tight tabular-nums">{m.value}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{m.label}</p>
-            <p className="text-[10px] text-[#138b94] font-medium mt-1 flex items-center gap-0.5">
+            <p className="text-[10px] text-brand-teal font-medium mt-1 flex items-center gap-0.5">
               <TrendingUp className="h-3 w-3" /> {m.sub}
             </p>
           </div>
@@ -133,7 +133,7 @@ export default function UniversityHomeClient({ user }: Props) {
               <span className="text-sm text-muted-foreground hidden sm:block">{s.year}</span>
               <span>
                 <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${
-                  s.status === "Active" ? "bg-[#138b94]/10 text-[#138b94]" :
+                  s.status === "Active" ? "bg-brand-teal/10 text-brand-teal" :
                   s.status === "Expiring" ? "bg-amber-100 text-amber-700" :
                   "bg-red-100/60 text-red-600"
                 }`}>

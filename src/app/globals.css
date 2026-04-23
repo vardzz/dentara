@@ -12,6 +12,11 @@
   --color-brand-light: #f0f7f9;
   --color-brand-gray: #475569;
 
+  --color-brand-navy: #0e2b5c;
+  --color-brand-blue: #3b82f6;
+  --color-brand-surface: #fafcff;
+  --color-brand-accent: #f0f7f9;
+
   --background-brand-light: #f0f7f9;
 
   @keyframes shimmer {

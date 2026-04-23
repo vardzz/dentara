@@ -146,7 +146,7 @@ export default function NotificationBell({ className }: NotificationBellProps) {
         ref={bellButtonRef}
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="relative inline-flex size-10 items-center justify-center rounded-2xl border border-slate-200/80 bg-white/85 text-[#0a1f44] shadow-[0_12px_28px_-20px_rgba(10,31,68,0.35)] transition-all hover:-translate-y-0.5"
+        className="relative inline-flex size-10 items-center justify-center rounded-2xl border border-slate-200/80 bg-white/85 text-brand-navy shadow-[0_12px_28px_-20px_rgba(10,31,68,0.35)] transition-all hover:-translate-y-0.5"
         aria-label="Open notifications"
       >
         <Bell className="size-4" />
@@ -182,7 +182,7 @@ export default function NotificationBell({ className }: NotificationBellProps) {
                     className="fixed z-[140] overflow-hidden rounded-[26px] border border-white/75 bg-[linear-gradient(170deg,rgba(255,255,255,0.98)_0%,rgba(248,250,252,0.96)_100%)] shadow-[0_24px_60px_-26px_rgba(8,26,58,0.55)] backdrop-blur-xl"
                   >
               <div className="flex items-center justify-between border-b border-slate-200/60 px-4 py-3">
-                <h4 className="text-sm font-black uppercase tracking-[0.16em] text-[#0a1f44]">Notifications</h4>
+                <h4 className="text-sm font-black uppercase tracking-[0.16em] text-brand-navy">Notifications</h4>
                 {isLoading ? <Loader2 className="size-4 animate-spin text-slate-400" /> : null}
               </div>
 
@@ -208,7 +208,7 @@ export default function NotificationBell({ className }: NotificationBellProps) {
                             }
                           }}
                         >
-                          <p className="text-base font-bold leading-snug text-[#0a1f44] break-words">
+                          <p className="text-base font-bold leading-snug text-brand-navy break-words">
                             {messageFor(item.type, item.sender.fullName)}
                           </p>
                           {item.booking ? (
@@ -286,7 +286,7 @@ export default function NotificationBell({ className }: NotificationBellProps) {
                                 setOfferModalNotificationId(item.id);
                                 setSelectedSchedule(null);
                               }}
-                              className="rounded-xl bg-[#138b94] px-3 py-2 text-xs font-bold text-white shadow-[0_14px_30px_-18px_rgba(19,139,148,0.9)]"
+                              className="rounded-xl bg-brand-teal px-3 py-2 text-xs font-bold text-white shadow-[0_14px_30px_-18px_var(--color-brand-teal)]"
                             >
                               Complete Booking
                             </button>
@@ -340,7 +340,7 @@ export default function NotificationBell({ className }: NotificationBellProps) {
                   >
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-lg font-black tracking-tight text-[#0a1f44]">Complete Booking</h3>
+                  <h3 className="text-lg font-black tracking-tight text-brand-navy">Complete Booking</h3>
                   <p className="text-sm font-medium text-slate-500">Pick an available date and time from the clinician schedule.</p>
                 </div>
                 <button
@@ -393,7 +393,7 @@ export default function NotificationBell({ className }: NotificationBellProps) {
                     setOfferModalNotificationId(null);
                     setSelectedSchedule(null);
                   }}
-                  className="rounded-xl bg-[#138b94] px-4 py-2 text-sm font-bold text-white shadow-[0_14px_30px_-18px_rgba(19,139,148,0.9)] disabled:opacity-50"
+                  className="rounded-xl bg-brand-teal px-4 py-2 text-sm font-bold text-white shadow-[0_14px_30px_-18px_var(--color-brand-teal)] disabled:opacity-50"
                 >
                   Confirm Booking
                 </button>

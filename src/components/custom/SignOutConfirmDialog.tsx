@@ -39,12 +39,12 @@ export default function SignOutConfirmDialog({
             aria-labelledby="signout-confirm-title"
           >
             <div className="pointer-events-none absolute inset-0">
-              <div className="absolute -left-14 -top-16 h-40 w-40 rounded-full bg-[#138b94]/10 blur-2xl" />
-              <div className="absolute -right-16 -bottom-20 h-48 w-48 rounded-full bg-[#0e2b5c]/8 blur-3xl" />
+              <div className="absolute -left-14 -top-16 h-40 w-40 rounded-full bg-brand-teal/10 blur-2xl" />
+              <div className="absolute -right-16 -bottom-20 h-48 w-48 rounded-full bg-brand-navy/10 blur-3xl" />
             </div>
 
             <div className="relative z-10">
-              <h3 id="signout-confirm-title" className="text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-[#0e2b5c] sm:text-[30px]">
+              <h3 id="signout-confirm-title" className="text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-brand-navy sm:text-[30px]">
                 Are you sure you want to leave?
               </h3>
               <p className="mt-2 text-sm font-medium text-[#5f708a]">
@@ -57,7 +57,7 @@ export default function SignOutConfirmDialog({
                 type="button"
                 onClick={onStay}
                 disabled={isSubmitting}
-                className="w-full flex-1 rounded-2xl border border-[#d7dfed] bg-white/90 px-5 py-3 text-sm font-bold text-[#0e2b5c] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-200 hover:border-[#b9c8df] hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full flex-1 rounded-2xl border border-[#d7dfed] bg-white/90 px-5 py-3 text-sm font-bold text-brand-navy shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-200 hover:border-[#b9c8df] hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
               >
                 No, I want to stay
               </button>

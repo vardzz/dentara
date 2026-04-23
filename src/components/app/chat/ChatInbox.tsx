@@ -41,7 +41,7 @@ export default async function ChatInbox({ basePath }: { basePath: string }) {
           <input
             type="text"
             placeholder="Search messages..."
-            className="w-full bg-white rounded-full border border-gray-200 pl-12 pr-6 py-3.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#138b94]/20 focus:border-[#138b94] transition-all"
+            className="w-full bg-white rounded-full border border-gray-200 pl-12 pr-6 py-3.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-all"
           />
         </div>
 
@@ -63,7 +63,7 @@ export default async function ChatInbox({ basePath }: { basePath: string }) {
                   >
                     {/* Avatar */}
                     <div className="relative shrink-0">
-                      <div className="h-12 w-12 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-sm">
+                      <div className="h-12 w-12 rounded-full bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm">
                         {initials(conversation.otherUser.fullName)}
                       </div>
                       {/* Online Indicator */}
@@ -86,7 +86,7 @@ export default async function ChatInbox({ basePath }: { basePath: string }) {
                         {conversation.lastMessage ? formatShortTime(conversation.lastMessage.createdAt) : ''}
                       </span>
                       {conversation.unreadCount > 0 ? (
-                        <span className="h-5 min-w-5 px-1.5 rounded-full bg-[#138b94] text-white text-[10px] font-bold flex items-center justify-center">
+                        <span className="h-5 min-w-5 px-1.5 rounded-full bg-brand-teal text-white text-[10px] font-bold flex items-center justify-center">
                           {conversation.unreadCount}
                         </span>
                       ) : (

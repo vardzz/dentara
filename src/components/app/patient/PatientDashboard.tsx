@@ -40,7 +40,7 @@ export default function PatientDashboard({ userName = 'Patient' }: PatientDashbo
       {/* ── Greeting Card ── */}
       <motion.div 
         variants={ITEM_ANIM}
-        className="relative overflow-hidden bg-gradient-to-br from-[#138b94] to-[#0e2b5c] p-6 rounded-[32px] shadow-[0_20px_40px_-12px_rgba(19,139,148,0.4)]"
+        className="relative overflow-hidden bg-gradient-to-br from-brand-teal to-brand-navy p-6 rounded-[32px] shadow-[0_20px_40px_-12px_rgba(19,139,148,0.4)]"
       >
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         
@@ -61,12 +61,12 @@ export default function PatientDashboard({ userName = 'Patient' }: PatientDashbo
       </motion.div>
 
       {/* ── Status Banner ── */}
-      <motion.div variants={ITEM_ANIM} className="bg-[#3b82f6]/10 border border-[#3b82f6]/20 p-5 rounded-[24px] flex items-center gap-4">
-        <div className="w-10 h-10 rounded-full bg-[#3b82f6]/20 flex items-center justify-center text-[#3b82f6] shrink-0">
+      <motion.div variants={ITEM_ANIM} className="bg-brand-blue/10 border border-brand-blue/20 p-5 rounded-[24px] flex items-center gap-4">
+        <div className="w-10 h-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue shrink-0">
           <Search size={18} strokeWidth={2.5} />
         </div>
         <div>
-          <p className="text-xs font-black uppercase text-[#3b82f6] tracking-widest mb-1">Active Search</p>
+          <p className="text-xs font-black uppercase text-brand-blue tracking-widest mb-1">Active Search</p>
           <p className="text-sm font-medium text-gray-600 leading-tight">Waiting for a student match for "Wisdom Tooth Pain".</p>
         </div>
       </motion.div>
@@ -75,7 +75,7 @@ export default function PatientDashboard({ userName = 'Patient' }: PatientDashbo
       <motion.div variants={ITEM_ANIM} className="mt-2">
         <div className="flex items-center justify-between mb-4 px-2">
           <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Nearby Clinics</h2>
-          <button className="text-xs font-bold text-[#138b94]">Map View</button>
+          <button className="text-xs font-bold text-brand-teal">Map View</button>
         </div>
         
         <div className="space-y-3">
@@ -89,9 +89,9 @@ export default function PatientDashboard({ userName = 'Patient' }: PatientDashbo
                 <MapPin size={18} strokeWidth={2.5} />
               </div>
               <div className="ml-4 flex-1">
-                <p className="text-sm font-bold text-[#0e2b5c] truncate">{item.clinic}</p>
+                <p className="text-sm font-bold text-brand-navy truncate">{item.clinic}</p>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] font-black tracking-widest uppercase text-[#138b94]">{item.dist}</span>
+                  <span className="text-[10px] font-black tracking-widest uppercase text-brand-teal">{item.dist}</span>
                   <span className="text-xs font-medium text-gray-400 truncate">{item.desc}</span>
                 </div>
               </div>

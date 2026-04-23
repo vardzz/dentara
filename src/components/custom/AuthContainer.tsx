@@ -523,9 +523,9 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
    * Render
    * ───────────────────────────────────────── */
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-brand-light overflow-hidden font-sans selection:bg-brand-teal/20">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-brand-surface overflow-hidden font-sans selection:bg-brand-teal/20">
       <div className="fixed top-[-5%] left-[-5%] w-[45%] h-[45%] bg-brand-teal/5 blur-[100px] rounded-full pointer-events-none" />
-      <div className="fixed bottom-[-5%] right-[-5%] w-[45%] h-[45%] bg-brand-dark/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="fixed bottom-[-5%] right-[-5%] w-[45%] h-[45%] bg-brand-navy/5 blur-[100px] rounded-full pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -535,7 +535,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
       >
         {/* ── LUXURY SLIDING OVERLAY (Desktop) ── */}
         <div
-          className={`absolute top-0 left-0 w-1/2 h-full bg-gradient-to-br from-brand-teal via-brand-dark to-brand-dark z-30 transition-all duration-700 ease-in-out hidden md:flex flex-col items-center justify-center p-12 text-white text-center shadow-2xl
+          className={`absolute top-0 left-0 w-1/2 h-full bg-gradient-to-br from-brand-teal via-brand-navy to-brand-navy z-30 transition-all duration-700 ease-in-out hidden md:flex flex-col items-center justify-center p-12 text-white text-center shadow-2xl
           ${isLogin ? "translate-x-full" : "translate-x-0"}`}
         >
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none" />
@@ -553,7 +553,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
             </p>
             <button
               onClick={() => toggleView(isLogin ? "register" : "login")}
-              className="mt-8 px-12 py-4 border border-white/30 rounded-full font-bold hover:bg-white hover:text-brand-dark transition-all duration-300 transform hover:scale-105 active:scale-95 min-h-[44px]"
+              className="mt-8 px-12 py-4 border border-white/30 rounded-full font-bold hover:bg-white hover:text-brand-navy transition-all duration-300 transform hover:scale-105 active:scale-95 min-h-[44px]"
             >
               {isLogin ? "Create Account" : "Sign In"}
             </button>
@@ -669,7 +669,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                   {/* Forgot Password sits below the input and above the button */}
                   <button
                     type="button"
-                    className="text-[10px] text-brand-teal font-bold uppercase tracking-widest hover:text-brand-dark transition-colors mt-1"
+                    className="text-[10px] text-brand-teal font-bold uppercase tracking-widest hover:text-brand-navy transition-colors mt-1"
                   >
                     Forgot Password?
                   </button>
@@ -679,7 +679,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
               <button
                 type="submit"
                 disabled={isLoading || loginForm.formState.isSubmitting}
-                className="w-full bg-brand-teal hover:bg-brand-dark text-white font-bold min-h-[44px] py-5 rounded-2xl shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98] mt-6 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full bg-brand-teal hover:bg-brand-navy text-white font-bold min-h-[44px] py-5 rounded-2xl shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98] mt-6 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -768,9 +768,9 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       setRoleState("student");
                       nextStep();
                     }}
-                    className="group p-6 rounded-3xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-brand-dark/30 hover:shadow-xl transition-all text-left flex items-center gap-5 min-h-[44px]"
+                    className="group p-6 rounded-3xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-brand-navy/30 hover:shadow-xl transition-all text-left flex items-center gap-5 min-h-[44px]"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-brand-dark group-hover:bg-brand-dark group-hover:text-white transition-all shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-brand-navy group-hover:bg-brand-navy group-hover:text-white transition-all shrink-0">
                       <GraduationCap size={28} />
                     </div>
                     <div>
@@ -1073,7 +1073,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                       className="text-brand-teal shrink-0"
                       size={20}
                     />
-                    <p className="text-xs text-brand-dark/70 leading-relaxed font-medium">
+                    <p className="text-xs text-brand-navy/70 leading-relaxed font-medium">
                       Standard clinical hours (8am – 5pm) will be assigned by
                       default.
                     </p>
@@ -1136,7 +1136,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                 <button
                   onClick={handleRegister}
                   disabled={isLoading}
-                  className="w-full bg-brand-dark hover:opacity-90 min-h-[44px] py-5 rounded-2xl text-white font-bold flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 transition-all shadow-xl"
+                  className="w-full bg-brand-navy hover:opacity-90 min-h-[44px] py-5 rounded-2xl text-white font-bold flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 transition-all shadow-xl"
                 >
                   {isLoading ? (
                     <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1375,7 +1375,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
                 <button
                   onClick={handleRegister}
                   disabled={isLoading}
-                  className="w-full bg-brand-dark hover:opacity-90 min-h-[44px] py-5 rounded-2xl text-white font-bold flex items-center justify-center shadow-xl disabled:opacity-50 transition-all"
+                  className="w-full bg-brand-navy hover:opacity-90 min-h-[44px] py-5 rounded-2xl text-white font-bold flex items-center justify-center shadow-xl disabled:opacity-50 transition-all"
                 >
                   {isLoading ? (
                     <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />

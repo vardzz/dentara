@@ -22,7 +22,7 @@ const bookings = [
 ];
 
 const statusConfig = {
-  upcoming: { label: "Upcoming", color: "bg-[#138b94]/10 text-[#138b94]" },
+  upcoming: { label: "Upcoming", color: "bg-brand-teal/10 text-brand-teal" },
   completed: { label: "Completed", color: "bg-emerald-500/10 text-emerald-600" },
   cancelled: { label: "Cancelled", color: "bg-red-100/60 text-red-600" },
 };
@@ -44,7 +44,7 @@ export default function UniversityBookingsClient() {
           { label: "Cancelled", value: "3", icon: XCircle },
         ].map((stat, i) => (
           <div key={i} className="glass-card-solid p-3 sm:p-4 text-center">
-            <stat.icon className="h-4 w-4 text-[#138b94] mx-auto mb-1.5" />
+            <stat.icon className="h-4 w-4 text-brand-teal mx-auto mb-1.5" />
             <p className="text-xl font-bold text-foreground">{stat.value}</p>
             <p className="text-[10px] text-muted-foreground font-medium">{stat.label}</p>
           </div>
@@ -74,7 +74,7 @@ export default function UniversityBookingsClient() {
               <div key={i} className="glass-card-solid p-4 hover-lift cursor-pointer">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#138b94]/10 flex items-center justify-center text-[#138b94] text-xs font-bold">
+                    <div className="w-9 h-9 rounded-xl bg-brand-teal/10 flex items-center justify-center text-brand-teal text-xs font-bold">
                       {b.student.split(" ").pop()?.[0]}
                     </div>
                     <div>

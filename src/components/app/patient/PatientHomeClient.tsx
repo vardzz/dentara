@@ -67,20 +67,20 @@ export default function PatientHomeClient({ user, bookings }: Props) {
         <h2 className="text-2xl font-bold tracking-tight text-foreground">{user.fullName}</h2>
       </motion.div>
 
-      <motion.div variants={ITEM} className="bg-[#3b82f6]/10 border border-[#3b82f6]/20 p-5 rounded-[24px] flex items-center gap-4">
-        <div className="w-10 h-10 rounded-full bg-[#3b82f6]/20 flex items-center justify-center text-[#3b82f6] shrink-0">
+      <motion.div variants={ITEM} className="bg-brand-blue/10 border border-brand-blue/20 p-5 rounded-[24px] flex items-center gap-4">
+        <div className="w-10 h-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue shrink-0">
           <Search className="h-5 w-5" strokeWidth={2.5} />
         </div>
         <div>
-          <p className="text-xs font-black uppercase text-[#3b82f6] tracking-widest mb-1">Current Concern</p>
+          <p className="text-xs font-black uppercase text-brand-blue tracking-widest mb-1">Current Concern</p>
           <p className="text-sm font-medium text-gray-600 leading-tight">{concern}</p>
         </div>
       </motion.div>
 
-      <motion.div variants={ITEM} className="glass-card p-6 bg-gradient-to-br from-[#138b94]/10 via-white/80 to-[#0e2b5c]/5 hover-lift cursor-pointer">
+      <motion.div variants={ITEM} className="glass-card p-6 bg-gradient-to-br from-brand-teal/10 via-white/80 to-brand-navy/5 hover-lift cursor-pointer">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#138b94]/10 flex items-center justify-center">
-            <Search className="h-6 w-6 text-[#138b94]" />
+          <div className="w-12 h-12 rounded-2xl bg-brand-teal/10 flex items-center justify-center">
+            <Search className="h-6 w-6 text-brand-teal" />
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-foreground text-sm">Find a Dental Student</h3>
@@ -99,10 +99,10 @@ export default function PatientHomeClient({ user, bookings }: Props) {
             </div>
           ) : (
             pendingBookings.map((booking) => (
-              <div key={booking.id} className="glass-card-solid p-5 border border-[#3b82f6]/15 bg-[#3b82f6]/6">
+              <div key={booking.id} className="glass-card-solid p-5 border border-brand-blue/15 bg-brand-blue/5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-11 h-11 rounded-2xl bg-[#3b82f6]/15 flex items-center justify-center text-[#3b82f6] shrink-0">
+                    <div className="w-11 h-11 rounded-2xl bg-brand-blue/15 flex items-center justify-center text-brand-blue shrink-0">
                       <Clock className="h-5 w-5" />
                     </div>
                     <div className="min-w-0">
@@ -115,7 +115,7 @@ export default function PatientHomeClient({ user, bookings }: Props) {
                       </p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#3b82f6]/10 text-[#3b82f6] whitespace-nowrap">
+                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-brand-blue/10 text-brand-blue whitespace-nowrap">
                     Pending
                   </span>
                 </div>

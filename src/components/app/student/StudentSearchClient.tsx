@@ -99,7 +99,7 @@ export default function StudentSearchClient() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by patient name or concern..."
-          className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/80 border border-gray-100/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#138b94]/30 transition-all duration-200"
+          className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/80 border border-gray-100/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-teal/30 transition-all duration-200"
         />
       </motion.div>
 
@@ -110,7 +110,7 @@ export default function StudentSearchClient() {
             onClick={() => setActiveFilter(s)}
             className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
               activeFilter === s
-                ? "bg-[#138b94] text-white shadow-lg"
+                ? "bg-brand-teal text-white shadow-lg"
                 : "bg-white/80 border border-gray-100/50 text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -166,7 +166,7 @@ export default function StudentSearchClient() {
               )}
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-[#0e2b5c]/10 flex items-center justify-center text-[#138b94] font-bold text-xs shrink-0">
+                  <div className="w-10 h-10 rounded-2xl bg-brand-navy/10 flex items-center justify-center text-brand-teal font-bold text-xs shrink-0">
                     {getInitials(patient.fullName)}
                   </div>
                   <div>
@@ -183,7 +183,7 @@ export default function StudentSearchClient() {
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                     priority === 'High' ? 'bg-red-100/60 text-red-600' :
                     priority === 'Medium' ? 'bg-amber-500/10 text-amber-600' :
-                    'bg-[#138b94]/10 text-[#138b94]'
+                    'bg-brand-teal/10 text-brand-teal'
                   }`}>
                     {priority} Priority
                   </span>

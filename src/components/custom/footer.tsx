@@ -49,7 +49,7 @@ export default function Footer() {
                                 alt="Dentara Icon"
                                 className="w-6 h-6 object-contain"
                             />
-                            <span className="text-lg font-bold tracking-tight text-[#0e2b5c]">
+                            <span className="text-lg font-bold tracking-tight text-brand-navy">
                                 DENTARA
                             </span>
                         </div>
@@ -66,7 +66,7 @@ export default function Footer() {
                                     key={s.label}
                                     href={s.href}
                                     aria-label={s.label}
-                                    className="hover:text-[#3b82f6] transition-colors duration-200"
+                                    className="hover:text-brand-blue transition-colors duration-200"
                                 >
                                     {s.icon}
                                 </Link>
@@ -84,7 +84,7 @@ export default function Footer() {
                                 <li key={l.label}>
                                     <Link
                                         href={l.href}
-                                        className="text-sm text-gray-500 hover:text-[#138b94] transition-colors duration-200"
+                                        className="text-sm text-gray-500 hover:text-brand-teal transition-colors duration-200"
                                     >
                                         {l.label}
                                     </Link>
@@ -103,7 +103,7 @@ export default function Footer() {
                                 <li key={l.label}>
                                     <Link
                                         href={l.href}
-                                        className="text-sm text-gray-500 hover:text-[#138b94] transition-colors duration-200"
+                                        className="text-sm text-gray-500 hover:text-brand-teal transition-colors duration-200"
                                     >
                                         {l.label}
                                     </Link>
@@ -122,7 +122,7 @@ export default function Footer() {
                                 <li key={l.label}>
                                     <Link
                                         href={l.href}
-                                        className="text-sm text-gray-500 hover:text-[#138b94] transition-colors duration-200"
+                                        className="text-sm text-gray-500 hover:text-brand-teal transition-colors duration-200"
                                     >
                                         {l.label}
                                     </Link>
