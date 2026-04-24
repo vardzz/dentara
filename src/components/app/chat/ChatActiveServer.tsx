@@ -3,6 +3,11 @@ import { redirect } from 'next/navigation';
 import { getConversationMessages, getConversationList, markConversationAsRead } from '@/lib/chat-server';
 import ChatActiveClient from '@/components/app/chat/ChatActiveClient';
 
+/**
+ * ChatActiveServer
+ * Optimized to fix data waterfalls.
+ * Phase 1: Performance & Streaming
+ */
 export default async function ChatActiveServer({ conversationId, basePath }: { conversationId: string; basePath: string }) {
   const session = await auth();
 
@@ -12,14 +17,14 @@ export default async function ChatActiveServer({ conversationId, basePath }: { c
 
   const currentUserId = session.user.id;
 
-  // Retrieve messages
-  const initialMessages = await getConversationMessages(currentUserId, conversationId);
+  // Parallel Data Fetching: Retrieve messages and conversation list concurrently.
+  // We also fire off the "mark as read" side effect in the same Promise.all.
+  const [initialMessages, allConversations] = await Promise.all([
+    getConversationMessages(currentUserId, conversationId),
+    getConversationList(currentUserId),
+    markConversationAsRead(currentUserId, conversationId)
+  ]);
 
-  // Mark as read
-  await markConversationAsRead(currentUserId, conversationId);
-
-  // Retrieve conversation to get the other user's info
-  const allConversations = await getConversationList(currentUserId);
   const conversation = allConversations.find((c) => c.id === conversationId);
 
   if (!conversation) {

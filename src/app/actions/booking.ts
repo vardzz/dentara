@@ -91,14 +91,20 @@ export async function createBookingRequestAction(
 
   const scheduledAt = parseDateOrThrow(scheduledAtIso);
 
-  const student = await prisma.user.findUnique({
-    where: { id: studentId },
-    select: {
-      id: true,
-      role: true,
-      availabilityJson: true,
-    },
-  });
+  const [student, patientProfile] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: studentId },
+      select: {
+        id: true,
+        role: true,
+        availabilityJson: true,
+      },
+    }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { concern: true },
+    })
+  ]);
 
   if (!student || student.role !== 'student') {
     throw new Error('Invalid student');
@@ -107,11 +113,6 @@ export async function createBookingRequestAction(
   if (!isSlotAvailableForDate(student.availabilityJson, scheduledAt)) {
     throw new Error('Selected slot is not available');
   }
-
-  const patientProfile = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { concern: true },
-  });
 
   const caseLabel = patientProfile?.concern?.trim()
     ? toPlainCaseLabel(patientProfile.concern)
