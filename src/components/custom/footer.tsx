@@ -68,6 +68,7 @@ export default function Footer() {
                                 <Link
                                     key={s.label}
                                     href={s.href}
+                                    prefetch={true}
                                     aria-label={s.label}
                                     className="hover:text-brand-blue transition-colors duration-200"
                                 >
@@ -87,6 +88,7 @@ export default function Footer() {
                                 <li key={l.label}>
                                     <Link
                                         href={l.href}
+                                        prefetch={true}
                                         className="text-sm text-gray-500 hover:text-brand-teal transition-colors duration-200"
                                     >
                                         {l.label}
@@ -106,6 +108,7 @@ export default function Footer() {
                                 <li key={l.label}>
                                     <Link
                                         href={l.href}
+                                        prefetch={true}
                                         className="text-sm text-gray-500 hover:text-brand-teal transition-colors duration-200"
                                     >
                                         {l.label}
@@ -125,6 +128,7 @@ export default function Footer() {
                                 <li key={l.label}>
                                     <Link
                                         href={l.href}
+                                        prefetch={true}
                                         className="text-sm text-gray-500 hover:text-brand-teal transition-colors duration-200"
                                     >
                                         {l.label}

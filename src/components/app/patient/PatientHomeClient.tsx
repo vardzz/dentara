@@ -87,22 +87,23 @@ export default function PatientHomeClient({ user, bookings }: Props) {
         </div>
       </motion.div>
 
-      <motion.div 
-        variants={ITEM} 
-        onClick={() => router.push('/app/patient/search')}
-        className="glass-card p-6 bg-gradient-to-br from-brand-teal/10 via-white/80 to-brand-navy/5 hover-lift cursor-pointer"
-      >
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-brand-teal/10 flex items-center justify-center">
-            <Search className="h-6 w-6 text-brand-teal" />
+      <Link href="/app/patient/search" prefetch={true} className="block group">
+        <motion.div 
+          variants={ITEM} 
+          className="glass-card p-6 bg-gradient-to-br from-brand-teal/10 via-white/80 to-brand-navy/5 hover-lift cursor-pointer"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-brand-teal/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Search className="h-6 w-6 text-brand-teal" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-foreground text-sm">Find a Dental Student</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Get quality care for your dental concern</p>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-foreground text-sm">Find a Dental Student</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Get quality care for your dental concern</p>
-          </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-        </div>
-      </motion.div>
+        </motion.div>
+      </Link>
 
       <motion.div variants={ITEM}>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Upcoming Appointment</h3>

@@ -17,6 +17,9 @@ When reviewing the provided file, apply the relevant fixes from this list:
 11. Redundant Text: In the Past Activities list, remove the hardcoded string "Completed: " from the display name (e.g., change "Completed: Juan DelaCruz" to just "Juan DelaCruz") since there is already a visual "Completed" badge.
 12. Skeleton Loaders: If creating a loading.tsx file, construct a Tailwind CSS skeleton (animate-pulse) that perfectly mirrors the structural layout of the fully loaded page (e.g., empty gray boxes for cards, pills for buttons).
 13. Mobile Floating Nav: In the navigation component, hide the text labels on mobile screens. Apply Tailwind classes like hidden md:inline-block to the text spans so only the lucide-react icons are visible on small devices.
+14. The "Double Click" Routing Bug: Scan the file for any navigation triggered by onClick={() => router.push(...)} or similar programmatic routing. If the element is purely for navigation (not submitting a form), replace it entirely with a Next.js <Link href="..."> component. <Link> automatically prefetches the route in the background, making the transition instant and requiring only one click.
+15. Non-Blocking Transitions (useTransition): If a Client Component must use useRouter (e.g., routing after a mutation or Server Action finishes), you must wrap the router.push() call inside React's useTransition hook. Update the UI to show a loading spinner on the button while isPending is true. This prevents the page from freezing and stops the user from clicking twice.
+16. Aggressive Prefetching: In navigation components (Sidebar, Navbar, Mobile Menu), ensure all <Link> tags are properly configured. Remove any prefetch={false} attributes. Ensure that hovering over a link or rendering it immediately prepares the Next.js router for a lightning-fast switch.
 </bug_fix_protocols>
 
 <execution_rules>

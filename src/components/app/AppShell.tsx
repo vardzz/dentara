@@ -72,10 +72,14 @@ export default function AppShell({ children, role, basePath, userName }: AppShel
           {/* ── Sidebar ── */}
           <aside className="fixed top-0 left-0 z-50 h-screen w-[260px] flex flex-col bg-white/60 backdrop-blur-2xl border-r border-white/50 shadow-[4px_0_30px_rgba(0,0,0,0.02)]">
           {/* Logo */}
-          <div className="flex items-center gap-2.5 px-7 pt-8 pb-4">
-            <Image src="/assets/icon.png" alt="Dentara" width={28} height={28} className="h-7 w-auto object-contain drop-shadow-sm" />
+          <Link 
+            href={`${basePath}/home`} 
+            prefetch={true}
+            className="flex items-center gap-2.5 px-7 pt-8 pb-4 group"
+          >
+            <Image src="/assets/icon.png" alt="Dentara" width={28} height={28} className="h-7 w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform" />
             <span className="text-lg font-bold tracking-tight text-brand-navy">DENTARA</span>
-          </div>
+          </Link>
 
           {/* ── Protocol 9: Sidebar Username ── */}
           <div className="px-7 pb-6">

@@ -112,12 +112,13 @@ export default function ChatActiveClient({ currentUserId, conversationId, initia
       {/* Header */}
       <header className="bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between shadow-sm shrink-0">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push(`${basePath}/chats`)}
+          <Link
+            href={`${basePath}/chats`}
+            prefetch={true}
             className="p-2 -ml-2 rounded-full hover:bg-slate-50 text-gray-500 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
-          </button>
+          </Link>
           
           <div className="relative">
             <div className="h-10 w-10 rounded-full bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm">
