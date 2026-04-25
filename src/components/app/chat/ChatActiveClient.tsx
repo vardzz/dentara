@@ -49,18 +49,21 @@ export default function ChatActiveClient({ currentUserId, conversationId, initia
 
     if (!supabase) return;
 
+    // ── Protocol 8: Robust real-time chat subscription ──
     const channel = supabase
-      .channel(`conversation-${conversationId}`)
+      .channel('messages')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'Message',
-          filter: `conversationId=eq.${conversationId}`,
         },
         async (payload) => {
           const incoming = payload.new as ChatMessageItem;
+
+          // Filter for this specific conversation context
+          if (incoming.conversationId !== conversationId) return;
 
           setMessages((prev) => {
             if (prev.some((msg) => msg.id === incoming.id)) {
