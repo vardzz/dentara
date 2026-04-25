@@ -176,65 +176,82 @@ export async function registerAction(
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = await prisma.user.create({
-      data: {
-        email: normalizedEmail,
-        password: hashedPassword,
-        fullName: fullName.trim(),
-        name: fullName.trim(),
-        role,
-        age: payload.age ? parseInt(payload.age, 10) : null,
-        phone: payload.phone ?? null,
-        concern: payload.concern ?? null,
-        location: payload.location ?? null,
-        school: payload.school ?? null,
-        yearLevel: payload.yearLevel ?? null,
-        studentId: payload.studentId ?? null,
-        username: payload.username ?? null,
-        clinicAddress: payload.clinicAddress ?? null,
-        casesJson: payload.cases
-          ? JSON.stringify(payload.cases)
-          : null,
-        availabilityJson: payload.availability
-          ? JSON.stringify(payload.availability)
-          : null,
-      },
-    });
+    // ── Protocol 1: Robust Prisma creation with graceful error handling ──
+    try {
+      const user = await prisma.user.create({
+        data: {
+          email: normalizedEmail,
+          password: hashedPassword,
+          fullName: fullName.trim(),
+          name: fullName.trim(),
+          role,
+          age: (payload.age && !isNaN(parseInt(payload.age, 10))) 
+            ? parseInt(payload.age, 10) 
+            : null,
+          phone: payload.phone ?? null,
+          concern: payload.concern ?? null,
+          location: payload.location ?? null,
+          school: payload.school ?? null,
+          yearLevel: payload.yearLevel ?? null,
+          studentId: payload.studentId ?? null,
+          username: payload.username ?? null,
+          clinicAddress: payload.clinicAddress ?? null,
+          casesJson: payload.cases
+            ? JSON.stringify(payload.cases)
+            : null,
+          availabilityJson: payload.availability
+            ? JSON.stringify(payload.availability)
+            : null,
+        },
+      });
 
-    return { success: true, userId: user.id };
+      return { success: true, userId: user.id };
+    } catch (dbErr) {
+      console.error("[auth] Database creation error:", dbErr);
+      return {
+        success: false,
+        error: getAuthErrorMessage(dbErr),
+      };
+    }
   } catch (err) {
-    console.error("[auth] Register error:", err);
+    console.error("[auth] Register action wrapper error:", err);
     return {
       success: false,
-      error: getAuthErrorMessage(err),
+      error: "An unexpected error occurred during registration. Please try again.",
     };
   }
 }
 
 /** Extract user-friendly message from Prisma or generic errors */
 function getAuthErrorMessage(err: unknown): string {
+  // Protocol 1: Ensure unique constraints and other Prisma errors are handled gracefully
   const prismaErr = err as { code?: string; meta?: { target?: string[] } } | null;
+  
   if (prismaErr && typeof prismaErr === "object" && typeof prismaErr.code === "string") {
     switch (prismaErr.code) {
-      case "P5010":
-        return "Warming up database. Please try again in a moment.";
       case "P2002": {
         const target = prismaErr.meta?.target;
-        if (Array.isArray(target) && target.includes("email"))
-          return "An account with this email already exists.";
-        if (Array.isArray(target) && target.includes("username"))
-          return "This username is already taken.";
-        return "A record with this value already exists. Please use different information.";
+        if (Array.isArray(target)) {
+          if (target.includes("email")) return "An account with this email already exists.";
+          if (target.includes("username")) return "This username is already taken.";
+        }
+        return "This information is already associated with an account.";
       }
       case "P2003":
-        return "Invalid reference. Please refresh and try again.";
+        return "There was a problem with the provided data references.";
+      case "P5010":
+        return "Database is warming up. Please try again in a few seconds.";
       case "P2025":
-        return "Record not found. Please refresh and try again.";
+        return "Required record not found. Please try again.";
       default:
-        return `Database error (${prismaErr.code}). Please try again or contact support.`;
+        return `Database error (${prismaErr.code}). Please try again later.`;
     }
   }
-  if (err instanceof Error && err.name?.includes("Prisma"))
-    return "Invalid data. Please check your input and try again.";
+
+  if (err instanceof Error) {
+    if (err.name.includes("Prisma")) return "Database connection issue. Please try again.";
+    return err.message;
+  }
+  
   return "Something went wrong. Please try again.";
 }

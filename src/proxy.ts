@@ -12,7 +12,7 @@ import { rateLimit } from '@/lib/rate-limit';
  */
 
 // ── Rate Limit Configurations ──
-const AUTH_LIMIT   = { maxRequests: 10, windowSeconds: 60 };   // 10 login/register attempts per minute
+const AUTH_LIMIT   = { maxRequests: 20, windowSeconds: 60 };   // 20 login/register attempts per minute
 const API_LIMIT    = { maxRequests: 30, windowSeconds: 60 };   // 30 server action calls per minute
 const GLOBAL_LIMIT = { maxRequests: 120, windowSeconds: 60 };  // 120 total requests per minute
 
