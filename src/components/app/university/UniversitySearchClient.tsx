@@ -22,6 +22,18 @@ const mockUniversities = [
 
 export default function UniversitySearchClient() {
   const [searchQuery, setSearchQuery] = useState("");
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const filteredUniversities = mockUniversities.filter((university) => {
+    if (!normalizedQuery) {
+      return true;
+    }
+
+    return (
+      university.name.toLowerCase().includes(normalizedQuery) ||
+      university.location.toLowerCase().includes(normalizedQuery)
+    );
+  });
 
   return (
     <motion.div variants={ANIM} initial="hidden" animate="visible" className="space-y-6">
@@ -41,25 +53,29 @@ export default function UniversitySearchClient() {
       </motion.div>
 
       <motion.div variants={ITEM} className="space-y-3">
-        {mockUniversities.map((u, i) => (
-          <div key={i} className="glass-card-solid p-5 hover-lift cursor-pointer">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-brand-navy/10 flex items-center justify-center shrink-0">
-                <Building2 className="h-5 w-5 text-brand-navy" />
-              </div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-foreground">{u.name}</h4>
-                <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-                  <MapPin className="h-3 w-3" /> {u.location}
-                </p>
-                <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {u.students} students</span>
-                  <span className="flex items-center gap-1"><GraduationCap className="h-3 w-3" /> {u.programs} programs</span>
+        {filteredUniversities.length === 0 ? (
+          <div className="glass-card-solid p-4 text-sm text-muted-foreground">No matching universities found.</div>
+        ) : (
+          filteredUniversities.map((u, i) => (
+            <div key={i} className="glass-card-solid p-5 hover-lift cursor-pointer">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-brand-navy/10 flex items-center justify-center shrink-0">
+                  <Building2 className="h-5 w-5 text-brand-navy" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-foreground">{u.name}</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                    <MapPin className="h-3 w-3" /> {u.location}
+                  </p>
+                  <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {u.students} students</span>
+                    <span className="flex items-center gap-1"><GraduationCap className="h-3 w-3" /> {u.programs} programs</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </motion.div>
     </motion.div>
   );

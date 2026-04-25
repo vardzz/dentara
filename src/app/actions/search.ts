@@ -161,8 +161,26 @@ export async function searchPatients(
       studentNeedKeywords = getCaseKeywords(parseCasesJson(studentProfile?.casesJson));
     }
 
+    const where: Prisma.UserWhereInput = {
+      role: 'patient',
+      ...(normalizedQuery
+        ? {
+            OR: [
+              { fullName: { contains: normalizedQuery, mode: 'insensitive' } },
+              { concern: { contains: normalizedQuery, mode: 'insensitive' } },
+              { location: { contains: normalizedQuery, mode: 'insensitive' } },
+            ],
+          }
+        : {}),
+      ...(normalizedLocation
+        ? {
+            location: { contains: normalizedLocation, mode: 'insensitive' },
+          }
+        : {}),
+    };
+
     const dbPatients = await prisma.user.findMany({
-      where: { role: 'patient' },
+      where,
       select: {
         id: true,
         fullName: true,
@@ -241,8 +259,26 @@ export async function searchStudents(
       patientNeedKeywords = tokenize(patientProfile?.concern ?? '');
     }
 
+    const where: Prisma.UserWhereInput = {
+      role: 'student',
+      ...(normalizedQuery
+        ? {
+            OR: [
+              { fullName: { contains: normalizedQuery, mode: 'insensitive' } },
+              { school: { contains: normalizedQuery, mode: 'insensitive' } },
+              { clinicAddress: { contains: normalizedQuery, mode: 'insensitive' } },
+            ],
+          }
+        : {}),
+      ...(normalizedLocation
+        ? {
+            clinicAddress: { contains: normalizedLocation, mode: 'insensitive' },
+          }
+        : {}),
+    };
+
     const dbStudents = await prisma.user.findMany({
-      where: { role: 'student' },
+      where,
       select: {
         id: true,
         fullName: true,
