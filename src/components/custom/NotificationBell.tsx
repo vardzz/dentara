@@ -50,6 +50,7 @@ function formatLocalDateTime(date: Date): string {
 export default function NotificationBell({ className }: NotificationBellProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isPending, startTransition] = React.useTransition();
     const basePath = React.useMemo(() => {
       if (pathname.startsWith('/app/student')) return '/app/student';
       if (pathname.startsWith('/app/university')) return '/app/university';
@@ -69,6 +70,7 @@ export default function NotificationBell({ className }: NotificationBellProps) {
   const [open, setOpen] = React.useState(false);
   const [activeNotificationId, setActiveNotificationId] = React.useState<string | null>(null);
   const [offerModalNotificationId, setOfferModalNotificationId] = React.useState<string | null>(null);
+  const [isMessageNavigating, setIsMessageNavigating] = React.useState<string | null>(null);
   const [selectedSchedule, setSelectedSchedule] = React.useState<Date | null>(null);
   const [isMounted, setIsMounted] = React.useState(false);
   const [panelPosition, setPanelPosition] = React.useState<{ left: number; top: number; width: number }>({
@@ -292,15 +294,27 @@ export default function NotificationBell({ className }: NotificationBellProps) {
                             </button>
                             <button
                               type="button"
+                              disabled={!!isMessageNavigating || isPending}
                               onClick={async () => {
-                                const result = await findOrCreateConversation(item.sender.id);
-                                router.push(`${basePath}/chats/${result.conversationId}`);
-                                setOpen(false);
+                                try {
+                                  setIsMessageNavigating(item.sender.id);
+                                  const result = await findOrCreateConversation(item.sender.id);
+                                  startTransition(() => {
+                                    router.push(`${basePath}/chats/${result.conversationId}`);
+                                    setOpen(false);
+                                  });
+                                } finally {
+                                  setIsMessageNavigating(null);
+                                }
                               }}
-                              className="inline-flex items-center justify-center gap-1 rounded-lg border border-slate-200/80 bg-white px-2.5 py-2 text-xs font-semibold text-slate-600"
+                              className="inline-flex items-center justify-center gap-1 rounded-lg border border-slate-200/80 bg-white px-2.5 py-2 text-xs font-semibold text-slate-600 disabled:opacity-50"
                               aria-label="Message sender"
                             >
-                              <MessageSquare className="size-4" />
+                              {(isMessageNavigating === item.sender.id || (isMessageNavigating === item.sender.id && isPending)) ? (
+                                <Loader2 className="size-3.5 animate-spin" />
+                              ) : (
+                                <MessageSquare className="size-4" />
+                              )}
                               Message
                             </button>
                           </div>

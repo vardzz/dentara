@@ -73,6 +73,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
   initialView = "login",
 }) => {
   const router = useRouter();
+  const [isPending, startTransition] = React.useTransition();
   const { setAuth, setRole } = useRole();
 
   /* ── UI State ── */
@@ -273,16 +274,19 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
           fullName: session.user.name ?? "",
         });
         
-        if (session.user.role === "student") router.push("/app/student");
-        else if (session.user.role === "patient") router.push("/app/patient");
-        else if (session.user.role === "university") router.push("/app/university");
+        startTransition(() => {
+          if (session.user.role === "student") router.push("/app/student");
+          else if (session.user.role === "patient") router.push("/app/patient");
+          else if (session.user.role === "university") router.push("/app/university");
+        });
       } else {
         setServerError("Could not load session. Please try again.");
+        setIsLoading(false);
       }
     } catch {
       setServerError("Something went wrong. Please try again.");
+      setIsLoading(false);
     }
-    setIsLoading(false);
   });
 
   /** Field names for the current step (for form.trigger) */
@@ -483,19 +487,23 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
       });
 
       // 3. Force the redirect to the specific dashboard!
-      if (userRole === "student") {
-        router.push("/app/student"); 
-      } else {
-        router.push("/app/patient"); 
-      }
+      startTransition(() => {
+        if (userRole === "student") {
+          router.push("/app/student"); 
+        } else {
+          router.push("/app/patient"); 
+        }
+      });
 
     } catch (error) {
       // Even if the silent login hiccups, push them to the dashboard anyway
-      if (role === "student") {
-        router.push("/app/student");
-      } else {
-        router.push("/app/patient");
-      }
+      startTransition(() => {
+        if (role === "student") {
+          router.push("/app/student");
+        } else {
+          router.push("/app/patient");
+        }
+      });
     }
     
     setIsLoading(false);
@@ -675,10 +683,10 @@ const AuthContainer: React.FC<AuthContainerProps> = ({
 
               <button
                 type="submit"
-                disabled={isLoading || loginForm.formState.isSubmitting}
+                disabled={isLoading || isPending || loginForm.formState.isSubmitting}
                 className="w-full bg-brand-teal hover:bg-brand-navy text-white font-bold min-h-[44px] py-5 rounded-2xl shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98] mt-6 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {isLoading ? (
+                {(isLoading || isPending) ? (
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>

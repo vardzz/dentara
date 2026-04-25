@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Bell, MessageCircle, Clock, CheckCircle2 } from 'lucide-react';
@@ -118,28 +119,32 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
 
       {/* Alerts */}
       <motion.div variants={ITEM} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="glass-card-solid flex-1 p-4 hover-lift cursor-pointer">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-teal/10 flex items-center justify-center">
-              <Bell className="h-4 w-4 text-brand-teal" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">{pendingRequests} Requests</p>
-              <p className="text-[10px] text-muted-foreground">New patient requests</p>
-            </div>
-          </div>
-        </div>
-        <div className="glass-card-solid flex-1 p-4 hover-lift cursor-pointer">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-navy/10 flex items-center justify-center">
-              <MessageCircle className="h-4 w-4 text-brand-navy" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">{unreadMessages} Unread</p>
-              <p className="text-[10px] text-muted-foreground">Notifications</p>
+        <Link href="/app/student/bookings" prefetch={true} className="flex-1 group">
+          <div className="glass-card-solid p-4 hover-lift cursor-pointer h-full">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-brand-teal/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Bell className="h-4 w-4 text-brand-teal" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">{pendingRequests} Requests</p>
+                <p className="text-[10px] text-muted-foreground">New patient requests</p>
+              </div>
             </div>
           </div>
-        </div>
+        </Link>
+        <Link href="/app/student/chats" prefetch={true} className="flex-1 group">
+          <div className="glass-card-solid p-4 hover-lift cursor-pointer h-full">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-brand-navy/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <MessageCircle className="h-4 w-4 text-brand-navy" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">{unreadMessages} Unread</p>
+                <p className="text-[10px] text-muted-foreground">Notifications</p>
+              </div>
+            </div>
+          </div>
+        </Link>
       </motion.div>
 
       {/* Clinical Quota Progress */}
