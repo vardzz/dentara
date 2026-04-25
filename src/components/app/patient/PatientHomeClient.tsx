@@ -140,11 +140,11 @@ export default function PatientHomeClient({ user, bookings }: Props) {
       </motion.div>
 
       <motion.div variants={ITEM}>
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Recent Activity</h3>
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Past Activities</h3>
         <div className="space-y-3">
           {completedBookings.length === 0 ? (
             <div className="glass-card-solid p-5 flex items-center justify-center h-24">
-              <p className="text-sm text-muted-foreground">No recent activity.</p>
+              <p className="text-sm text-muted-foreground">No past activities.</p>
             </div>
           ) : (
             completedBookings.map((booking) => (
@@ -155,7 +155,7 @@ export default function PatientHomeClient({ user, bookings }: Props) {
                       <CheckCircle2 className="h-5 w-5" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">Completed by {booking.studentName}</p>
+                      <p className="text-sm font-semibold text-foreground truncate">{booking.studentName}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {mounted ? formatDateLabel(booking.updatedAt) : '...'} · {mounted ? formatTimeLabel(booking.updatedAt) : '...'}
                       </p>

@@ -95,10 +95,10 @@ export default function StudentDashboard({ userName = 'Doctor' }: StudentDashboa
         </button>
       </motion.div>
 
-      {/* ── Recent Action Log ── */}
+      {/* ── Past Activities ── */}
       <motion.div variants={ITEM_ANIM} className="mt-2">
         <div className="flex items-center justify-between mb-4 px-2">
-          <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Recent Activity</h2>
+          <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Past Activities</h2>
           <button className="text-xs font-bold text-brand-blue">View All</button>
         </div>
         

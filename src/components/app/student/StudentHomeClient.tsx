@@ -151,7 +151,11 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
           {QUOTA_LABELS.map((label) => {
             const current = normalizedProgress[label] || 0;
             const required = requiredByLabel[label] || 0;
-            const progressPercentage = required > 0 ? Math.min((current / required) * 100, 100) : 0;
+            
+            // Protocol 2: Do not render tasks with a requirement of 0
+            if (required <= 0) return null;
+            
+            const progressPercentage = Math.min((current / required) * 100, 100);
 
             return (
               <div key={label}>
@@ -214,15 +218,15 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
         </div>
       </motion.div>
 
-      {/* Recent Activity */}
+      {/* Past Activities */}
       <motion.div variants={ITEM}>
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-          Recent Activity
+          Past Activities
         </h3>
         <div className="space-y-3">
           {recentActivities.length === 0 ? (
             <div className="glass-card-solid p-5 flex items-center justify-center h-24">
-              <p className="text-sm text-muted-foreground">No recent activity.</p>
+              <p className="text-sm text-muted-foreground">No past activities.</p>
             </div>
           ) : (
             recentActivities.slice(0, 5).map((booking) => (
@@ -234,7 +238,7 @@ export default function StudentHomeClient({ user, progress, unreadChatCount = 0,
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">
-                        Completed: {booking.patient.fullName}
+                        {booking.patient.fullName}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {mounted ? formatDateLabel(booking.updatedAt) : '...'} · {mounted ? formatTimeLabel(booking.updatedAt) : '...'}
