@@ -61,3 +61,44 @@ export async function getCurrentUserProfile() {
     return null;
   }
 }
+
+/**
+ * Updates the current user's profile.
+ * 
+ * Protocol 5: Persists patient concern and other profile fields to the DB.
+ */
+export async function updateUserProfile(data: {
+  fullName?: string;
+  school?: string;
+  yearLevel?: string;
+  clinicAddress?: string;
+  age?: string;
+  phone?: string;
+  location?: string;
+  concern?: string;
+}) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  try {
+    const updateData: any = { ...data };
+    
+    // Parse numeric fields
+    if (data.age) {
+      updateData.age = parseInt(data.age, 10);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: session.user.id },
+      data: updateData,
+    });
+
+    return { success: true, user: updatedUser };
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    throw new Error('Failed to update profile');
+  }
+}

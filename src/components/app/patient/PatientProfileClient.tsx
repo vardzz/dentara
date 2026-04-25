@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import SignOutConfirmDialog from '@/components/custom/SignOutConfirmDialog';
 import { useRole } from '@/lib/role-context';
-import { getCurrentUserProfile } from '@/app/actions/user';
+import { getCurrentUserProfile, updateUserProfile } from '@/app/actions/user';
 
 const ANIM: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -87,9 +87,13 @@ export default function PatientProfileClient({ user: initialUser }: Props) {
   const location = profile?.location || 'Update your location';
   
   const handleSave = async () => {
-    // Optional: Add server action call to save profile
-    setIsEditing(false);
-    setProfile((prev) => prev ? { ...prev, ...formData, age: formData.age ? parseInt(formData.age, 10) : prev.age } : prev);
+    try {
+      await updateUserProfile(formData);
+      setIsEditing(false);
+      setProfile((prev) => prev ? { ...prev, ...formData, age: formData.age ? parseInt(formData.age, 10) : prev.age } : prev);
+    } catch (error) {
+      console.error("Failed to save profile:", error);
+    }
   };
 
   return (

@@ -255,7 +255,7 @@ export default function ProfileDetailModal({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 40, scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 280, damping: 28 }}
-              className="fixed inset-x-0 bottom-0 z-[120] flex items-end justify-center p-0 sm:inset-0 sm:items-center sm:p-4"
+              className="fixed inset-x-0 bottom-0 z-[120] flex items-end justify-center p-0 sm:inset-0 sm:items-center sm:p-4 md:pl-[260px]"
             >
               <div className="relative w-full overflow-hidden rounded-t-[32px] border border-white/80 bg-[linear-gradient(160deg,rgba(255,255,255,0.98)_0%,rgba(248,250,252,0.96)_100%)] shadow-[0_20px_50px_rgba(0,0,0,0.1)] sm:max-w-3xl sm:rounded-[32px]">
                 <div className="pointer-events-none absolute inset-0">
