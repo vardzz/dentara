@@ -29,6 +29,7 @@ type StudentDiscoveryItem = {
 type SearchSuccess<T> = {
   success: true;
   data: T[];
+  hasMore: boolean;
 };
 
 type SearchFailure = {
@@ -141,11 +142,14 @@ function scoreFieldMatch(value: string, query?: string): number {
 export async function searchPatients(
   query?: string,
   locationFilter?: string,
+  page: number = 1,
 ): Promise<SearchResponse<PatientDiscoveryItem>> {
   try {
     const session = await auth();
     const normalizedQuery = normalize(query);
     const normalizedLocation = normalize(locationFilter);
+    const pageSize = 10;
+    const skip = (page - 1) * pageSize;
 
     let studentNeedKeywords: string[] = [];
 
@@ -168,9 +172,14 @@ export async function searchPatients(
       orderBy: {
         createdAt: 'desc',
       },
+      take: pageSize + 1,
+      skip: skip,
     });
 
-    const combined: PatientDiscoveryItem[] = dbPatients.map((patient) => ({
+    const hasMore = dbPatients.length > pageSize;
+    const itemsToReturn = dbPatients.slice(0, pageSize);
+
+    const combined: PatientDiscoveryItem[] = itemsToReturn.map((patient) => ({
       id: patient.id,
       fullName: patient.fullName,
       concern: patient.concern ?? '',
@@ -197,6 +206,7 @@ export async function searchPatients(
     return {
       success: true,
       data: ranked,
+      hasMore,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -211,12 +221,15 @@ export async function searchStudents(
   query?: string,
   specialtyFilter?: string,
   locationFilter?: string,
+  page: number = 1,
 ): Promise<SearchResponse<StudentDiscoveryItem>> {
   try {
     const session = await auth();
     const normalizedQuery = normalize(query);
     const normalizedSpecialty = normalize(specialtyFilter);
     const normalizedLocation = normalize(locationFilter);
+    const pageSize = 10;
+    const skip = (page - 1) * pageSize;
 
     let patientNeedKeywords: string[] = [];
 
@@ -242,9 +255,14 @@ export async function searchStudents(
       orderBy: {
         createdAt: 'desc',
       },
+      take: pageSize + 1,
+      skip: skip,
     });
 
-    const combined: StudentDiscoveryItem[] = dbStudents.map((student) => ({
+    const hasMore = dbStudents.length > pageSize;
+    const itemsToReturn = dbStudents.slice(0, pageSize);
+
+    const combined: StudentDiscoveryItem[] = itemsToReturn.map((student) => ({
       id: student.id,
       fullName: student.fullName,
       school: student.school ?? '',
@@ -288,6 +306,7 @@ export async function searchStudents(
     return {
       success: true,
       data: ranked,
+      hasMore,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';

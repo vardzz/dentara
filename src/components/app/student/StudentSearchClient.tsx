@@ -54,6 +54,8 @@ export default function StudentSearchClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedProfile, setSelectedProfile] = useState<ProfileModalUser | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
   React.useEffect(() => {
     let isCancelled = false;
@@ -63,7 +65,7 @@ export default function StudentSearchClient() {
       setIsLoading(true);
       setError(null);
 
-      const result = await searchPatients(searchQuery, locationFilter);
+      const result = await searchPatients(searchQuery, locationFilter, currentPage);
 
       if (isCancelled) {
         return;
@@ -77,6 +79,7 @@ export default function StudentSearchClient() {
       }
 
       setPatients(result.data);
+      setHasMore(result.hasMore);
       setIsLoading(false);
     }, 250);
 
@@ -84,6 +87,11 @@ export default function StudentSearchClient() {
       isCancelled = true;
       clearTimeout(timeoutId);
     };
+  }, [searchQuery, activeFilter, currentPage]);
+
+  // Reset page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
   }, [searchQuery, activeFilter]);
 
   return (
@@ -195,6 +203,27 @@ export default function StudentSearchClient() {
             </div>
           );
         })}
+
+        {/* Protocol 4: Pagination Buttons */}
+        {!isLoading && !error && (patients.length > 0 || currentPage > 1) && (
+          <div className="flex items-center justify-between gap-4 pt-4">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="flex-1 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-bold text-brand-navy shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:bg-gray-50 active:scale-95"
+            >
+              Previous
+            </button>
+            <span className="text-xs font-bold text-slate-400">Page {currentPage}</span>
+            <button
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={!hasMore}
+              className="flex-1 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-bold text-brand-navy shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:bg-gray-50 active:scale-95"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </motion.div>
 
       <ProfileDetailModal
