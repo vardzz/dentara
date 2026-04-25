@@ -20,7 +20,7 @@ export default async function UniversityLayout({ children }: { children: React.R
   }
 
   return (
-    <AppShell role="University" basePath="/app/university">
+    <AppShell role="University" basePath="/app/university" userName={session.user.name}>
       {children}
     </AppShell>
   );

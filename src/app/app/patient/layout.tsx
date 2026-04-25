@@ -22,7 +22,7 @@ export default async function PatientLayout({ children }: { children: React.Reac
   }
 
   return (
-    <AppShell role="Patient" basePath="/app/patient">
+    <AppShell role="Patient" basePath="/app/patient" userName={session.user.name}>
       {children}
     </AppShell>
   );

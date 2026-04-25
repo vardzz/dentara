@@ -16,9 +16,10 @@ interface AppShellProps {
   children: React.ReactNode;
   role: string;
   basePath: string;
+  userName?: string | null;
 }
 
-export default function AppShell({ children, role, basePath }: AppShellProps) {
+export default function AppShell({ children, role, basePath, userName }: AppShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -50,11 +51,14 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
     );
   }
 
+  // ── Protocol 3 & 7: Dynamic Search Labels and "Chats" Plural ──
+  const searchLabel = role === 'Student' ? 'Patients' : (role === 'Patient' ? 'Students' : 'Search');
+
   const NAV_ITEMS = [
     { id: 'home',     label: 'Home',     icon: Home,          href: `${basePath}/home` },
-    { id: 'search',   label: 'Search',   icon: Search,        href: `${basePath}/search` },
+    { id: 'search',   label: searchLabel, icon: Search,       href: `${basePath}/search` },
     { id: 'bookings', label: 'Bookings', icon: Calendar,      href: `${basePath}/bookings` },
-    { id: 'chats',    label: 'Chat',     icon: MessageCircle, href: `${basePath}/chats` },
+    { id: 'chats',    label: 'Chats',    icon: MessageCircle, href: `${basePath}/chats` },
     { id: 'profile',  label: 'Profile',  icon: User,          href: `${basePath}/profile` },
   ];
 
@@ -68,9 +72,14 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
           {/* ── Sidebar ── */}
           <aside className="fixed top-0 left-0 z-50 h-screen w-[260px] flex flex-col bg-white/60 backdrop-blur-2xl border-r border-white/50 shadow-[4px_0_30px_rgba(0,0,0,0.02)]">
           {/* Logo */}
-          <div className="flex items-center gap-2.5 px-7 pt-8 pb-6">
+          <div className="flex items-center gap-2.5 px-7 pt-8 pb-4">
             <Image src="/assets/icon.png" alt="Dentara" width={28} height={28} className="h-7 w-auto object-contain drop-shadow-sm" />
             <span className="text-lg font-bold tracking-tight text-brand-navy">DENTARA</span>
+          </div>
+
+          {/* ── Protocol 9: Sidebar Username ── */}
+          <div className="px-7 pb-6">
+            <p className="text-sm font-bold text-brand-navy truncate">{userName ?? 'Guest User'}</p>
           </div>
 
           {/* Role badge */}
@@ -231,7 +240,7 @@ export default function AppShell({ children, role, basePath }: AppShellProps) {
                   <Icon size={isActive ? 20 : 22} strokeWidth={isActive ? 2.5 : 2} />
                 </motion.div>
                 {isActive && (
-                  <motion.span initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 text-[9px] font-black tracking-widest uppercase text-brand-teal mt-0.5">
+                  <motion.span initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 text-[9px] font-black tracking-widest uppercase text-brand-teal mt-0.5 hidden md:inline-block">
                     {tab.label}
                   </motion.span>
                 )}

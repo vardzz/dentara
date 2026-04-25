@@ -32,7 +32,7 @@ export default async function ChatInbox({ basePath }: { basePath: string }) {
     <div className="flex flex-col h-full bg-slate-50/50 p-4 md:p-10 -mx-6 -mt-24 pt-24 md:m-0 md:p-0 md:bg-transparent min-h-[100svh] md:min-h-0">
       <div className="max-w-2xl w-full mx-auto space-y-6 md:mt-0 px-6 md:px-0">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-800">Messages</h1>
+          <h1 className="text-2xl font-bold text-slate-800">Chats</h1>
         </div>
 
         {/* Search Bar */}
@@ -40,7 +40,7 @@ export default async function ChatInbox({ basePath }: { basePath: string }) {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
           <input
             type="text"
-            placeholder="Search messages..."
+            placeholder="Search chats..."
             className="w-full bg-white rounded-full border border-gray-200 pl-12 pr-6 py-3.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-all"
           />
         </div>
@@ -48,7 +48,7 @@ export default async function ChatInbox({ basePath }: { basePath: string }) {
         {/* Conversation List Container */}
         <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
           {conversations.length === 0 ? (
-            <div className="p-8 text-center text-slate-500 text-sm">No messages yet.</div>
+            <div className="p-8 text-center text-slate-500 text-sm">No chats yet.</div>
           ) : (
             <div className="flex flex-col">
               {conversations.map((conversation, index) => {

@@ -22,7 +22,7 @@ export default async function StudentLayout({ children }: { children: React.Reac
   }
 
   return (
-    <AppShell role="Student" basePath="/app/student">
+    <AppShell role="Student" basePath="/app/student" userName={session.user.name}>
       {children}
     </AppShell>
   );
