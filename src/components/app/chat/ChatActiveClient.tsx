@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ImageIcon, MoreVertical, Paperclip, Phone, Send } from 'lucide-react';
 import { sendMessage, markConversationAsReadAction } from '@/app/actions/chat';

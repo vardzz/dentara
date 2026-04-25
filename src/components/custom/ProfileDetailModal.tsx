@@ -90,7 +90,6 @@ export default function ProfileDetailModal({
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  const [isMessageLoading, setIsMessageLoading] = useState(false);
   const [isBookingLoading, setIsBookingLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastTone, setToastTone] = useState<'success' | 'error' | 'info'>('success');
@@ -98,7 +97,6 @@ export default function ProfileDetailModal({
 
   useEffect(() => {
     if (!open) {
-      setIsMessageLoading(false);
       setIsBookingLoading(false);
       setSelectedSchedule(null);
     }
@@ -132,14 +130,14 @@ export default function ProfileDetailModal({
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !isMessageLoading && !isBookingLoading) {
+      if (event.key === 'Escape' && !isPending && !isBookingLoading) {
         onClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isBookingLoading, isMessageLoading, onClose, open]);
+  }, [isBookingLoading, isPending, onClose, open]);
 
   if (!open && !toastMessage) {
     return null;
@@ -151,38 +149,35 @@ export default function ProfileDetailModal({
   const primaryActionLabel = isStudent ? 'Request Booking' : 'Offer Treatment';
   const initials = selectedUser ? getInitials(selectedUser.fullName) : 'OK';
 
-  const handleMessage = async () => {
+  /** 
+   * Protocol 18: Mutation Routing (The Chat Creation Bug)
+   * 
+   * This remains a button (not a Link) because it must execute a server action 
+   * (findOrCreateConversation) to generate the target ID before routing.
+   * We wrap the entire async logic in startTransition to prevent UI freezing 
+   * and show a loading spinner on the button via isPending.
+   */
+  const handleMessage = () => {
     const activeUser = selectedUser;
+    if (!activeUser || isPending || isBookingLoading) return;
 
-    if (!activeUser) {
-      return;
-    }
+    startTransition(async () => {
+      try {
+        const result = await findOrCreateConversation(activeUser.id);
 
-    if (isMessageLoading || isBookingLoading || isPending) {
-      return;
-    }
+        const basePath = pathname.startsWith('/app/student')
+          ? '/app/student'
+          : pathname.startsWith('/app/university')
+            ? '/app/university'
+            : '/app/patient';
 
-    setIsMessageLoading(true);
-
-    try {
-      const result = await findOrCreateConversation(activeUser.id);
-
-      const basePath = pathname.startsWith('/app/student')
-        ? '/app/student'
-        : pathname.startsWith('/app/university')
-          ? '/app/university'
-          : '/app/patient';
-
-      startTransition(() => {
         router.push(`${basePath}/chats/${result.conversationId}`);
-      });
-    } catch (error) {
-      console.error("Failed to start conversation:", error);
-      setToastTone('error');
-      setToastMessage("Unable to open chat. Please try again.");
-    } finally {
-      setIsMessageLoading(false);
-    }
+      } catch (error) {
+        console.error("Failed to start conversation:", error);
+        setToastTone('error');
+        setToastMessage("Unable to open chat. Please try again.");
+      }
+    });
   };
 
   const handleBooking = async () => {
@@ -192,7 +187,7 @@ export default function ProfileDetailModal({
       return;
     }
 
-    if (isBookingLoading || isMessageLoading) {
+    if (isBookingLoading || isPending) {
       return;
     }
 
@@ -205,10 +200,6 @@ export default function ProfileDetailModal({
     setIsBookingLoading(true);
 
     try {
-      // Supabase mutation / Server Action injection point:
-      // - insert or update the booking request / treatment offer record
-      // - emit the realtime payload that powers the live dashboard stream
-      // - return the canonical booking id so the UI can reconcile optimistic state
       if (onBookingAction) {
         await onBookingAction({
           user: activeUser,
@@ -253,7 +244,7 @@ export default function ProfileDetailModal({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-[110] bg-[radial-gradient(circle_at_top,_rgba(19,139,148,0.14),_transparent_36%),rgba(8,26,58,0.58)] backdrop-blur-[18px]"
-              onClick={isMessageLoading || isBookingLoading ? undefined : onClose}
+              onClick={isPending || isBookingLoading ? undefined : onClose}
             />
 
             <motion.div
@@ -398,20 +389,21 @@ export default function ProfileDetailModal({
 
                   <div className="sticky bottom-0 border-t border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.7)_0%,rgba(248,250,252,0.98)_100%)] px-5 py-4 backdrop-blur-xl sm:px-7">
                     <div className="flex flex-col gap-3 sm:flex-row">
+                      {/* Protocol 18: Send Message Button with useTransition and Server Action */}
                       <button
                         type="button"
                         onClick={handleMessage}
-                        disabled={isMessageLoading || isBookingLoading || isPending}
+                        disabled={isPending || isBookingLoading}
                         className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200/80 bg-white/80 px-5 text-sm font-bold text-brand-navy shadow-[0_12px_30px_-20px_var(--color-brand-navy)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-teal/25 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        {(isMessageLoading || isPending) ? <Loader2 className="size-4 animate-spin" /> : <MessageSquare className="size-4" />}
+                        {isPending ? <Loader2 className="size-4 animate-spin" /> : <MessageSquare className="size-4" />}
                         Send Message
                       </button>
 
                       <button
                         type="button"
                         onClick={handleBooking}
-                        disabled={isMessageLoading || isBookingLoading}
+                        disabled={isPending || isBookingLoading}
                         className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-brand-teal px-5 text-sm font-bold text-white shadow-[0_18px_40px_-20px_var(--color-brand-teal)] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {isBookingLoading ? <Loader2 className="size-4 animate-spin" /> : <CalendarPlus className="size-4" />}

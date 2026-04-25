@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { Search, Clock, ChevronRight, CheckCircle2 } from 'lucide-react';
@@ -57,7 +57,6 @@ function formatTimeLabel(iso: string): string {
 }
 
 export default function PatientHomeClient({ user, bookings }: Props) {
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
