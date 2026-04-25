@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -89,6 +89,7 @@ export default function ProfileDetailModal({
 }: ProfileDetailModalProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
   const [isMessageLoading, setIsMessageLoading] = useState(false);
   const [isBookingLoading, setIsBookingLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -157,7 +158,7 @@ export default function ProfileDetailModal({
       return;
     }
 
-    if (isMessageLoading || isBookingLoading) {
+    if (isMessageLoading || isBookingLoading || isPending) {
       return;
     }
 
@@ -172,7 +173,13 @@ export default function ProfileDetailModal({
           ? '/app/university'
           : '/app/patient';
 
-      router.push(`${basePath}/chats/${result.conversationId}`);
+      startTransition(() => {
+        router.push(`${basePath}/chats/${result.conversationId}`);
+      });
+    } catch (error) {
+      console.error("Failed to start conversation:", error);
+      setToastTone('error');
+      setToastMessage("Unable to open chat. Please try again.");
     } finally {
       setIsMessageLoading(false);
     }
@@ -394,10 +401,10 @@ export default function ProfileDetailModal({
                       <button
                         type="button"
                         onClick={handleMessage}
-                        disabled={isMessageLoading || isBookingLoading}
+                        disabled={isMessageLoading || isBookingLoading || isPending}
                         className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200/80 bg-white/80 px-5 text-sm font-bold text-brand-navy shadow-[0_12px_30px_-20px_var(--color-brand-navy)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-teal/25 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        {isMessageLoading ? <Loader2 className="size-4 animate-spin" /> : <MessageSquare className="size-4" />}
+                        {(isMessageLoading || isPending) ? <Loader2 className="size-4 animate-spin" /> : <MessageSquare className="size-4" />}
                         Send Message
                       </button>
 
